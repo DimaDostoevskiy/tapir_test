@@ -201,36 +201,66 @@ img {
 
 /* Footer */
 .footer {
-  border-top: 1px solid $color-border;
-  background: rgba($color-bg, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #05070c;
 }
 
 .footer__inner {
   @include container;
-  padding: 28px 0;
-  display: grid;
-  gap: 18px;
+  padding: 44px 0;
 }
 
-.footer__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 18px;
+.footer__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 34px;
 }
 
 .footer__link {
-  color: $color-muted;
-  font-weight: 600;
-  transition: color 120ms ease;
+  color: rgba(232, 238, 252, 0.78);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.35;
+  transition: color 120ms ease, opacity 120ms ease;
 }
 
 .footer__link:hover {
   color: $color-text;
 }
 
-.footer__meta {
-  color: $color-muted;
+.footer__title {
+  margin: 0 0 14px;
   font-size: 14px;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+  color: rgba(232, 238, 252, 0.55);
+  font-weight: 700;
+}
+
+.footer__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.footer__item {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px;
+  }
+}
+
+@media (max-width: 520px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
 }
 
 /* Home */
@@ -240,6 +270,12 @@ img {
   grid-template-columns: 1.2fr 0.8fr;
   gap: 26px;
   align-items: center;
+  /*
+    На главной "основной блок" должен быть на всю высоту экрана.
+    Шапка (72px) находится вне main, а padding main: 32px сверху и 48px снизу.
+    Футер остаётся ниже блока (виден при скролле).
+  */
+  min-height: calc(100dvh - 72px - 32px - 48px);
   padding: 28px;
   border-radius: $radius-md;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
