@@ -15,9 +15,8 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans",
     sans-serif;
   color: $color-text;
-  background: radial-gradient(1200px 600px at 20% -10%, rgba($color-primary, 0.25), transparent 70%),
-    radial-gradient(900px 500px at 90% 0%, rgba(#00dca0, 0.14), transparent 60%),
-    linear-gradient(180deg, $color-bg, $color-bg);
+  /* Равномерный фон на всей странице, без цветной полосы между main и футером */
+  background: $color-bg;
 }
 
 a {
@@ -43,6 +42,13 @@ img {
 
 .layout__main {
   padding: 32px 0 48px;
+}
+
+@media (min-width: 1024px) {
+  .layout__main--home {
+    /* На главной высота main = высота экрана минус высота хедера */
+    min-height: calc(100dvh - 72px);
+  }
 }
 
 .container {
@@ -202,7 +208,7 @@ img {
 /* Footer */
 .footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #05070c;
+  background: $color-bg;
 }
 
 .footer__inner {
@@ -270,12 +276,7 @@ img {
   grid-template-columns: 1.2fr 0.8fr;
   gap: 26px;
   align-items: center;
-  /*
-    На главной "основной блок" должен быть на всю высоту экрана.
-    Шапка (72px) находится вне main, а padding main: 32px сверху и 48px снизу.
-    Футер остаётся ниже блока (виден при скролле).
-  */
-  min-height: calc(100dvh - 72px - 32px - 48px);
+  min-height: 100%;
   padding: 28px;
   border-radius: $radius-md;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
