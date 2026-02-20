@@ -4,13 +4,14 @@ const isDevEnv = nodeEnv === 'development' || nodeEnv === 'dev'
 const defaultExternalApiBaseUrl = isDevEnv ? 'http://localhost:45874/api' : 'http://localhost:7000/api'
 
 export default defineNuxtConfig({
+  devtools: { enabled: false },
   typescript: {
     typeCheck: false,
   },
 
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
   css: ['~/assets/styles/main.scss'],
+ 
 
   app: {
     baseURL: '/blog/',
