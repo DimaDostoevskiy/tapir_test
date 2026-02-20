@@ -1,0 +1,16 @@
+---
+description: Nuxt 4 and Vue SFC implementation standards
+globs: **/*.vue
+alwaysApply: false
+---
+
+# Nuxt and Vue Standards
+
+- Use Vue 3 Composition API with `script setup` in SFC components.
+- Keep components focused: UI components should not own cross-page business logic.
+- Use clear naming: components in PascalCase, composables/utilities in camelCase.
+- Prefer Nuxt auto-imported primitives (`useRoute`, `useFetch`, `useState`) over custom wrappers unless needed.
+- Keep page-level data loading in pages/composables, not in presentational components.
+- Maintain SSR-safe code: guard browser-only APIs with client checks when required.
+- Keep templates readable: extract repeated or complex markup into child components.
+- Follow existing CSS/Sass conventions in the repo; avoid style-system rewrites in feature tasks.

@@ -1,11 +1,10 @@
 <template>
   <div class="layout">
-    <AppHeader class="layout__header"/>
+    <AppHeader class="layout__header" />
     <main class="layout__main" :class="{ 'layout__main--home': isHome }">
-      {{ time }}
-      <slot/>
+      <slot />
     </main>
-    <AppFooter class="layout__footer"/>
+    <AppFooter class="layout__footer" />
   </div>
 </template>
 
@@ -15,10 +14,5 @@ import AppFooter from '~/components/AppFooter.vue'
 
 const route = useRoute()
 const isHome = computed(() => route.path === '/')
-const time = ref<Date>()
-
-onMounted(() => {
-  time.value = new Date()
-})
 </script>
 

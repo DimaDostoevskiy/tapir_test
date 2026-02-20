@@ -3,22 +3,22 @@
     <div class="footer__inner">
       <div class="footer__grid">
         <section class="footer__col" aria-label="Раздел: КАТАЛОГ">
-          <h2 class="footer__title">Каталог</h2>
+          <h2 class="footer__title">Навигация</h2>
           <ul class="footer__list">
-            <li class="footer__item"><a class="footer__link" href="#">Главная</a></li>
-            <li class="footer__item"><a class="footer__link" href="#">Мужчинам</a></li>
-            <li class="footer__item"><a class="footer__link" href="#">Женщинам</a></li>
-            <li class="footer__item"><a class="footer__link" href="#">Детям</a></li>
+            <li class="footer__item"><NuxtLink class="footer__link" to="/">Главная</NuxtLink></li>
+            <li class="footer__item"><NuxtLink class="footer__link" to="/blog">Блог</NuxtLink></li>
+            <li class="footer__item"><NuxtLink class="footer__link" to="/catalog">Каталог</NuxtLink></li>
+            <li class="footer__item"><NuxtLink class="footer__link" to="/admin/blog">Админка</NuxtLink></li>
           </ul>
         </section>
 
         <section class="footer__col" aria-label="Раздел: ПОКУПКА">
-          <h2 class="footer__title">Покупка</h2>
+          <h2 class="footer__title">Для автора</h2>
           <ul class="footer__list">
-            <li class="footer__item"><a class="footer__link" href="#">Доставка</a></li>
-            <li class="footer__item"><a class="footer__link" href="#">Оплата</a></li>
-            <li class="footer__item"><a class="footer__link" href="#">Возврат</a></li>
-            <li class="footer__item"><a class="footer__link" href="#">FAQ</a></li>
+            <li class="footer__item"><span class="footer__link">Вход — через внешний ресурс</span></li>
+            <li class="footer__item"><span class="footer__link">Создание постов — только ADMIN</span></li>
+            <li class="footer__item"><span class="footer__link">Сессия хранится в HttpOnly cookie</span></li>
+            <li class="footer__item"><span class="footer__link">CRUD постов через админку</span></li>
           </ul>
         </section>
 

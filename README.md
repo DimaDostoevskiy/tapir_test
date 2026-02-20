@@ -1,25 +1,46 @@
-# Тестовое задание (Frontend) — Nuxt 4 + TypeScript
+# Pro Moto Blog — Nuxt 4 + Sequelize + MySQL
 
-## Реализовано
+## Что реализовано
 
-- **Шапка/подвал**: все ссылки — заглушки `href="#"`, «бургер» без логики.
-- **Главная**: кнопка «В каталог» ведёт на `/catalog`.
-- **Каталог**:
-  - SSR-загрузка первой страницы товаров.
-  - «Показать ещё» подгружает следующую страницу, на время запроса показывает «Загрузка...».
-  - При сетевой ошибке показывает блок: «Произошла ошибка, попробуйте позже» + «Повторить».
-  - Карточка товара целиком — ссылка-заглушка `href="#"`.
-  - Кнопка «в избранное» только визуальная.
-  - Цена «x2» рассчитывается как `ceil(price / 2)`.
-- **Верстка**: SCSS, BEM, преимущественно grid/flex, адаптивная сетка карточек.
+- Публичный блог:
+  - `GET /api/posts` — список опубликованных постов.
+  - `GET /api/posts/:slug` — просмотр одного поста.
+  - Страницы: `/blog`, `/blog/:slug`.
+- Админка постов (только ADMIN):
+  - `GET /api/admin/posts`
+  - `POST /api/admin/posts`
+  - `GET /api/admin/posts/:id`
+  - `PUT /api/admin/posts/:id`
+  - `DELETE /api/admin/posts/:id`
+  - Страницы: `/admin/blog`, `/admin/blog/create`, `/admin/blog/:id/edit`.
+- Auth flow через внешний ресурс:
+  - Вход по redirect на `/auth/callback?token=...`.
+  - Nuxt сервер validate токен через внешний `whoami`.
+  - При `Role=ADMIN` создаётся серверная сессия и ставится `HttpOnly` cookie.
+  - `POST /api/auth/logout` очищает сессию, `GET /api/auth/me` возвращает текущего пользователя.
+- База данных:
+  - `Sequelize + MySQL` только для таблицы `posts`.
+  - Пользователи приходят из внешней системы.
 
-## API
-
-Эндпоинт: `https://test-task-api.tapir.ws/products?page=1&limit=12`
-
-## Требования к окружению
+## Переменные окружения
 
 Nuxt 4 требует Node **`^20.19.0`** или **`>=22.12.0`** (см. `package.json#engines`).
+
+```env
+NODE_ENV=development
+HOST=127.0.0.1
+PORT=3000
+DB_NAME=db_blog_name
+DB_USER=root
+DB_PASSWORD=
+DB_HOST=127.0.0.1
+DB_PORT=3306
+MAIL_KEY=
+
+SESSION_COOKIE_NAME=pro_moto_blog
+SESSION_SECRET=dev-change-me
+SESSION_TTL_SECONDS=28800
+```
 
 ## Запуск
 

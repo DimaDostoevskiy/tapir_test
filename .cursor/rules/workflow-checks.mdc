@@ -1,0 +1,17 @@
+---
+description: Execution workflow and verification checks before task completion
+alwaysApply: true
+---
+
+# Workflow and Verification
+
+- Use the correct project scripts:
+  - `npm run dev` - run development server.
+  - `npm run build` - create production build.
+  - `npm run generate` - generate static output.
+  - `npm run preview` - preview production output.
+  - `npm run postinstall` - run Nuxt prepare step.
+- After substantial code edits, run at least one relevant verification command (`build` or another task-specific check).
+- If a command fails, fix introduced issues before finalizing or clearly report blockers.
+- Do not leave partially implemented changes behind.
+- In the final response, include what was changed, what was verified, and any remaining risks.

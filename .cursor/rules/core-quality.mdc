@@ -1,0 +1,17 @@
+---
+description: Core coding quality and safety rules for all tasks
+alwaysApply: true
+---
+
+# Core Quality Rules
+
+- Solve the exact user request first; avoid unrelated refactors.
+- Keep changes minimal and consistent with existing project patterns.
+- Prefer type-safe solutions; avoid `any` unless clearly justified.
+- Do not add dependencies unless they are necessary for the task.
+- Do not change config or infrastructure files without explicit user request.
+- Preserve backward compatibility unless the user asks for a breaking change.
+- Do not hardcode secrets, tokens, or environment-specific values.
+- Reuse existing helpers/components before creating new abstractions.
+- Remove temporary debug code before finishing.
+- If behavior changes, document it in the final response with impact and risks.

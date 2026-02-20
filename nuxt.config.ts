@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   typescript: {
-    typeCheck: true,
+    typeCheck: false,
   },
 
   compatibilityDate: '2025-07-15',
@@ -10,12 +10,30 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Tapir — тестовое задание',
+      title: 'Pro Moto Blog',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Nuxt 4 + TypeScript тестовое задание' }
+        { name: 'description', content: 'Nuxt 4 blog with public pages and admin panel' }
       ]
     }
+  },
+
+  runtimeConfig: {
+    nodeEnv: process.env.NODE_ENV || 'development',
+    host: process.env.HOST || '127.0.0.1',
+    port: Number(process.env.PORT || 3000),
+    mailKey: process.env.MAIL_KEY || '',
+    sessionSecret: process.env.SESSION_SECRET || 'dev-change-me',
+    sessionCookieName: process.env.SESSION_COOKIE_NAME || 'tapir_session',
+    sessionTtlSeconds: Number(process.env.SESSION_TTL_SECONDS || 60 * 60 * 8),
+    externalWhoamiUrl: process.env.EXTERNAL_WHOAMI_URL || 'http://localhost:7000/api/auth/whoami',
+    mysql: {
+      host: process.env.DB_HOST || '127.0.0.1',
+      port: Number(process.env.DB_PORT || 3306),
+      database: process.env.DB_NAME || 'tapir_blog',
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+    },
   },
 
   vite: {

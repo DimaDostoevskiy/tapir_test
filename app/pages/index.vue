@@ -1,26 +1,44 @@
 <template>
-  <div class="home">
-    <section class="home__hero">
-      <div class="home__content">
-        <h1 class="home__title">Кроссовки, которые хочется носить каждый день</h1>
-        <p class="home__subtitle">
-          Тестовое приложение на Nuxt 4 с SSR: переход в каталог, карточки товаров, пагинация «Показать ещё» и обработка
-          сетевых ошибок.
-        </p>
-
-        <NuxtLink class="button button--primary" to="/catalog">В каталог</NuxtLink>
+  <div class="container">
+    <section class="catalog" id="catalog">
+      <header class="catalog__header">
+        <h1 class="catalog__title">Каталог</h1>
+        <p class="catalog__hint">Карточки остаются как есть. Ниже — моковые посты для разработки.</p>
+      </header>
+      <div class="catalog__grid">
+        <ProductCard v-for="p in products" :key="p.id" :product="p" />
       </div>
+    </section>
 
-      <aside class="home__panel">
-        <p class="home__panel-title">Что внутри</p>
-        <ul class="home__panel-list">
-          <li>SSR загрузка первой страницы</li>
-          <li>Постраничная подгрузка товаров</li>
-          <li>SCSS + BEM, grid и flex</li>
-          <li>Адаптивная сетка карточек</li>
-        </ul>
-      </aside>
+    <section class="blog-page" id="posts">
+      <header class="blog-page__header">
+        <h2 class="blog-page__title">Посты (mock)</h2>
+        <p class="blog-page__subtitle">Временные данные для фронтенд-разработки</p>
+      </header>
+
+      <div class="blog-list">
+        <article v-for="post in postsMock" :key="post.id" class="blog-list__item">
+          <h3 class="blog-list__title">{{ post.title }}</h3>
+          <p class="blog-list__excerpt">{{ post.excerpt }}</p>
+          <p>{{ post.content }}</p>
+        </article>
+      </div>
     </section>
   </div>
 </template>
+
+<script setup lang="ts">
+import ProductCard from '~/components/ProductCard.vue'
+import type { ProductsResponse } from '~/types/products'
+import { mockPosts as postsMock } from '~/utils/mockPosts'
+
+const API_BASE = 'https://test-task-api.tapir.ws'
+const LIMIT = 8
+
+const { data } = await useFetch<ProductsResponse>(`${API_BASE}/products`, {
+  query: { page: 1, limit: LIMIT },
+})
+
+const products = computed(() => data.value?.products || [])
+</script>
 
