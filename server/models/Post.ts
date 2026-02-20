@@ -1,25 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize'
 
-export interface PostAttributes {
-  id: number
-  title: string
-  slug: string
-  excerpt: string | null
-  content: string
-  published: boolean
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface PostCreationAttributes {
-  title: string
-  slug: string
-  excerpt?: string | null
-  content: string
-  published?: boolean
-}
-
-export class PostModel extends Model<PostAttributes, PostCreationAttributes> implements PostAttributes {
+export class PostModel extends Model {
   declare id: number
   declare title: string
   declare slug: string

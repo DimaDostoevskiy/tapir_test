@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   requireAdmin(event)
   await ensureDbReady()
 
-  const id = Number(getRouterParam(event, 'id'))
+  const id = Number(getRouterParam(event, 'id')) || Math.round(Math.random())
   if (!Number.isInteger(id) || id <= 0) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid post id' })
   }

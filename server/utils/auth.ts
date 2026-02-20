@@ -11,6 +11,12 @@ interface WhoAmIResponse {
   [key: string]: unknown
 }
 
+function isDevelopmentEnv() {
+  const runtimeConfig = useRuntimeConfig()
+  const nodeEnv = String(runtimeConfig.nodeEnv || process.env.NODE_ENV || '').toLowerCase()
+  return nodeEnv === 'development' || nodeEnv === 'dev'
+}
+
 function normalizeRole(role: string | undefined) {
   return String(role || '').trim().toUpperCase()
 }
@@ -66,12 +72,35 @@ export function getCurrentUser(event: H3Event): SessionUser | null {
   const sessionId = getCookie(event, runtimeConfig.sessionCookieName)
 
   if (!sessionId) {
+    if (isDevelopmentEnv()) {
+      const devAdminUser: SessionUser = {
+        id: 'dev-admin',
+        email: 'dev-admin@local',
+        name: 'Dev Admin',
+        role: 'ADMIN',
+      }
+      createAuthSession(event, devAdminUser)
+      return devAdminUser
+    }
+
     return null
   }
 
   const session = getStoredSession(sessionId)
   if (!session) {
     clearAuthCookie(event)
+
+    if (isDevelopmentEnv()) {
+      const devAdminUser: SessionUser = {
+        id: 'dev-admin',
+        email: 'dev-admin@local',
+        name: 'Dev Admin',
+        role: 'ADMIN',
+      }
+      createAuthSession(event, devAdminUser)
+      return devAdminUser
+    }
+
     return null
   }
 

@@ -1,20 +1,21 @@
 <template>
   <section id="posts" class="blog-page container">
-    <header class="blog-page__header">
-      <h1 class="blog-page__title">Посты (mock)</h1>
-      <p class="blog-page__subtitle">Одна страница с лентой постов</p>
-    </header>
-
-    <div class="blog-list">
-      <PostCard v-for="post in mockPosts" :key="post.id" :post="post" />
+    <div v-if="postList.length" class="blog-list">
+      <PostCard v-for="post in postList"
+                :key="post.id"
+                :post="post"
+      />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { mockPosts } from '~/utils/mockPosts'
+import {PostModel} from "../../server/models/Post";
 
-useSeoMeta({
-  title: 'Посты — Pro Moto Blog',
+const postList = ref<PostModel[]>([])
+
+await useFetch(`/api/posts/`).then((res) => {
+  postList.value = res.data.value?.map(post => post as PostModel) || []
 })
+
 </script>

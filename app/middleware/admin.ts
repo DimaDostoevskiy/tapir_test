@@ -4,6 +4,6 @@ export default defineNuxtRouteMiddleware(async () => {
   await refresh()
 
   if (!isAdmin.value) {
-    return navigateTo('/blog')
+    return navigateTo('/')
   }
 })

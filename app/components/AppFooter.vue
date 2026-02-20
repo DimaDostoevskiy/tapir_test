@@ -7,7 +7,6 @@
           <ul class="footer__list">
             <li class="footer__item"><NuxtLink class="footer__link" to="/">Главная</NuxtLink></li>
             <li class="footer__item"><NuxtLink class="footer__link" to="/blog">Блог</NuxtLink></li>
-            <li class="footer__item"><NuxtLink class="footer__link" to="/catalog">Каталог</NuxtLink></li>
             <li class="footer__item"><NuxtLink class="footer__link" to="/admin/blog">Админка</NuxtLink></li>
           </ul>
         </section>

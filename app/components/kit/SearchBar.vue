@@ -48,6 +48,7 @@ function emitSubmit() {
 .search {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   width: min(100%, 320px);
   min-width: fit-content;
@@ -77,6 +78,8 @@ function emitSubmit() {
 }
 
 .search__btn {
+  top: 3px;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;

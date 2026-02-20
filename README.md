@@ -40,6 +40,9 @@ MAIL_KEY=
 SESSION_COOKIE_NAME=pro_moto_blog
 SESSION_SECRET=dev-change-me
 SESSION_TTL_SECONDS=28800
+
+EXTERNAL_API_BASE_URL=http://localhost:45874/api
+EXTERNAL_WHOAMI_URL=http://localhost:45874/api/auth/whoami
 ```
 
 ## Запуск

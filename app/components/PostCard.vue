@@ -7,9 +7,9 @@
 </template>
 
 <script setup lang="ts">
-import type { MockPost } from '~/utils/mockPosts'
+import {PostModel} from "../../server/models/Post";
 
 defineProps<{
-  post: MockPost
+  post: PostModel
 }>()
 </script>
