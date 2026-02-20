@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize'
+import { useRuntimeConfig } from '#imports'
 
 let sequelizeInstance: Sequelize | null = null
 

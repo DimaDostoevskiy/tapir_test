@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "npm exec eslint . -- --no-warn-ignored",
+    "lint:fix": "npm exec eslint . --fix -- --no-warn-ignored"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

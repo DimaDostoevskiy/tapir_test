@@ -1,3 +1,5 @@
+import { defineNitroPlugin } from '#imports'
+
 export default defineNitroPlugin((nitroApp) => {
     nitroApp.hooks.hook('request', (event) => {
         console.info('[REQ]', event.method, event.path)
