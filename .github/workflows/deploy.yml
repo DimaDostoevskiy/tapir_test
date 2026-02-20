@@ -30,6 +30,9 @@ jobs:
             echo "📦 Start building..."
             npm run build
 
+            echo "📦 Restart PM2..."
+            pm2 restart pro_moto_blog
+
             echo "✅ Deployment complete!"
 
       - name: Send Telegram notification
