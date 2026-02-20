@@ -533,14 +533,15 @@ img {
   border-radius: $radius-md;
   padding: 16px;
   background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 10px 24px rgba($color-primary, 0.14);
   display: grid;
   gap: 10px;
   transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
 }
 
 .blog-list__item:hover {
-  border-color: rgba(246, 114, 63, 0.65);
-  box-shadow: 0 0 0 3px rgba(246, 114, 63, 0.2);
+  border-color: rgba($color-primary, 0.65);
+  box-shadow: 0 0 0 3px rgba($color-primary, 0.2), 0 14px 30px rgba($color-primary, 0.22);
   background: rgba(255, 255, 255, 0.06);
 }
 

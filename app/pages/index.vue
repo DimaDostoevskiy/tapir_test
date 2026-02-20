@@ -10,12 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import {PostModel} from "../../server/models/Post";
+import type { BlogPost } from '~/types/blog'
 
-const postList = ref<PostModel[]>([])
+const postList = ref<BlogPost[]>([])
 
-await useFetch(`/api/posts/`).then((res) => {
-  postList.value = res.data.value?.map(post => post as PostModel) || []
+await useFetch<BlogPost[]>('/api/posts').then((res) => {
+  postList.value = res.data.value || []
 })
-
 </script>

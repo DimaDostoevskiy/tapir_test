@@ -72,8 +72,8 @@ function emitSubmit() {
 }
 
 .search__input:focus {
-  border-color: rgba(246, 114, 63, 0.65);
-  box-shadow: 0 0 0 3px rgba(246, 114, 63, 0.2);
+  border-color: rgba($color-primary, 0.65);
+  box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -85,9 +85,9 @@ function emitSubmit() {
   justify-content: center;
   height: 40px;
   padding: 0 16px;
-  border: 1px solid rgba(246, 114, 63, 0.55);
+  border: 1px solid rgba($color-primary, 0.55);
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(246, 114, 63, 0.96), rgba(170, 145, 135, 0.92));
+  background: linear-gradient(135deg, rgba($color-primary, 0.96), rgba($color-primary-hover, 0.92));
   color: #111111;
   font-weight: 700;
   cursor: pointer;

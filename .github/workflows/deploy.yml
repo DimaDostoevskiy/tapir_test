@@ -1,0 +1,44 @@
+name: Deploy Node.js App
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd moto_blog
+            echo "📥 Pulling latest changes..."
+            git pull origin main
+
+            echo "📦 Installing dependencies..."
+            npm install
+
+            echo "📦 Start building..."
+            npm run build
+
+            echo "✅ Deployment complete!"
+
+      - name: Send Telegram notification
+        if: always()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ${{ job.status == 'success' && '✅' || '❌' }} moto_blog
+            Ветка: ${{ github.ref_name }}
+            Автор: ${{ github.actor }}
