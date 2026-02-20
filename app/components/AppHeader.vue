@@ -11,6 +11,8 @@
 </template>
 
 <script setup lang="ts">
+import SearchBar from '~/components/kit/SearchBar.vue'
+
 const { refresh } = useAuth()
 const searchString = ref('')
 

@@ -1,36 +1,20 @@
 <template>
-  <div class="container">
-    <section class="blog-page" id="posts">
-      <header class="blog-page__header">
+  <section id="posts" class="blog-page container">
+    <header class="blog-page__header">
+      <h1 class="blog-page__title">Посты (mock)</h1>
+      <p class="blog-page__subtitle">Одна страница с лентой постов</p>
+    </header>
 
-      </header>
-
-      <div class="blog-list">
-        <article v-for="post in postsMock"
-                 :key="post.id"
-                 class="blog-list__item"
-        >
-          <h3 class="blog-list__title">{{ post.title }}</h3>
-          <p class="blog-list__excerpt">{{ post.excerpt }}</p>
-          <p>{{ post.content }}</p>
-        </article>
-      </div>
-    </section>
-  </div>
+    <div class="blog-list">
+      <PostCard v-for="post in mockPosts" :key="post.id" :post="post" />
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import ProductCard from '~/components/ProductCard.vue'
-import type {ProductsResponse} from '~/types/products'
-import {mockPosts as postsMock} from '~/utils/mockPosts'
+import { mockPosts } from '~/utils/mockPosts'
 
-const API_BASE = 'https://test-task-api.tapir.ws'
-const LIMIT = 8
-
-const {data} = await useFetch<ProductsResponse>(`${API_BASE}/products`, {
-  query: {page: 1, limit: LIMIT},
+useSeoMeta({
+  title: 'Посты — Pro Moto Blog',
 })
-
-const products = computed(() => data.value?.products || [])
 </script>
-

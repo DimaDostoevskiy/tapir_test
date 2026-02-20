@@ -10,7 +10,10 @@
       @keyup.enter="emitSubmit"
     />
     <button class="search__btn" type="button" aria-label="Искать пост" @click="emitSubmit">
-      Искать
+      <svg class="search__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+        <path d="M20 20L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
     </button>
   </div>
 </template>
@@ -46,7 +49,8 @@ function emitSubmit() {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: min(100%, 420px);
+  width: min(100%, 320px);
+  min-width: fit-content;
 }
 
 .search__input {
@@ -59,6 +63,7 @@ function emitSubmit() {
   color: #fafafa;
   outline: none;
   transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+  margin-right: 12px;
 }
 
 .search__input::placeholder {
@@ -72,6 +77,9 @@ function emitSubmit() {
 }
 
 .search__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 40px;
   padding: 0 16px;
   border: 1px solid rgba(246, 114, 63, 0.55);
@@ -81,6 +89,11 @@ function emitSubmit() {
   font-weight: 700;
   cursor: pointer;
   transition: transform 120ms ease, filter 120ms ease;
+}
+
+.search__icon {
+  width: 18px;
+  height: 18px;
 }
 
 .search__btn:hover {
