@@ -1,10 +1,8 @@
 import { PostModel } from '../../../models/Post'
-import { requireAdmin } from '../../../utils/auth'
 import { ensureDbReady } from '../../../utils/initDb'
 import { makeUniqueSlug, toCreationData, validatePostPayload } from '../../../utils/posts'
 
 export default defineEventHandler(async (event) => {
-  await requireAdmin(event)
   await ensureDbReady()
 
   const body = await readBody(event)

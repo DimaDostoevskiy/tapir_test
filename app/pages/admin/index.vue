@@ -7,15 +7,11 @@
       </div>
     </header>
 
-    <p class="blog-page__subtitle">Доступ только для пользователей с ролью ADMIN.</p>
+    <p class="blog-page__subtitle">Управление контентом.</p>
   </section>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['admin'],
-})
-
 useSeoMeta({
   title: 'Admin — Pro Moto Blog',
 })

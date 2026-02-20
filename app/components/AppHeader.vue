@@ -13,16 +13,11 @@
 <script setup lang="ts">
 import SearchBar from '~/components/kit/SearchBar.vue'
 
-const { refresh } = useAuth()
 const searchString = ref('')
 
 function onSearch() {
   // Placeholder for future integration with post filtering.
 }
-
-onMounted(() => {
-  refresh()
-})
 </script>
 
 <style scoped lang="scss">

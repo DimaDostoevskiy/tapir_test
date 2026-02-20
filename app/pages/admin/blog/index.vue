@@ -4,7 +4,6 @@
       <h1 class="admin-page__title">Админка: посты</h1>
       <div class="admin-page__actions">
         <NuxtLink class="button button--primary" to="/admin/blog/create">Создать пост</NuxtLink>
-        <button class="button button--ghost" type="button" @click="logout">Выйти</button>
       </div>
     </header>
 
@@ -31,15 +30,9 @@
 <script setup lang="ts">
 import type { BlogPost } from '~/types/blog'
 
-definePageMeta({
-  middleware: ['admin'],
-})
-
 useSeoMeta({
   title: 'Админка — Tapir',
 })
-
-const { logout } = useAuth()
 
 const { data: posts, pending, error, refresh } = await useFetch<BlogPost[]>('/api/admin/posts')
 
