@@ -22,7 +22,7 @@ jobs:
           script: |
             cd moto_blog
             echo "📥 Pulling latest changes..."
-            git pull origin main
+            git pull origin master
 
             echo "📦 Installing dependencies..."
             npm install

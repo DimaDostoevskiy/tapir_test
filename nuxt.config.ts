@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   css: ['~/assets/styles/main.scss'],
 
   app: {
+    baseURL: '/blog/',
     head: {
       title: 'Pro Moto Blog',
       meta: [
