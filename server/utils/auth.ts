@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import { createError, deleteCookie, getCookie, setCookie } from 'h3'
+import { createError, deleteCookie, getCookie, getHeader, setCookie } from 'h3'
 import { createSession, destroySession, getStoredSession, type SessionUser } from './sessionStore'
 
 interface WhoAmIResponse {
@@ -21,6 +21,40 @@ function normalizeRole(role: string | undefined) {
   return String(role || '').trim().toUpperCase()
 }
 
+const FALLBACK_ROLE = 'USER'
+const ANONYMOUS_USER: SessionUser = {
+  name: 'Инкогнито',
+  role: FALLBACK_ROLE,
+}
+
+function toSessionUser(payload: WhoAmIResponse | null | undefined): SessionUser {
+  const safePayload = payload && typeof payload === 'object' ? payload : {}
+  const roleValue = normalizeRole(
+    (safePayload as WhoAmIResponse).Role || (safePayload as WhoAmIResponse).role,
+  ) || FALLBACK_ROLE
+
+  return {
+    id: (safePayload as WhoAmIResponse).id,
+    email: (safePayload as WhoAmIResponse).email,
+    name: (safePayload as WhoAmIResponse).name,
+    role: roleValue,
+  }
+}
+
+function extractAuthorizationToken(event: H3Event) {
+  const authorizationHeader = (getHeader(event, 'authorization') || '').trim()
+  if (!authorizationHeader) {
+    return ''
+  }
+
+  const bearerPrefix = 'Bearer '
+  if (authorizationHeader.startsWith(bearerPrefix)) {
+    return authorizationHeader.slice(bearerPrefix.length).trim()
+  }
+
+  return authorizationHeader
+}
+
 export async function fetchExternalUserByToken(token: string): Promise<SessionUser> {
   const runtimeConfig = useRuntimeConfig()
 
@@ -30,18 +64,7 @@ export async function fetchExternalUserByToken(token: string): Promise<SessionUs
     },
   })
 
-  const roleValue = normalizeRole(response.Role || response.role)
-
-  if (!roleValue) {
-    throw createError({ statusCode: 401, statusMessage: 'Role is missing in whoami response' })
-  }
-
-  return {
-    id: response.id,
-    email: response.email,
-    name: response.name,
-    role: roleValue,
-  }
+  return toSessionUser(response)
 }
 
 export function setAuthCookie(event: H3Event, sessionId: string) {
@@ -67,44 +90,37 @@ export function createAuthSession(event: H3Event, user: SessionUser) {
   setAuthCookie(event, sessionId)
 }
 
-export function getCurrentUser(event: H3Event): SessionUser | null {
+export async function getCurrentUser(event: H3Event): Promise<SessionUser> {
   const runtimeConfig = useRuntimeConfig()
-  const sessionId = getCookie(event, runtimeConfig.sessionCookieName)
-
-  if (!sessionId) {
-    if (isDevelopmentEnv()) {
-      const devAdminUser: SessionUser = {
-        id: 'dev-admin',
-        email: 'dev-admin@local',
-        name: 'Dev Admin',
-        role: 'ADMIN',
-      }
-      createAuthSession(event, devAdminUser)
-      return devAdminUser
+  const token = extractAuthorizationToken(event)
+  if (token) {
+    try {
+      const whoAmIUser = await fetchExternalUserByToken(token)
+      createAuthSession(event, whoAmIUser)
+      return whoAmIUser
+    } catch {
+      createAuthSession(event, ANONYMOUS_USER)
+      return ANONYMOUS_USER
     }
+  }
 
-    return null
+  const sessionId = getCookie(event, runtimeConfig.sessionCookieName)
+  if (!sessionId) {
+    createAuthSession(event, ANONYMOUS_USER)
+    return ANONYMOUS_USER
   }
 
   const session = getStoredSession(sessionId)
   if (!session) {
     clearAuthCookie(event)
-
-    if (isDevelopmentEnv()) {
-      const devAdminUser: SessionUser = {
-        id: 'dev-admin',
-        email: 'dev-admin@local',
-        name: 'Dev Admin',
-        role: 'ADMIN',
-      }
-      createAuthSession(event, devAdminUser)
-      return devAdminUser
-    }
-
-    return null
+    createAuthSession(event, ANONYMOUS_USER)
+    return ANONYMOUS_USER
   }
 
-  return session.user
+  return {
+    ...session.user,
+    role: normalizeRole(session.user.role) || FALLBACK_ROLE,
+  }
 }
 
 export function logoutCurrentSession(event: H3Event) {
@@ -118,8 +134,8 @@ export function logoutCurrentSession(event: H3Event) {
   clearAuthCookie(event)
 }
 
-export function requireAdmin(event: H3Event) {
-  const user = getCurrentUser(event)
+export async function requireAdmin(event: H3Event) {
+  const user = await getCurrentUser(event)
 
   if (!user) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })

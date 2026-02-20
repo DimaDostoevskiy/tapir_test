@@ -4,7 +4,7 @@ import { requireAdmin } from '../../../utils/auth'
 import { ensureDbReady } from '../../../utils/initDb'
 
 export default defineEventHandler(async (event) => {
-  requireAdmin(event)
+  await requireAdmin(event)
   await ensureDbReady()
 
   const id = Number(getRouterParam(event, 'id'))

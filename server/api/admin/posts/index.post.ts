@@ -4,7 +4,7 @@ import { ensureDbReady } from '../../../utils/initDb'
 import { makeUniqueSlug, toCreationData, validatePostPayload } from '../../../utils/posts'
 
 export default defineEventHandler(async (event) => {
-  requireAdmin(event)
+  await requireAdmin(event)
   await ensureDbReady()
 
   const body = await readBody(event)

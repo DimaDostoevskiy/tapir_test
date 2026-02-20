@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
 
   if (!token) {
     createAuthSession(event, {
-      name: 'John',
+      name: 'Инкогнито',
       role: 'USER',
     })
     return sendRedirect(event, '/', 302)
@@ -15,14 +15,13 @@ export default defineEventHandler(async (event) => {
 
   try {
     const user = await fetchExternalUserByToken(token)
-
-    if (user.role !== 'ADMIN') {
-      return sendRedirect(event, '/?auth=forbidden', 302)
-    }
-
     createAuthSession(event, user)
-    return sendRedirect(event, '/admin', 302)
+    return sendRedirect(event, user.role === 'ADMIN' ? '/admin' : '/', 302)
   } catch {
-    return sendRedirect(event, '/?auth=failed', 302)
+    createAuthSession(event, {
+      name: 'Инкогнито',
+      role: 'USER',
+    })
+    return sendRedirect(event, '/', 302)
   }
 })

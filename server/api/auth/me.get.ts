@@ -1,7 +1,7 @@
 import { getCurrentUser } from '../../utils/auth'
 
-export default defineEventHandler((event) => {
-  const user = getCurrentUser(event)
+export default defineEventHandler(async (event) => {
+  const user = await getCurrentUser(event)
 
   return {
     authenticated: Boolean(user),
