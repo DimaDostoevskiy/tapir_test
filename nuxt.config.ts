@@ -1,8 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  typescript: {
+    typeCheck: true,
+  },
+
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-
   css: ['~/assets/styles/main.scss'],
 
   app: {
@@ -23,5 +26,7 @@ export default defineNuxtConfig({
         }
       }
     }
-  }
+  },
+
+  modules: ['@nuxt/eslint']
 })
