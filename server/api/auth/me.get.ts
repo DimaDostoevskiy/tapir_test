@@ -17,8 +17,8 @@ export default defineEventHandler(async (event) => {
         },
     }).then(res => {
         return {
-            role: res?.user?.Role || incognitoUser.role,
-            name: res?.user?.Name || incognitoUser.name,
+            role: (res?.user.Role).toString() || incognitoUser.role,
+            name: (res?.user.Name).toString() || incognitoUser.name,
         }
     }).catch(() => {
         return { ...incognitoUser }
