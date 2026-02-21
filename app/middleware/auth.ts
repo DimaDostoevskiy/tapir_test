@@ -1,13 +1,15 @@
 export default defineNuxtRouteMiddleware(async (to) => {
     const isAdminRoute = to.path.startsWith('/admin')
-    const tokenFromQuery = typeof to.query.token === 'string' ? to.query.token.trim() : ''
+
+    console.log('- - - MIDDLEWARE - - -')
 
     try {
         const cookieUser = useCookie<{ role: string, name: string } | null>('auth_user', {sameSite: 'lax'})
 
-        if (tokenFromQuery) {
+        if (!cookieUser.value) {
+            const tokenFromStorage = localStorage.getItem('token')
             const res = await $fetch<{ role: string, name: string }>('/api/auth/me', {
-                query: {token: tokenFromQuery},
+                query: {token: tokenFromStorage},
             })
 
             cookieUser.value = {

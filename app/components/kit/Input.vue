@@ -30,7 +30,7 @@ withDefaults(defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
-  (e: 'enter'): void
+  (e: 'enter:value', value: string): void
 }>()
 
 function onInput(event: Event) {
@@ -38,8 +38,9 @@ function onInput(event: Event) {
   emit('update:modelValue', target.value)
 }
 
-function emitEnter() {
-  emit('enter')
+function emitEnter(event: Event) {
+  const target = event.target as HTMLInputElement
+  emit('enter:value', target.value)
 }
 </script>
 
@@ -61,28 +62,23 @@ function emitEnter() {
   box-sizing: border-box;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
-
 .kit-input::placeholder {
   color: rgba(250, 250, 250, 0.58);
 }
-
 .kit-input:hover:not(:disabled) {
   border-color: rgba($color-primary, 0.72);
   background-color: #000000 !important;
 }
-
 .kit-input:focus-visible {
   border-color: rgba($color-primary, 0.88);
   box-shadow: 0 0 0 3px rgba($color-primary, 0.26);
   background-color: #000000 !important;
 }
-
 .kit-input:focus,
 .kit-input:active,
 .kit-input:not(:placeholder-shown) {
   border-color: rgba($color-primary, 0.84);
 }
-
 .kit-input:disabled {
   opacity: 0.62;
   cursor: not-allowed;
@@ -90,7 +86,6 @@ function emitEnter() {
   color: rgba(255, 255, 255, 0.78) !important;
   border-color: rgba($color-primary, 0.4);
 }
-
 .kit-input:-webkit-autofill,
 .kit-input:-webkit-autofill:hover,
 .kit-input:-webkit-autofill:focus,
