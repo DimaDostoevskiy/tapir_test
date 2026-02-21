@@ -2,21 +2,21 @@
   <form class="post-form" @submit.prevent="emitSubmit">
     <label class="post-form__field">
       <span class="post-form__label">Заголовок</span>
-      <input v-model="localValue.title" class="post-form__input" type="text" maxlength="255" required />
+      <KitFormControl v-model="titleValue" type="text" maxlength="255" required />
     </label>
 
     <label class="post-form__field">
       <span class="post-form__label">Краткое описание</span>
-      <textarea v-model="localValue.excerpt" class="post-form__textarea" rows="3" />
+      <KitFormControl v-model="excerptValue" as="textarea" rows="3" />
     </label>
 
     <label class="post-form__field">
       <span class="post-form__label">Контент</span>
-      <textarea v-model="localValue.content" class="post-form__textarea" rows="12" required />
+      <KitFormControl v-model="contentValue" as="textarea" rows="12" required />
     </label>
 
     <label class="post-form__checkbox">
-      <input v-model="localValue.published" type="checkbox" />
+      <input v-model="publishedValue" type="checkbox" />
       <span>Опубликовано</span>
     </label>
 
@@ -47,6 +47,33 @@ const localValue = computed({
   set: (value: PostFormPayload) => emit('update:modelValue', value),
 })
 
+function updateField<Key extends keyof PostFormPayload>(key: Key, value: PostFormPayload[Key]) {
+  localValue.value = {
+    ...localValue.value,
+    [key]: value,
+  }
+}
+
+const titleValue = computed({
+  get: () => localValue.value.title,
+  set: (value: string) => updateField('title', value),
+})
+
+const excerptValue = computed({
+  get: () => localValue.value.excerpt,
+  set: (value: string) => updateField('excerpt', value),
+})
+
+const contentValue = computed({
+  get: () => localValue.value.content,
+  set: (value: string) => updateField('content', value),
+})
+
+const publishedValue = computed({
+  get: () => localValue.value.published,
+  set: (value: boolean) => updateField('published', value),
+})
+
 function emitSubmit() {
   emit('submit')
 }
@@ -66,20 +93,6 @@ function emitSubmit() {
 .post-form__label {
   color: $color-muted;
   font-size: 14px;
-}
-
-.post-form__input,
-.post-form__textarea {
-  width: 100%;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  background: rgb(var(--color-bg-rgb) / 0.25);
-  color: $color-text;
-  padding: 10px 12px;
-}
-
-.post-form__textarea {
-  resize: vertical;
 }
 
 .post-form__checkbox {
