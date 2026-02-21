@@ -1,0 +1,15 @@
+---
+description: Keep UI responsive across breakpoints
+alwaysApply: true
+---
+
+# Responsive UI First
+
+- Treat responsiveness as a required quality bar for every UI change.
+- Avoid hard fixed widths/heights for layout blocks when content can grow.
+- Prefer fluid sizing (`%`, `min()`, `max()`, `clamp()`) and add breakpoints when needed.
+- Ensure controls remain visible and clickable on desktop, tablet, and mobile.
+- For overlay/fixed elements, verify they are not hidden behind sticky/footer layers.
+- Add or adjust media queries for components touched in the task.
+- Keep typography and spacing readable on small screens.
+- If a desktop-only element is added, hide or replace it on mobile intentionally.

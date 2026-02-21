@@ -24,7 +24,7 @@ const route = useRoute()
 const { data: post } = await useFetch<BlogPost | null>(() => `/api/posts/${route.params.slug}`)
 
 useSeoMeta({
-  title: () => (post.value ? `${post.value.title} — Tapir` : 'Пост — Tapir'),
+  title: () => (post.value ? `${post.value.title} — pro_moto_blog` : 'Пост — pro_moto_blog'),
 })
 
 const paragraphs = computed(() => post.value?.content.split(/\n{2,}/).filter(Boolean) || [])

@@ -51,7 +51,6 @@ function emitSubmit() {
   justify-content: center;
   gap: 8px;
   width: min(100%, 320px);
-  min-width: fit-content;
 }
 
 .search__input {
@@ -64,7 +63,7 @@ function emitSubmit() {
   color: #fafafa;
   outline: none;
   transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
-  margin-right: 12px;
+  margin-right: 8px;
 }
 
 .search__input::placeholder {
@@ -78,8 +77,6 @@ function emitSubmit() {
 }
 
 .search__btn {
-  top: 3px;
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -110,6 +107,11 @@ function emitSubmit() {
 @media (max-width: 760px) {
   .search {
     width: 100%;
+    min-width: 0;
+  }
+
+  .search__input {
+    margin-right: 4px;
   }
 
   .search__btn {
