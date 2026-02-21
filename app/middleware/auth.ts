@@ -16,10 +16,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
             }
         }
 
-        if (isAdminRoute && cookieUser.value?.role !== 'ADMIN') {
+        if (isAdminRoute && cookieUser && cookieUser.value?.role !== 'ADMIN') {
             return navigateTo('/')
         }
-    } catch {
+    } catch (err) {
+        console.log(err)
         return navigateTo('/')
     }
 })

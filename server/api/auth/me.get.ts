@@ -11,14 +11,14 @@ export default defineEventHandler(async (event) => {
         name: 'John Doe'
     }
 
-    return await $fetch('http://127.0.0.1:8000/api/auth', {
+    return await $fetch<{ user?: { Role?: string, Name?: string } }>('http://127.0.0.1:7000/api/auth', {
         headers: {
             'Authorization': token,
         },
     }).then(res => {
         return {
-            role: (res?.user.Role).toString() || incognitoUser.role,
-            name: (res?.user.Name).toString() || incognitoUser.name,
+            role: res?.user?.Role?.toString() || incognitoUser.role,
+            name: res?.user?.Name?.toString() || incognitoUser.name,
         }
     }).catch(() => {
         return { ...incognitoUser }
