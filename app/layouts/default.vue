@@ -24,7 +24,7 @@ const isHome = computed(() => route.path === '/')
 }
 
 .layout__main {
-  padding: 32px 0 48px;
+  padding: 0 0 48px;
 }
 
 @media (min-width: 1024px) {
@@ -45,7 +45,7 @@ const isHome = computed(() => route.path === '/')
   min-height: 0;
   height: 100%;
   overflow: hidden;
-  padding-bottom: 16px;
+  padding: 0 0 16px;
 }
 
 .layout--home .layout__footer {
