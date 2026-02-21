@@ -9,6 +9,8 @@ export default defineEventHandler(async (event) => {
         name: 'John Doe'
     }
 
+    console.log(token);
+
     return await $fetch<{ user?: { Role?: string, Name?: string } }>('http://127.0.0.1:7000/api/auth', {
         headers: {
             'Authorization': token,
