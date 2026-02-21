@@ -4,24 +4,15 @@
 
 Фактически сейчас работает на https://motodart.pro/blog
 
-- Публичный блог:
-  - `GET /api/posts` — список опубликованных постов.
-  - `GET /api/posts/:slug` — просмотр одного поста.
-  - `/blog`, `/blog/:slug`.
-- Админка постов:
-  - `GET /api/admin/posts`
-  - `POST /api/admin/posts`
-  - `GET /api/admin/posts/:id`
-  - `PUT /api/admin/posts/:id`
-  - `DELETE /api/admin/posts/:id`
-  - Страницы: 
+
+- Страницы: 
   - `mysite.pro/blog/`
   - `mysite.pro/blog/admin/`, 
   - `mysite.pro/blog/admin/blog`, 
   - `mysite.pro/blog/admin/blog/create`, 
   - `mysite.pro/blog/admin/blog/:id/edit`.
 - База данных:
-  - `Sequelize + MySQL` только для таблицы `posts`. 
+  - `Sequelize + MySQL`
   - Подключается к работающей уже базе, но может управлять только таблицей "Post"
   - А к пользователям у неё нет доступа. 
   - Пользователя получаем из базы через GET на http://127.0.0.1:7000/auth/
