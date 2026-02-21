@@ -2,28 +2,38 @@
 
 ## Что реализовано
 
+Фактически сейчас работает на https://motodart.pro/blog
+
 - Публичный блог:
   - `GET /api/posts` — список опубликованных постов.
   - `GET /api/posts/:slug` — просмотр одного поста.
-  - Страницы: `/blog`, `/blog/:slug`.
+  - `/blog`, `/blog/:slug`.
 - Админка постов:
   - `GET /api/admin/posts`
   - `POST /api/admin/posts`
   - `GET /api/admin/posts/:id`
   - `PUT /api/admin/posts/:id`
   - `DELETE /api/admin/posts/:id`
-  - Страницы: `/admin/blog`, `/admin/blog/create`, `/admin/blog/:id/edit`.
+  - Страницы: 
+  - `mysite.pro/blog/`
+  - `mysite.pro/blog/admin/`, 
+  - `mysite.pro/blog/admin/blog`, 
+  - `mysite.pro/blog/admin/blog/create`, 
+  - `mysite.pro/blog/admin/blog/:id/edit`.
 - База данных:
-  - `Sequelize + MySQL` только для таблицы `posts`.
-  - Пользователи в проекте не используются.
+  - `Sequelize + MySQL` только для таблицы `posts`. 
+  - Подключается к работающей уже базе, но может управлять только таблицей "Post"
+  - А к пользователям у неё нет доступа. 
+  - Пользователя получаем из базы через GET на http://127.0.0.1:7000/auth/
+  - With token in "Authorization" header 
 
-## Авторизация (Auth)
+## Авторизация
 
 ### Как работает
 
-1. Пользователь заходит с параметром `?token=...` (например, `https://site/blog/?token=JWT`).
+1. Пользователь заходит с параметром `?token=...` (например, `https://mysyte.pro.blog/?token=JWT`).
 2. `app/middleware/auth.ts` читает `token` из query.
-3. Middleware вызывает `GET /api/auth/me?token=...`.
+3. Middleware вызывает (тут надо переделать, наверное) `GET /api/auth/me?token=...`.
 4. `server/api/auth/me.get.ts` отправляет токен во внешний auth-сервис через заголовок `Authorization`.
 5. Если auth-сервис вернул пользователя, в cookie `auth_user` сохраняются:
    - `role`
@@ -31,36 +41,15 @@
 6. Для маршрутов `/admin*` доступ разрешен только если `auth_user.role === 'ADMIN'`.
 
 ### Используемые точки
-
-- Внутренний endpoint проекта:
-  - `GET /api/auth/me?token=<jwt>`
-- Внешний auth-сервис (вызывается на сервере проекта):
-  - сейчас зашит в `server/api/auth/me.get.ts` как `http://127.0.0.1:7000/api/auth`
-
+- `GET /api/auth/me?token=<jwt>` - Внешний auth-сервис)
+- Ожидаемый ответ:
+```json
+{"role":"ADMIN","name":"..."}
+```
 ### Cookies
 
 - `auth_user` — объект пользователя `{ role, name }`
 - `sameSite: 'lax'`
-
-### Проверка на сервере (VPS)
-
-Проверить внешний auth-сервис:
-
-```bash
-curl -i -H "Authorization: <JWT_TOKEN>" http://127.0.0.1:7000/api/auth
-```
-
-Проверить endpoint проекта:
-
-```bash
-curl -i "https://your-domain/blog/api/auth/me?token=<JWT_TOKEN>"
-```
-
-Ожидаемый ответ:
-
-```json
-{"role":"ADMIN","name":"..."}
-```
 
 ### Частые проблемы
 
