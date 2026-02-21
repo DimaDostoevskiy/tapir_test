@@ -11,8 +11,8 @@
     </div>
     <button class="blog__to-top button" type="button" @click="scrollListToTop">
       <span class="blog__to-top-chevrons" aria-hidden="true">
-        <span class="blog__to-top-chevron" />
-        <span class="blog__to-top-chevron" />
+        <span class="blog__to-top-chevron"/>
+        <span class="blog__to-top-chevron"/>
       </span>
       <span>Наверх</span>
     </button>
@@ -121,13 +121,12 @@ useSeoMeta({
   justify-content: start;
   height: 100%;
   min-height: 0;
-  max-width: 1440px;
   overflow: hidden;
   margin: 0 auto;
   position: relative;
 }
 
-.blog-list{
+.blog-list {
   width: min(100% - 32px, 1200px);
   margin-inline: auto;
   flex: 1;

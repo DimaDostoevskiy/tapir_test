@@ -1,18 +1,24 @@
 <template>
   <div class="search" aria-label="Поиск по постам">
     <input
-      :value="modelValue"
-      class="search__input"
-      type="text"
-      :placeholder="placeholder"
-      aria-label="Поиск постов"
-      @input="onInput"
-      @keyup.enter="emitSubmit"
+        :value="modelValue"
+        class="search__input"
+        type="text"
+        :placeholder="placeholder"
+        aria-label="Поиск постов"
+        @input="onInput"
+        @keyup.enter="emitSubmit"
     />
-    <button class="search__btn" type="button" aria-label="Искать пост" @click="emitSubmit">
-      <svg class="search__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
-        <path d="M20 20L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    <button class="search__btn"
+            type="button"
+            aria-label="Искать пост"
+            @click="emitSubmit">
+      <svg class="search__icon"
+           viewBox="0 0 24 24"
+           fill="none"
+           aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 20L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </button>
   </div>
@@ -20,13 +26,13 @@
 
 <script setup lang="ts">
 const props = withDefaults(
-  defineProps<{
-    modelValue: string
-    placeholder?: string
-  }>(),
-  {
-    placeholder: 'Поиск постов...',
-  }
+    defineProps<{
+      modelValue: string
+      placeholder?: string
+    }>(),
+    {
+      placeholder: 'Поиск постов...',
+    }
 )
 
 const emit = defineEmits<{
@@ -48,7 +54,7 @@ function emitSubmit() {
 .search {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   width: min(100%, 320px);
 }
@@ -63,7 +69,8 @@ function emitSubmit() {
   color: #fafafa;
   outline: none;
   transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
-  margin-right: 8px;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .search__input::placeholder {
@@ -77,6 +84,8 @@ function emitSubmit() {
 }
 
 .search__btn {
+  position: relative;
+  top: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -89,11 +98,9 @@ function emitSubmit() {
   font-weight: 700;
   cursor: pointer;
   transition: transform 120ms ease, filter 120ms ease;
-}
-
-.search__icon {
-  width: 18px;
-  height: 18px;
+  margin: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .search__btn:hover {
@@ -104,18 +111,12 @@ function emitSubmit() {
   transform: translateY(1px);
 }
 
+.search__icon {
+  width: 18px;
+  height: 18px;
+}
+
 @media (max-width: 760px) {
-  .search {
-    width: 100%;
-    min-width: 0;
-  }
 
-  .search__input {
-    margin-right: 4px;
-  }
-
-  .search__btn {
-    padding: 0 12px;
-  }
 }
 </style>
