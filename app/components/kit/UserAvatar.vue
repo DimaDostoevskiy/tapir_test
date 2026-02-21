@@ -1,14 +1,13 @@
 <template>
-  <div class="avatar-wrapper">
+  <div class="avatar__wrapper">
+    <img
+      class="avatar__img"
+      :src="resolvedImageUrl"
+      alt="Аватар пользователя"
+      loading="lazy"
+    >
     <div class="avatar__text">
       {{ avatarText }}
-    </div>
-    <div>
-      <img class="avatar__img"
-           :src="resolvedImageUrl"
-           alt="Аватар пользователя"
-           loading="lazy"
-      >
     </div>
   </div>
 </template>
@@ -45,41 +44,36 @@ const avatarText = computed(() => {
 </script>
 
 <style scoped lang="scss">
-
-.avatar-wrapper {
-
+.avatar__wrapper {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
-  width: 800px;
-  background-color: #d70101;
+  gap: 10px;
+  min-width: 0;
+  white-space: nowrap;
+  max-width: min(100%, 360px);
 }
 
 .avatar__img {
-  align-items: center;
-  justify-content: center;
+  order: 1;
+  width: 42px;
   height: 42px;
+  object-fit: cover;
   border: 1px solid $color-primary;
-  border-radius: 999px;
-  color: #111111;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 4s ease;
-}
-
-.avatar__img:hover {
-  border-radius: 444px;
-  background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-primary-hover, 0.1));
-  color: #111111;
-  font-weight: 700;
-  cursor: pointer;
+  border-radius: 50%;
+  background: #161616;
+  flex-shrink: 0;
 }
 
 .avatar__text {
-  position: absolute;
-  left: 64px;
+  order: 2;
+  display: inline-block;
   font-weight: 700;
   color: rgba(250, 250, 250, 0.86);
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
