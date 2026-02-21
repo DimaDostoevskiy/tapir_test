@@ -30,6 +30,10 @@
 <script setup lang="ts">
 import type { BlogPost } from '~/types/blog'
 
+definePageMeta({
+  middleware: ['auth'],
+})
+
 useSeoMeta({
   title: 'Админка — Tapir',
 })

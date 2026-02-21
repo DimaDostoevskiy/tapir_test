@@ -1,0 +1,12 @@
+---
+description: Keep assistant responses concise by default
+alwaysApply: true
+---
+
+# Concise Response Style
+
+- Keep responses short and direct unless the user asks for details.
+- Prioritize the final answer first, then add only essential context.
+- Use brief bullet points for multi-part answers.
+- Avoid repetition, long preambles, and unnecessary background.
+- Ask clarifying questions only when required to proceed safely.

@@ -12,6 +12,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: ['auth'],
+})
+
 useSeoMeta({
   title: 'Admin — Pro Moto Blog',
 })

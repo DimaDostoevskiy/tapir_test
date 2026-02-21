@@ -15,6 +15,10 @@
 import PostForm from '~/components/admin/PostForm.vue'
 import type { PostFormPayload } from '~/types/blog'
 
+definePageMeta({
+  middleware: ['auth'],
+})
+
 const loading = ref(false)
 const errorMessage = ref('')
 const form = ref<PostFormPayload>({

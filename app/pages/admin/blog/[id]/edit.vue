@@ -15,6 +15,10 @@
 import PostForm from '~/components/admin/PostForm.vue'
 import type { BlogPost, PostFormPayload } from '~/types/blog'
 
+definePageMeta({
+  middleware: ['auth'],
+})
+
 const route = useRoute()
 const id = Number(route.params.id)
 

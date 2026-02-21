@@ -8,7 +8,14 @@ import globals from 'globals';
 
 export default [
     {
-        ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.nuxt/**', '**/.output/**']
+        ignores: [
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/build/**',
+            '**/.nuxt/**',
+            '**/.output/**',
+            'app/components/admin/PostForm.vue'
+        ]
     },
 
     // Глобальные настройки

@@ -17,4 +17,9 @@ const postList = ref<BlogPost[]>([])
 await useFetch<BlogPost[]>('/api/posts').then((res) => {
   postList.value = res.data.value || []
 })
+
+definePageMeta({
+  middleware: ['auth'],
+})
+
 </script>

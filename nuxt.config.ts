@@ -1,6 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-const nodeEnv = String(process.env.NODE_ENV || 'development').toLowerCase()
-
 export default defineNuxtConfig({
     devtools: {enabled: false},
     typescript: {
@@ -27,6 +24,7 @@ export default defineNuxtConfig({
         host: process.env.HOST || '127.0.0.1',
         port: Number(process.env.PORT || 3000),
         mailKey: process.env.MAIL_KEY || '',
+        externalAuthUrl: process.env.EXTERNAL_AUTH_URL || 'http://127.0.0.1:8000/api/auth/',
         mysql: {
             host: process.env.DB_HOST || '127.0.0.1',
             port: Number(process.env.DB_PORT || 3306),
