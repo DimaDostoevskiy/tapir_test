@@ -111,6 +111,11 @@ onBeforeUnmount(() => {
 useSeoMeta({
   title: 'Блог — Pro Moto Blog',
 })
+
+definePageMeta({
+  middleware: ['auth'],
+})
+
 </script>
 
 <style scoped>
