@@ -2,7 +2,7 @@
   <section class="admin-page container">
     <header class="admin-page__header">
       <h1 class="admin-page__title">Создать пост</h1>
-      <NuxtLink class="button button--ghost" to="/admin/blog">Назад к списку</NuxtLink>
+      <KitButton to="/admin/blog" variant="ghost">Назад к списку</KitButton>
     </header>
 
     <PostForm v-model="form" :loading="loading" submit-label="Создать" @submit="submit" />
@@ -46,3 +46,32 @@ async function submit() {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.admin-page {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-page__title {
+  margin: 0;
+  font-size: 30px;
+}
+
+.blog-page__state {
+  margin: 0;
+  color: $color-muted;
+}
+
+.blog-page__state--error {
+  color: $color-error;
+}
+</style>

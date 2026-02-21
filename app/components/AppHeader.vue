@@ -7,7 +7,7 @@
           :placeholder="`Поиск...`"
           :model-value="searchString"
           @update:model-value="onSearchInput"
-          @enter="searchPost"
+          @enter:value="searchPost"
         />
         <KitButton
             variant="primary"
@@ -39,14 +39,24 @@ const searchPost = async () => {
 </script>
 
 <style scoped>
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgb(var(--color-bg-rgb) / 0.7);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
+}
+
 .header__inner {
-  width: min(100% - 32px, 1200px);
+  width: min(100% - 32px, var(--container-max));
   margin: 0 auto;
-  height: 42px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding: 8px 0;
 }
 
 .search__container {
@@ -59,16 +69,22 @@ const searchPost = async () => {
 }
 
 .search__container :deep(.kit-input) {
+  width: clamp(180px, 28vw, 320px);
   min-width: 0;
 }
 
 @media (max-width: 760px) {
   .header__inner {
     gap: 10px;
+    min-height: 52px;
   }
 
   .search__container {
     gap: 8px;
+  }
+
+  .search__container :deep(.kit-input) {
+    width: clamp(140px, 40vw, 220px);
   }
 }
 </style>

@@ -3,7 +3,7 @@
     <header class="admin-page__header">
       <h1 class="admin-page__title">Admin Panel</h1>
       <div class="admin-page__actions">
-        <NuxtLink class="button button--primary" to="/admin/blog">Управление постами</NuxtLink>
+        <KitButton to="/admin/blog" variant="primary">Управление постами</KitButton>
       </div>
     </header>
 
@@ -20,3 +20,34 @@ useSeoMeta({
   title: 'Admin — Pro Moto Blog',
 })
 </script>
+
+<style scoped lang="scss">
+.admin-page {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-page__title {
+  margin: 0;
+  font-size: 30px;
+}
+
+.admin-page__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.blog-page__subtitle {
+  margin: 0;
+  color: $color-muted;
+}
+</style>

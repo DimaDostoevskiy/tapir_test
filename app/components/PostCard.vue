@@ -70,8 +70,8 @@ function handleImageError() {
 }
 
 .post__card:hover {
-  border-color: rgba($color-primary, 0.88);
-  box-shadow: 0 0 0 3px rgba($color-primary, 0.24), 0 16px 34px rgba($color-primary, 0.3);
+  border-color: rgb(var(--color-primary-rgb) / 0.88);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.24), 0 16px 34px rgb(var(--color-primary-rgb) / 0.3);
 }
 
 .post__card__image {
@@ -113,8 +113,8 @@ function handleImageError() {
 }
 
 .post__card__link:hover {
-  color: rgba($color-primary, 0.96);
-  border-color: rgba($color-primary, 0.45);
+  color: rgb(var(--color-primary-rgb) / 0.96);
+  border-color: rgb(var(--color-primary-rgb) / 0.45);
   background: rgba(0, 0, 0, 0.44);
 }
 

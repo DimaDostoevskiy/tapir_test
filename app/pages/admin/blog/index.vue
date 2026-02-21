@@ -3,7 +3,7 @@
     <header class="admin-page__header">
       <h1 class="admin-page__title">Админка: посты</h1>
       <div class="admin-page__actions">
-        <NuxtLink class="button button--primary" to="/admin/blog/create">Создать пост</NuxtLink>
+        <KitButton to="/admin/blog/create" variant="primary">Создать пост</KitButton>
       </div>
     </header>
 
@@ -19,8 +19,8 @@
           </p>
         </div>
         <div class="admin-post-list__actions">
-          <NuxtLink class="button" :to="`/admin/blog/${post.id}/edit`">Редактировать</NuxtLink>
-          <button class="button" type="button" @click="removePost(post.id)">Удалить</button>
+          <KitButton :to="`/admin/blog/${post.id}/edit`">Редактировать</KitButton>
+          <KitButton type="button" @click="removePost(post.id)">Удалить</KitButton>
         </div>
       </article>
     </div>
@@ -52,3 +52,68 @@ async function removePost(id: number) {
   await refresh()
 }
 </script>
+
+<style scoped lang="scss">
+.admin-page {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-page__title {
+  margin: 0;
+  font-size: 30px;
+}
+
+.admin-page__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.blog-page__state {
+  margin: 0;
+  color: $color-muted;
+}
+
+.blog-page__state--error {
+  color: $color-error;
+}
+
+.admin-post-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-post-list__item {
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-post-list__title {
+  margin: 0;
+}
+
+.admin-post-list__meta {
+  margin: 6px 0 0;
+  color: $color-muted;
+}
+
+.admin-post-list__actions {
+  display: flex;
+  gap: 8px;
+}
+</style>

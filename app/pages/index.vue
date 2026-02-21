@@ -9,13 +9,13 @@
                 :post="post"
       />
     </div>
-    <button class="blog__to-top button" type="button" @click="scrollListToTop">
+    <KitButton class="blog__to-top" type="button" @click="scrollListToTop">
       <span class="blog__to-top-chevrons" aria-hidden="true">
         <span class="blog__to-top-chevron"/>
         <span class="blog__to-top-chevron"/>
       </span>
       <span>Наверх</span>
-    </button>
+    </KitButton>
   </section>
 </template>
 
@@ -188,14 +188,14 @@ definePageMeta({
 }
 
 .blog__to-top:hover {
-  border-color: rgba($color-primary, 0.68);
-  background: linear-gradient(135deg, rgba($color-primary, 0.96), rgba($color-primary, 0.72));
+  border-color: rgb(var(--color-primary-rgb) / 0.68);
+  background: linear-gradient(135deg, rgb(var(--color-primary-rgb) / 0.96), rgb(var(--color-primary-rgb) / 0.72));
   color: $color-text;
 }
 
 .blog__to-top:focus-visible {
-  border-color: rgba($color-primary, 0.68);
-  background: linear-gradient(135deg, rgba($color-primary, 0.96), rgba($color-primary, 0.72));
+  border-color: rgb(var(--color-primary-rgb) / 0.68);
+  background: linear-gradient(135deg, rgb(var(--color-primary-rgb) / 0.96), rgb(var(--color-primary-rgb) / 0.72));
   color: $color-text;
 }
 

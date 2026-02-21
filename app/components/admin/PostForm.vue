@@ -21,9 +21,9 @@
     </label>
 
     <div class="post-form__actions">
-      <button class="button button--primary" type="submit" :disabled="loading">
+      <KitButton type="submit" variant="primary" :disabled="loading">
         {{ loading ? 'Сохранение...' : submitLabel }}
-      </button>
+      </KitButton>
     </div>
   </form>
 </template>
@@ -51,3 +51,45 @@ function emitSubmit() {
   emit('submit')
 }
 </script>
+
+<style scoped lang="scss">
+.post-form {
+  display: grid;
+  gap: 14px;
+}
+
+.post-form__field {
+  display: grid;
+  gap: 8px;
+}
+
+.post-form__label {
+  color: $color-muted;
+  font-size: 14px;
+}
+
+.post-form__input,
+.post-form__textarea {
+  width: 100%;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  background: rgb(var(--color-bg-rgb) / 0.25);
+  color: $color-text;
+  padding: 10px 12px;
+}
+
+.post-form__textarea {
+  resize: vertical;
+}
+
+.post-form__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-form__actions {
+  display: flex;
+  justify-content: flex-start;
+}
+</style>

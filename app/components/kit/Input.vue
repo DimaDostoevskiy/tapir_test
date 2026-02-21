@@ -47,52 +47,52 @@ function emitEnter(event: Event) {
 <style scoped lang="scss">
 .kit-input {
   width: 100%;
-  height: 40px;
-  padding: 0 14px;
+  height: 46px;
+  padding: 0 16px;
   font-size: 14px;
   line-height: 1;
   font-weight: 500;
   border-radius: 999px;
-  border: 1px solid rgba($color-primary, 0.55);
-  background-color: #000000 !important;
-  color: #ffffff !important;
-  caret-color: #ffffff;
+  border: 1px solid rgb(var(--color-primary-rgb) / 0.55);
+  background-color: rgb(var(--color-bg-rgb) / 0.92);
+  color: var(--color-text);
+  caret-color: var(--color-text);
   outline: none;
   transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
   box-sizing: border-box;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgb(var(--color-text-rgb) / 0.04);
 }
 .kit-input::placeholder {
-  color: rgba(250, 250, 250, 0.58);
+  color: rgb(var(--color-text-rgb) / 0.58);
 }
 .kit-input:hover:not(:disabled) {
-  border-color: rgba($color-primary, 0.72);
-  background-color: #000000 !important;
+  border-color: rgb(var(--color-primary-rgb) / 0.72);
+  background-color: rgb(var(--color-bg-rgb) / 0.96);
 }
 .kit-input:focus-visible {
-  border-color: rgba($color-primary, 0.88);
-  box-shadow: 0 0 0 3px rgba($color-primary, 0.26);
-  background-color: #000000 !important;
+  border-color: rgb(var(--color-primary-rgb) / 0.88);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.26);
+  background-color: rgb(var(--color-bg-rgb) / 1);
 }
 .kit-input:focus,
 .kit-input:active,
 .kit-input:not(:placeholder-shown) {
-  border-color: rgba($color-primary, 0.84);
+  border-color: rgb(var(--color-primary-rgb) / 0.84);
 }
 .kit-input:disabled {
   opacity: 0.62;
   cursor: not-allowed;
-  background-color: #000000 !important;
-  color: rgba(255, 255, 255, 0.78) !important;
-  border-color: rgba($color-primary, 0.4);
+  background-color: rgb(var(--color-bg-rgb) / 0.75);
+  color: rgb(var(--color-text-rgb) / 0.78);
+  border-color: rgb(var(--color-primary-rgb) / 0.4);
 }
 .kit-input:-webkit-autofill,
 .kit-input:-webkit-autofill:hover,
 .kit-input:-webkit-autofill:focus,
 .kit-input:-webkit-autofill:active {
-  -webkit-text-fill-color: #ffffff !important;
-  box-shadow: 0 0 0 1000px #000000 inset !important;
-  -webkit-box-shadow: 0 0 0 1000px #000000 inset !important;
+  -webkit-text-fill-color: var(--color-text) !important;
+  box-shadow: 0 0 0 1000px rgb(var(--color-bg-rgb) / 1) inset !important;
+  -webkit-box-shadow: 0 0 0 1000px rgb(var(--color-bg-rgb) / 1) inset !important;
   transition: background-color 9999s ease-in-out 0s;
 }
 </style>

@@ -1,5 +1,15 @@
 <template>
+  <NuxtLink
+    v-if="to"
+    :to="to"
+    :class="'default'"
+    :aria-disabled="disabled ? 'true' : undefined"
+    @click="onClick"
+  >
+    <slot />
+  </NuxtLink>
   <button
+    v-else
     :type="type"
     :disabled="disabled"
     :class="buttonClass"
@@ -14,11 +24,13 @@ const props = withDefaults(defineProps<{
   type?: 'button' | 'submit' | 'reset'
   variant?: 'default' | 'primary' | 'ghost'
   size?: 'sm' | 'md'
+  to?: string
   disabled?: boolean
 }>(), {
   type: 'button',
   variant: 'default',
   size: 'md',
+  to: '',
   disabled: false,
 })
 
@@ -78,8 +90,8 @@ function onClick(event: MouseEvent) {
 }
 
 .kit-button--primary {
-  background: linear-gradient(135deg, rgba($color-primary, 0.96), rgba($color-primary-hover, 0.92));
-  border-color: rgba($color-primary, 0.55);
+  background: linear-gradient(135deg, rgb(var(--color-primary-rgb) / 0.96), rgb(var(--color-primary-hover-rgb) / 0.92));
+  border-color: rgb(var(--color-primary-rgb) / 0.55);
   color: #ffffff;
 }
 
@@ -90,8 +102,8 @@ function onClick(event: MouseEvent) {
 }
 
 .kit-button--primary:hover {
-  border-color: rgba($color-primary, 0.72);
-  box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+  border-color: rgb(var(--color-primary-rgb) / 0.72);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.2);
 }
 
 .kit-button--ghost {
