@@ -148,7 +148,7 @@ function handleImageError() {
   color: rgba(250, 250, 250, 0.88);
   font-size: 15px;
   line-height: 1.7;
-  letter-spacing: 0.1px;
+  letter-spacing: normal;
   height: 60px;
   overflow: hidden;
   mask-image: linear-gradient(to bottom, #000 48%, transparent 100%);

@@ -11,6 +11,14 @@ export class PostModel extends Model {
   declare updatedAt: Date
 }
 
+export class PostCreationAttributes{
+    declare title: string
+    declare slug: string
+    declare excerpt: string | null
+    declare content: string
+    declare published: boolean
+}
+
 let initialized = false
 
 export function initPostModel(sequelize: Sequelize) {
