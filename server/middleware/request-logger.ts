@@ -59,7 +59,7 @@ export default defineEventHandler((event) => {
     const durationMs = Date.now() - startedAt
     const statusCode = event.node.res.statusCode
 
-    console.info(
+    console.log(
       `[request] ${method} ${url} -> ${statusCode} (${durationMs}ms) ip=${ip} ua="${userAgent}"`
     )
   })
