@@ -17,9 +17,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
             }
         }
 
-
-        console.log(cookieUser.value);
-
         if (isAdminRoute && cookieUser.value.role !== 'ADMIN') {
             return navigateTo('/')
         }
