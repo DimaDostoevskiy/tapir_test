@@ -2,22 +2,46 @@
 <template>
   <div class="input-wrapper">
     <label v-if="label" :for="id" class="input__label">{{ label }}</label>
+    <textarea
+      v-if="as === 'textarea'"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="readonly"
+      :required="required"
+      :name="name"
+      :id="id"
+      :rows="rows"
+      v-bind="$attrs"
+      class="input input_textarea"
+      :class="{
+        'input_error': error,
+        'input_success': success,
+        'input_disabled': disabled,
+        'input_lg': size === 'lg',
+        'input_sm': size === 'sm'
+      }"
+      @input="handleInput"
+      @focus="$emit('focus')"
+      @blur="$emit('blur')"
+    />
     <input
-        :type="type"
-        :value="modelValue"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        :readonly="readonly"
-        :required="required"
-        :name="name"
-        :id="id"
-        @input="handleInput"
-        @focus="$emit('focus')"
-        @blur="$emit('blur')"
-        @keyup.enter="$emit('enter')"
-        v-bind="$attrs"
-        class="input"
-        :class="{
+      v-else
+      :type="type"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="readonly"
+      :required="required"
+      :name="name"
+      :id="id"
+      @input="handleInput"
+      @focus="$emit('focus')"
+      @blur="$emit('blur')"
+      @keyup.enter="$emit('enter')"
+      v-bind="$attrs"
+      class="input"
+      :class="{
         'input_error': error,
         'input_success': success,
         'input_disabled': disabled,
@@ -35,7 +59,9 @@ import {onBeforeUnmount} from 'vue'
 
 const props = defineProps({
   modelValue: null,
-  type: {type: String, default: 'text'},
+  type: { type: String, default: 'text' },
+  as: { type: String, default: 'input', validator: v => ['input', 'textarea'].includes(v) },
+  rows: { type: Number, default: 3 },
   placeholder: String,
   label: String,
   disabled: Boolean,
@@ -46,8 +72,8 @@ const props = defineProps({
   error: String,
   success: Boolean,
   hint: String,
-  size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v)},
-  debounce: {type: Number, default: 300}
+  size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v) },
+  debounce: { type: Number, default: 300 }
 })
 
 const emit = defineEmits(['update:modelValue', 'focus', 'blur', 'enter'])
@@ -56,9 +82,16 @@ let debounceTimer = null
 
 const handleInput = (e) => {
   const value = e.target.value
+  const isTextarea = e.target.tagName === 'TEXTAREA'
+
+  if (isTextarea || props.debounce <= 0) {
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = null
+    emit('update:modelValue', value)
+    return
+  }
 
   if (debounceTimer) clearTimeout(debounceTimer)
-
   debounceTimer = setTimeout(() => {
     emit('update:modelValue', value)
   }, props.debounce)
@@ -165,5 +198,10 @@ onBeforeUnmount(() => {
   line-height: 1.4;
   color: rgb(var(--color-muted-rgb));
   font-style: normal;
+}
+
+.input_textarea {
+  min-height: auto;
+  resize: vertical;
 }
 </style>

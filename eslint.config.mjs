@@ -13,8 +13,7 @@ export default [
             '**/dist/**',
             '**/build/**',
             '**/.nuxt/**',
-            '**/.output/**',
-            'app/components/admin/PostForm.vue'
+            '**/.output/**'
         ]
     },
 

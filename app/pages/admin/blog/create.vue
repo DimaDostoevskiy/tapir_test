@@ -1,24 +1,46 @@
 <template>
-  <section class="admin-page container">
+  <section class="admin-page">
     <header class="admin-page__header">
       <h1 class="admin-page__title">Создать пост</h1>
-      <KitButton to="/admin/blog" variant="ghost">Назад к списку</KitButton>
+      <KitButton to="/admin/blog" variant="outline">Назад к списку</KitButton>
     </header>
 
-    <PostForm
-        v-model="form"
-        :loading="loading"
-        submit-label="Создать"
-        @submit="submit"
-    />
+    <KitForm :loading="loading" submit-label="Создать" @submit="submit">
+      <KitInput
+        label="Заголовок"
+        v-model="form.title"
+        type="text"
+        maxlength="255"
+        required
+        :debounce="0"
+      />
+      <KitInput
+        label="Краткое описание"
+        v-model="form.excerpt"
+        as="textarea"
+        :rows="3"
+        :debounce="0"
+      />
+      <KitInput
+        label="Контент"
+        v-model="form.content"
+        as="textarea"
+        :rows="12"
+        required
+        :debounce="0"
+      />
+      <label class="kit-form__checkbox">
+        <input v-model="form.published" type="checkbox" />
+        <span>Опубликовано</span>
+      </label>
+    </KitForm>
 
-    <p v-if="errorMessage" class="blog-page__state blog-page__state--error">{{ errorMessage }}</p>
+    <p v-if="errorMessage" class="admin-page__state admin-page__state--error">{{ errorMessage }}</p>
   </section>
 </template>
 
 <script setup lang="ts">
-import PostForm from '~/components/admin/PostForm.vue'
-import type {PostFormPayload} from '~/types/blog'
+import type { PostFormPayload } from '~/types/blog'
 
 definePageMeta({
   middleware: ['auth'],
@@ -56,7 +78,10 @@ async function submit() {
 <style scoped>
 .admin-page {
   display: grid;
-  gap: 16px;
+  gap: 20px;
+  padding: clamp(16px, 4vw, 32px);
+  max-width: min(900px, 100%);
+  margin: 0 auto;
 }
 
 .admin-page__header {
@@ -69,15 +94,16 @@ async function submit() {
 
 .admin-page__title {
   margin: 0;
-  font-size: 30px;
+  font-size: clamp(1.375rem, 3.5vw, 1.875rem);
+  font-weight: 600;
 }
 
-.blog-page__state {
+.admin-page__state {
   margin: 0;
-  color: var(--color-border);
+  color: var(--color-muted);
 }
 
-.blog-page__state--error {
-  color: var(--color-error);
+.admin-page__state--error {
+  color: var(--color-danger);
 }
 </style>
