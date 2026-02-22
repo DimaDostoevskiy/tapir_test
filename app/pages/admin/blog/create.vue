@@ -68,7 +68,7 @@ async function submit() {
 
 .blog-page__state {
   margin: 0;
-  color: $color-muted;
+  color: var(--color-border);
 }
 
 .blog-page__state--error {

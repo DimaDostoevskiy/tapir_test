@@ -48,6 +48,6 @@ useSeoMeta({
 
 .blog-page__subtitle {
   margin: 0;
-  color: $color-muted;
+  color: var(--color-primary);
 }
 </style>

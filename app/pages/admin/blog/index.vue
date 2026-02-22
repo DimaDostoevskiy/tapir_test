@@ -80,11 +80,11 @@ async function removePost(id: number) {
 
 .blog-page__state {
   margin: 0;
-  color: $color-muted;
+  color: var(--color-primary);
 }
 
 .blog-page__state--error {
-  color: $color-error;
+  color: var(--color-error);
 }
 
 .admin-post-list {
@@ -93,7 +93,7 @@ async function removePost(id: number) {
 }
 
 .admin-post-list__item {
-  border: 1px solid $color-border;
+  border: 1px solid var(--color-border);
   border-radius: $radius-sm;
   padding: 12px;
   display: flex;
@@ -109,7 +109,7 @@ async function removePost(id: number) {
 
 .admin-post-list__meta {
   margin: 6px 0 0;
-  color: $color-muted;
+  color: var(--color-primary);
 }
 
 .admin-post-list__actions {
