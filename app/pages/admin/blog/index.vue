@@ -35,7 +35,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Админка — Tapir',
+  title: 'Админка',
 })
 
 const { data: posts, pending, error, refresh } = await useFetch<BlogPost[]>('/api/admin/posts')

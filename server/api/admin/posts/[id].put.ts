@@ -1,7 +1,8 @@
 import { createError, getRouterParam } from 'h3'
 import { PostModel } from '../../../models/Post'
 import { ensureDbReady } from '../../../utils/initDb'
-import { makeUniqueSlug, validatePostPayload } from '../../../utils/posts'
+import { validatePostPayload } from '../../../utils/posts'
+import makeSlug from "../../../utils/makeSlugUtil";
 
 export default defineEventHandler(async (event) => {
   await ensureDbReady()
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event)
   const payload = validatePostPayload(body)
-  const slug = await makeUniqueSlug(payload.title, id)
+  const slug = await makeSlug(payload.title, id)
 
   await post.update({
     title: payload.title,

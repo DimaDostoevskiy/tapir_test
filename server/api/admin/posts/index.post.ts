@@ -1,14 +1,15 @@
-import { PostModel } from '../../../models/Post'
-import { ensureDbReady } from '../../../utils/initDb'
-import { makeUniqueSlug, toCreationData, validatePostPayload } from '../../../utils/posts'
+import {PostModel, PostPayload} from '../../../models/Post'
+import makeSlug from '../../../utils/makeSlugUtil'
 
 export default defineEventHandler(async (event) => {
-  await ensureDbReady()
-
-  const body = await readBody(event)
-  const payload = validatePostPayload(body)
-  const slug = await makeUniqueSlug(payload.title)
-
-  const post = await PostModel.create(toCreationData(payload, slug))
-  return post.get({ plain: true })
+    const body = await readValidatedBody(event, (data) => {
+        if (!data) {
+            throw createError({status: 400, message: 'Title required'})
+        }
+        return data as PostPayload
+    })
+    body.slug = await makeSlug(body.title)
+    const payload = validatePostPayload(body)
+    const post = await PostModel.create({...payload})
+    return post.get({plain: true})
 })

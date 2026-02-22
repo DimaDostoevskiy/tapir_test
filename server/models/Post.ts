@@ -1,22 +1,15 @@
 import { DataTypes, Model, Sequelize } from 'sequelize'
 
-export class PostModel extends Model {
-  declare id: number
-  declare title: string
-  declare slug: string
-  declare excerpt: string | null
-  declare content: string
-  declare published: boolean
-  declare createdAt: Date
-  declare updatedAt: Date
-}
-
-export class PostCreationAttributes{
+export class PostPayload extends Model {
     declare title: string
     declare slug: string
-    declare excerpt: string | null
+    declare excerpt: string
     declare content: string
     declare published: boolean
+}
+
+export class PostModel extends PostPayload {
+
 }
 
 let initialized = false

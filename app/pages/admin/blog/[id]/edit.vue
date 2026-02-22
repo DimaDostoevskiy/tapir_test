@@ -5,14 +5,21 @@
       <KitButton to="/admin/blog" variant="ghost">Назад к списку</KitButton>
     </header>
 
-    <PostForm v-model="form" :loading="loading" submit-label="Сохранить" @submit="submit"/>
+    <KitButton
+        to="/admin/blog"
+        variant="ghost"
+        @click="submit"
+    >Submit
+    </KitButton>
 
-    <p v-if="errorMessage" class="blog-page__state blog-page__state--error">{{ errorMessage }}</p>
+    <p v-if="error"
+       class="blog-page__state blog-page__state--error"
+    >{{ errorMessage }}
+    </p>
   </section>
 </template>
 
 <script setup lang="ts">
-import PostForm from '~/components/admin/PostForm.vue'
 import type {BlogPost, PostFormPayload} from '~/types/blog'
 
 definePageMeta({
@@ -24,24 +31,12 @@ const id = Number(route.params.id)
 
 const loading = ref(false)
 const errorMessage = ref('')
-const form = ref<PostFormPayload>({
-  title: '',
-  excerpt: '',
-  content: '',
-  published: true,
-})
+const form = ref<PostFormPayload>()
 
 const {data, error} = await useFetch<BlogPost>(`/api/admin/posts/${id}`)
 
 if (error.value || !data.value) {
-  throw createError({statusCode: 404, statusMessage: 'Post not found'})
-}
-
-form.value = {
-  title: data.value.title,
-  excerpt: data.value.excerpt || '',
-  content: data.value.content,
-  published: data.value.published,
+  console.log(error)
 }
 
 async function submit() {

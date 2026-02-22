@@ -46,6 +46,7 @@ const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts')
 
 <style scoped>
 .blog__list {
+  padding: 16px;
   height: 90vh;
   width: fit-content;
 }

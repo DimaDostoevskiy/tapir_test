@@ -2,26 +2,26 @@
   <header class="header">
     <div class="container">
       <KitAvatar
-          :src="String(userImageUrl)"
+          :src="userImageUrl"
           :size="'sm'"
       />
       <div class="user__info">
-        <p class="user__info__text">{{ userName }}</p>
-        <p class="user__info__text">{{ userRole }}</p>
+        <p class="user__info__text">{{ user.name }}</p>
+        <p class="user__info__text">{{ user.role }}</p>
       </div>
     </div>
     <div class="container">
       <KitInput
           :placeholder="`Поиск...`"
           :model-value="searchString"
-          @update:model-value="onSearchInput"
-          @enter:value="searchPost"
+          @change="fetchPosts"
+          @enter:value="fetchPosts"
       />
       <KitButton
           class=""
           variant="primary"
           size="md"
-          @click="searchPost"
+          @click="fetchPosts"
       >
         Найти
       </KitButton>
@@ -30,18 +30,33 @@
 </template>
 
 <script setup lang="ts">
-const userImageUrl = ref<string | null>(null)
+import { type BlogPost } from '~/types/blog'
+import { type IUserCookie } from '~/types/user'
+
 const searchString = ref<string>('')
-const userName = ref<string>('')
-const userRole = ref<string>('')
+const postList = ref<BlogPost[]>([])
+const userImageUrl = ref<string>('')
+const user = reactive<IUserCookie>({
+  name: undefined,
+  role: undefined,
+})
 
-const onSearchInput = (value: string) => {
-  searchString.value = value
+const userCookie = useCookie('auth_user')
+
+// Функция для получения постов
+const fetchPosts = async () => {
+  await useFetch<BlogPost[]>('/api/admin/posts')
+      .then((res) => {
+        console.log('Посты:', res)
+      })
 }
 
-const searchPost = async () => {
-  console.log(searchString.value)
-}
+onMounted(() => {
+  if (userCookie && userCookie.value) {
+    // user.name = userCookie.value?.name.toString() || 'Инкогнито'
+    // user.role = userCookie.value?.role.toString() || 'USER'
+  }
+})
 
 </script>
 
@@ -57,6 +72,7 @@ const searchPost = async () => {
   width: 1190px;
   height: 64px;
   margin: 0 auto;
+  padding: 0 16px;
   background: rgb(var(--color-bg-rgb) / 0.0);
   backdrop-filter: blur(10px);
   z-index: 10;
@@ -64,18 +80,17 @@ const searchPost = async () => {
 
 .container {
   display: flex;
-  position: sticky;
-  top: 0;
   flex-direction: row;
   align-items: center;
   justify-content: left;
-
 }
 
 .user__info {
   display: none;
-  align-items: center;
   flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  margin-left: 8px;
 }
 
 .user__info__text {
@@ -83,15 +98,12 @@ const searchPost = async () => {
   flex-direction: column;
   padding: 0 0 0 8px;
   margin: 0;
-
 }
-
 
 @media (min-width: 768px) {
   .user__info {
     display: flex;
   }
-
 }
 </style>
 
