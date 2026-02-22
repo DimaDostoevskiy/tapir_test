@@ -1,8 +1,12 @@
 <template>
   <form class="kit-form" @submit.prevent="$emit('submit')">
-    <slot />
+    <slot/>
     <div v-if="submitLabel" class="kit-form__actions">
-      <KitButton type="submit" variant="primary" :disabled="loading">
+      <KitButton
+          type="submit"
+          variant="primary"
+          :disabled="loading || submitDisabled"
+      >
         {{ loading ? loadingText : submitLabel }}
       </KitButton>
     </div>
@@ -11,15 +15,17 @@
 
 <script setup lang="ts">
 withDefaults(
-  defineProps<{
-    submitLabel?: string
-    loading?: boolean
-    loadingText?: string
-  }>(),
-  {
-    loading: false,
-    loadingText: 'Сохранение...',
-  }
+    defineProps<{
+      submitLabel?: string
+      loading?: boolean
+      loadingText?: string
+      submitDisabled?: boolean
+    }>(),
+    {
+      loading: false,
+      loadingText: 'Сохранение...',
+      submitDisabled: false,
+    }
 )
 
 defineEmits<{

@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
         excerpt: payload.excerpt || null,
         content: payload.content,
         published: payload.published ?? true,
+        image: payload.image || null,
     })
 
     return post.get({plain: true})

@@ -5,6 +5,10 @@
       <p class="post__meta">Обновлено: {{ formattedDate }}</p>
     </header>
 
+    <div v-if="post.image?.trim()" class="post__image-wrapper">
+      <img :src="post.image" :alt="`Обложка: ${post.title}`" class="post__image" loading="eager"/>
+    </div>
+
     <p v-if="post.excerpt" class="blog-post__excerpt">{{ post.excerpt }}</p>
     <div class="blog-post__content">
       <p v-for="(paragraph, idx) in paragraphs" :key="idx">{{ paragraph }}</p>
@@ -17,11 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import type { BlogPost } from '~/types/blog'
+import type {BlogPost} from '~/types/blog'
 
 const route = useRoute()
 
-const { data: post } = await useFetch<BlogPost | null>(() => `/api/posts/${route.params.slug}`)
+const {data: post} = await useFetch<BlogPost | null>(() => `/api/posts/${route.params.slug}`)
 
 useSeoMeta({
   title: () => (post.value ? `${post.value.title} — pro_moto_blog` : 'Пост — pro_moto_blog'),
@@ -53,6 +57,18 @@ const formattedDate = computed(() => {
 .post__meta {
   margin: 0;
   color: var(--color-text);
+}
+
+.post__image-wrapper {
+  max-width: 100%;
+}
+
+.post__image {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 .blog-post__excerpt {

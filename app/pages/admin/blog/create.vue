@@ -5,32 +5,50 @@
       <KitButton to="/admin/blog" variant="outline">Назад к списку</KitButton>
     </header>
 
-    <KitForm :loading="loading" submit-label="Создать" @submit="submit">
+    <KitForm
+        submit-label="Создать"
+        :loading="loading"
+        :submit-disabled="!form.image?.trim()"
+        @submit="submit"
+    >
       <KitInput
-        label="Заголовок"
-        v-model="form.title"
-        type="text"
-        maxlength="255"
-        required
-        :debounce="0"
+          label="Заголовок"
+          v-model="form.title"
+          type="text"
+          maxlength="255"
+          required
+          :debounce="0"
       />
       <KitInput
-        label="Краткое описание"
-        v-model="form.excerpt"
-        as="textarea"
-        :rows="3"
-        :debounce="0"
+          label="Краткое описание"
+          v-model="form.excerpt"
+          as="textarea"
+          :rows="3"
+          :debounce="0"
       />
       <KitInput
-        label="Контент"
-        v-model="form.content"
-        as="textarea"
-        :rows="12"
-        required
-        :debounce="0"
+          label="Контент"
+          v-model="form.content"
+          as="textarea"
+          :rows="12"
+          required
+          :debounce="0"
       />
+      <div class="admin-page__image">
+        <label class="admin-page__image-label">Изображение <span class="admin-page__required">*</span></label>
+        <input
+            type="file"
+            accept="image/*"
+            class="admin-page__file-input"
+            @change="onImageChange"
+        />
+        <p v-if="imageError" class="admin-page__state admin-page__state--error">{{ imageError }}</p>
+        <div v-if="form.image" class="admin-page__preview">
+          <img :src="previewSrc" alt="Превью" class="admin-page__preview-img"/>
+        </div>
+      </div>
       <label class="kit-form__checkbox">
-        <input v-model="form.published" type="checkbox" />
+        <input v-model="form.published" type="checkbox"/>
         <span>Опубликовано</span>
       </label>
     </KitForm>
@@ -40,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PostFormPayload } from '~/types/blog'
+import type {PostFormPayload} from '~/types/blog'
 
 definePageMeta({
   middleware: ['auth'],
@@ -48,13 +66,36 @@ definePageMeta({
 
 const loading = ref(false)
 const errorMessage = ref('')
+const imageError = ref('')
 const form = ref<PostFormPayload>({
   title: '',
   excerpt: '',
   content: '',
   published: true,
   slug: '',
+  image: '',
 })
+
+const previewSrc = computed(() => form.value.image?.trim() ?? '')
+
+async function onImageChange(event: Event) {
+  imageError.value = ''
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await $fetch<{ path: string }>('/api/admin/upload', {
+      method: 'POST',
+      body: formData,
+    })
+    form.value.image = res.path
+  } catch {
+    imageError.value = 'Не удалось загрузить изображение'
+  }
+  input.value = ''
+}
 
 async function submit() {
   loading.value = true
@@ -105,5 +146,33 @@ async function submit() {
 
 .admin-page__state--error {
   color: var(--color-danger);
+}
+
+.admin-page__image {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-page__image-label {
+  font-weight: 500;
+}
+
+.admin-page__required {
+  color: var(--color-danger);
+}
+
+.admin-page__file-input {
+  max-width: 100%;
+}
+
+.admin-page__preview {
+  max-width: min(400px, 100%);
+}
+
+.admin-page__preview-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
 }
 </style>
