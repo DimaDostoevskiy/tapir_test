@@ -20,7 +20,18 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
+            echo "📥 Go to project folder..."
             cd moto_blog
+
+            echo "📥 Cope folder from old build..."
+            rm -r ~/tmp/.output
+
+            echo "📥 Cope folder from old build..."
+            cp -r .output/ ~/tmp/
+
+            echo "📥 Remove folder from old build..."
+            rm -r .output node_modules
+
             echo "📥 Pulling latest changes..."
             git pull origin master
 
@@ -42,6 +53,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            ${{ job.status == 'success' && '✅' || '❌' }} moto_blog
+            Статус: ${{ job.status == 'success' && '✅ Success' || '❌ Fail' }}
+            Репозиторий: moto_blog
+            Сообщение: ${{ github.event.head_commit.message }}
             Ветка: ${{ github.ref_name }}
             Автор: ${{ github.actor }}
