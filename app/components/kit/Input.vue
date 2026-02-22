@@ -1,98 +1,164 @@
+<!-- BaseInput.vue -->
 <template>
-  <input
-    :value="modelValue"
-    :type="type"
-    :placeholder="placeholder"
-    :aria-label="ariaLabel"
-    :autocomplete="autocomplete"
-    :disabled="disabled"
-    class="kit-input"
-    @input="onInput"
-    @keyup.enter="emitEnter"
-  >
+  <div class="input-wrapper">
+    <label v-if="label" :for="id" class="input__label">{{ label }}</label>
+    <input
+        :type="type"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :readonly="readonly"
+        :required="required"
+        :name="name"
+        :id="id"
+        @input="handleInput"
+        @focus="$emit('focus')"
+        @blur="$emit('blur')"
+        @keyup.enter="$emit('enter')"
+        v-bind="$attrs"
+        class="input"
+        :class="{
+        'input--error': error,
+        'input--success': success,
+        'input--disabled': disabled,
+        'input--lg': size === 'lg',
+        'input--sm': size === 'sm'
+      }"
+    />
+    <p v-if="error" class="input__error">{{ error }}</p>
+    <p v-if="hint && !error" class="input__hint">{{ hint }}</p>
+  </div>
 </template>
 
-<script setup lang="ts">
-withDefaults(defineProps<{
-  modelValue: string
-  type?: string
-  placeholder?: string
-  ariaLabel?: string
-  autocomplete?: string
-  disabled?: boolean
-}>(), {
-  type: 'text',
-  placeholder: '',
-  ariaLabel: 'Текстовое поле',
-  autocomplete: 'off',
-  disabled: false,
+<script setup>
+import { ref, onBeforeUnmount } from 'vue'
+
+const props = defineProps({
+  modelValue: null,
+  type: { type: String, default: 'text' },
+  placeholder: String,
+  label: String,
+  disabled: Boolean,
+  readonly: Boolean,
+  required: Boolean,
+  name: String,
+  id: String,
+  error: String,
+  success: Boolean,
+  hint: String,
+  size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v) },
+  debounce: { type: Number, default: 300 }
 })
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
-  (e: 'enter:value', value: string): void
-}>()
+const emit = defineEmits(['update:modelValue', 'focus', 'blur', 'enter'])
 
-function onInput(event: Event) {
-  const target = event.target as HTMLInputElement
-  emit('update:modelValue', target.value)
+let debounceTimer = null
+
+const handleInput = (e) => {
+  const value = e.target.value
+
+  if (debounceTimer) clearTimeout(debounceTimer)
+
+  debounceTimer = setTimeout(() => {
+    emit('update:modelValue', value)
+  }, props.debounce)
 }
 
-function emitEnter(event: Event) {
-  const target = event.target as HTMLInputElement
-  emit('enter:value', target.value)
-}
+onBeforeUnmount(() => {
+  if (debounceTimer) clearTimeout(debounceTimer)
+})
 </script>
 
-<style scoped lang="scss">
-.kit-input {
+<style scoped>
+.input-wrapper {
   width: 100%;
-  height: 46px;
-  padding: 0 16px;
-  font-size: 14px;
-  line-height: 1;
+}
+
+.input__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
   font-weight: 500;
-  border-radius: 999px;
-  border: 1px solid rgb(var(--color-primary-rgb) / 0.55);
-  background-color: rgb(var(--color-bg-rgb) / 0.92);
-  color: var(--color-text);
-  caret-color: var(--color-text);
+  letter-spacing: 0.01em;
+  color: rgb(var(--color-text-rgb));
+  opacity: 0.9;
+}
+
+.input {
+  padding: 12px 16px;
+  background: rgb(var(--color-surface-2-rgb) / 0.4);
+  border: 1px solid rgb(var(--color-border-rgb) / 0.15);
+  border-radius: var(--radius-sm);
+  color: rgb(var(--color-text-rgb));
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
   outline: none;
-  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
-  box-sizing: border-box;
-  box-shadow: inset 0 1px 0 rgb(var(--color-text-rgb) / 0.04);
+  width: 100%;
+  transition: all 0.2s ease;
 }
-.kit-input::placeholder {
-  color: rgb(var(--color-text-rgb) / 0.58);
+
+.input--sm {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border-radius: calc(var(--radius-sm) - 2px);
 }
-.kit-input:hover:not(:disabled) {
-  border-color: rgb(var(--color-primary-rgb) / 0.72);
-  background-color: rgb(var(--color-bg-rgb) / 0.96);
+
+.input--lg {
+  padding: 16px 20px;
+  font-size: 1.125rem;
+  border-radius: var(--radius-md);
 }
-.kit-input:focus-visible {
-  border-color: rgb(var(--color-primary-rgb) / 0.88);
-  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.26);
-  background-color: rgb(var(--color-bg-rgb) / 1);
+
+.input:hover:not(:disabled) {
+  background: rgb(var(--color-surface-2-rgb) / 0.6);
+  border-color: rgb(var(--color-border-rgb) / 0.3);
 }
-.kit-input:focus,
-.kit-input:active,
-.kit-input:not(:placeholder-shown) {
-  border-color: rgb(var(--color-primary-rgb) / 0.84);
+
+.input:focus {
+  background: rgb(var(--color-surface-rgb));
+  border-color: rgb(var(--color-primary-rgb));
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.15);
 }
-.kit-input:disabled {
-  opacity: 0.62;
+
+.input--error {
+  border-color: rgb(var(--color-danger-rgb));
+}
+
+.input--error:focus {
+  border-color: rgb(var(--color-danger-rgb));
+  box-shadow: 0 0 0 3px rgb(var(--color-danger-rgb) / 0.15);
+}
+
+.input--success {
+  border-color: rgb(var(--color-success-rgb));
+}
+
+.input--disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  background-color: rgb(var(--color-bg-rgb) / 0.75);
-  color: rgb(var(--color-text-rgb) / 0.78);
-  border-color: rgb(var(--color-primary-rgb) / 0.4);
 }
-.kit-input:-webkit-autofill,
-.kit-input:-webkit-autofill:hover,
-.kit-input:-webkit-autofill:focus,
-.kit-input:-webkit-autofill:active {
-  -webkit-text-fill-color: var(--color-text) !important;
-  box-shadow: 0 0 0 1000px rgb(var(--color-bg-rgb) / 1) inset !important;
-  -webkit-box-shadow: 0 0 0 1000px rgb(var(--color-bg-rgb) / 1) inset !important;
-  transition: background-color 9999s ease-in-out 0s;
+
+.input::placeholder {
+  color: rgb(var(--color-muted-rgb) / 0.5);
+  font-weight: 300;
+  font-style: normal;
+}
+
+.input__error {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgb(var(--color-danger-rgb));
+}
+
+.input__hint {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.4;
+  color: rgb(var(--color-muted-rgb));
+  font-style: italic;
 }
 </style>
