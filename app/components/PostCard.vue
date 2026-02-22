@@ -66,6 +66,7 @@ function handleImageError() {
   display: grid;
   gap: 10px;
   overflow: hidden;
+  margin: 16px;
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
 
