@@ -1,26 +1,26 @@
 <template>
-  <section class="admin-page container">
+  <section class="admin-page">
     <header class="admin-page__header">
-      <h1 class="admin-page__title">Админка: посты</h1>
+      <h1 class="admin-page__title">Посты</h1>
       <div class="admin-page__actions">
         <KitButton to="/admin/blog/create" variant="primary">Создать пост</KitButton>
       </div>
     </header>
 
-    <p v-if="pending" class="blog-page__state">Загрузка...</p>
-    <p v-else-if="error" class="blog-page__state blog-page__state--error">Не удалось загрузить список</p>
+    <p v-if="pending" class="admin-page__state">Загрузка...</p>
+    <p v-else-if="error" class="admin-page__state admin-page__state--error">Не удалось загрузить список</p>
 
     <div v-else class="admin-post-list">
       <article v-for="post in posts || []" :key="post.id" class="admin-post-list__item">
         <div class="admin-post-list__main">
           <h2 class="admin-post-list__title">{{ post.title }}</h2>
           <p class="admin-post-list__meta">
-            slug: {{ post.slug }} • {{ post.published ? 'Опубликован' : 'Черновик' }}
+            {{ post.slug }} · {{ post.published ? 'Опубликован' : 'Черновик' }}
           </p>
         </div>
         <div class="admin-post-list__actions">
-          <KitButton :to="`/admin/blog/${post.id}/edit`">Редактировать</KitButton>
-          <KitButton type="button" @click="removePost(post.id)">Удалить</KitButton>
+          <KitButton :to="`/admin/blog/${post.id}/edit`" variant="outline" size="sm">Редактировать</KitButton>
+          <KitButton type="button" variant="danger" size="sm" @click="removePost(post.id)">Удалить</KitButton>
         </div>
       </article>
     </div>
@@ -56,7 +56,10 @@ async function removePost(id: number) {
 <style scoped>
 .admin-page {
   display: grid;
-  gap: 16px;
+  gap: 20px;
+  padding: clamp(16px, 4vw, 32px);
+  max-width: min(900px, 100%);
+  margin: 0 auto;
 }
 
 .admin-page__header {
@@ -69,7 +72,8 @@ async function removePost(id: number) {
 
 .admin-page__title {
   margin: 0;
-  font-size: 30px;
+  font-size: clamp(1.375rem, 3.5vw, 1.875rem);
+  font-weight: 600;
 }
 
 .admin-page__actions {
@@ -78,13 +82,13 @@ async function removePost(id: number) {
   gap: 10px;
 }
 
-.blog-page__state {
+.admin-page__state {
   margin: 0;
-  color: var(--color-primary);
+  color: var(--color-muted);
 }
 
-.blog-page__state--error {
-  color: var(--color-error);
+.admin-page__state--error {
+  color: var(--color-danger);
 }
 
 .admin-post-list {
@@ -93,27 +97,35 @@ async function removePost(id: number) {
 }
 
 .admin-post-list__item {
+  padding: 16px 20px;
+  background: rgb(var(--color-surface-rgb) / 0.5);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .admin-post-list__title {
   margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .admin-post-list__meta {
-  margin: 6px 0 0;
-  color: var(--color-primary);
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
 }
 
 .admin-post-list__actions {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  min-height: 40px;
 }
 </style>

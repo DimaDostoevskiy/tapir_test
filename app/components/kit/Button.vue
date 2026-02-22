@@ -1,36 +1,41 @@
 <!-- BaseButton.vue -->
 <template>
-  <button
-      :type="type"
-      :disabled="disabled || loading"
-      @click="$emit('click', $event)"
-      v-bind="$attrs"
-      class="btn"
-      :class="{
-      'btn--primary': variant === 'primary',
-      'btn--secondary': variant === 'secondary',
-      'btn--outline': variant === 'outline',
-      'btn--danger': variant === 'danger',
-      'btn--success': variant === 'success',
-      'btn--lg': size === 'lg',
-      'btn--sm': size === 'sm',
-      'btn--full': fullWidth,
-      'btn--loading': loading,
-      'btn--disabled': disabled
-    }"
+  <NuxtLink
+    v-if="to"
+    :to="to"
+    class="btn"
+    :class="btnClasses"
+    :aria-disabled="disabled || loading ? true : undefined"
+    v-bind="linkAttrs"
+    @click="onLinkClick"
   >
     <span v-if="loading" class="btn__spinner" />
     <span v-if="icon && !loading" class="btn__icon" :class="iconPosition">{{ icon }}</span>
-    <span class="btn__text">
-      <slot />
-    </span>
+    <span class="btn__text"><slot /></span>
+    <span v-if="iconRight && !loading" class="btn__icon btn__icon--right">{{ iconRight }}</span>
+  </NuxtLink>
+  <button
+    v-else
+    :type="type"
+    :disabled="disabled || loading"
+    class="btn"
+    :class="btnClasses"
+    v-bind="$attrs"
+    @click="$emit('click', $event)"
+  >
+    <span v-if="loading" class="btn__spinner" />
+    <span v-if="icon && !loading" class="btn__icon" :class="iconPosition">{{ icon }}</span>
+    <span class="btn__text"><slot /></span>
     <span v-if="iconRight && !loading" class="btn__icon btn__icon--right">{{ iconRight }}</span>
   </button>
 </template>
 
 <script setup>
-defineProps({
+import { computed, useAttrs } from 'vue'
+
+const props = defineProps({
   type: { type: String, default: 'button' },
+  to: { type: [String, Object], default: null },
   variant: {
     type: String,
     default: 'primary',
@@ -45,7 +50,33 @@ defineProps({
   iconPosition: { type: String, default: 'left', validator: v => ['left', 'right'].includes(v) }
 })
 
-defineEmits(['click'])
+const emit = defineEmits(['click'])
+const attrs = useAttrs()
+
+const btnClasses = computed(() => ({
+  'btn--primary': props.variant === 'primary',
+  'btn--secondary': props.variant === 'secondary',
+  'btn--outline': props.variant === 'outline',
+  'btn--danger': props.variant === 'danger',
+  'btn--success': props.variant === 'success',
+  'btn--lg': props.size === 'lg',
+  'btn--sm': props.size === 'sm',
+  'btn--full': props.fullWidth,
+  'btn--loading': props.loading,
+  'btn--disabled': props.disabled
+}))
+
+const linkAttrs = computed(() => {
+  const { type, ...rest } = attrs
+  return rest
+})
+
+function onLinkClick(e) {
+  if (props.disabled || props.loading) {
+    e.preventDefault()
+  }
+  emit('click', e)
+}
 </script>
 
 <style scoped>
