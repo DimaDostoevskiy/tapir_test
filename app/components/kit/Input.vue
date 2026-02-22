@@ -18,11 +18,11 @@
         v-bind="$attrs"
         class="input"
         :class="{
-        'input--error': error,
-        'input--success': success,
-        'input--disabled': disabled,
-        'input--lg': size === 'lg',
-        'input--sm': size === 'sm'
+        'input_error': error,
+        'input_success': success,
+        'input_disabled': disabled,
+        'input_lg': size === 'lg',
+        'input_sm': size === 'sm'
       }"
     />
     <p v-if="error" class="input__error">{{ error }}</p>
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import {ref, onBeforeUnmount} from 'vue'
+import {onBeforeUnmount} from 'vue'
 
 const props = defineProps({
   modelValue: null,
@@ -101,13 +101,13 @@ onBeforeUnmount(() => {
   transition: all 0.2s ease;
 }
 
-.input--sm {
+.input_sm {
   padding: 8px 12px;
   font-size: 0.875rem;
   border-radius: calc(var(--radius-sm) - 2px);
 }
 
-.input--lg {
+.input_lg {
   padding: 16px 20px;
   font-size: 1.125rem;
   border-radius: var(--radius-md);
@@ -124,20 +124,20 @@ onBeforeUnmount(() => {
   box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.15);
 }
 
-.input--error {
+.input_error {
   border-color: rgb(var(--color-danger-rgb));
 }
 
-.input--error:focus {
+.input_error:focus {
   border-color: rgb(var(--color-danger-rgb));
   box-shadow: 0 0 0 3px rgb(var(--color-danger-rgb) / 0.15);
 }
 
-.input--success {
+.input_success {
   border-color: rgb(var(--color-success-rgb));
 }
 
-.input--disabled {
+.input_disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

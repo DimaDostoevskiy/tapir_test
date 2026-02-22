@@ -3,11 +3,6 @@
     <div class="blog__list scroll"
          ref="blogListRef"
     >
-      <KitButton class="up__btn">
-        <slot>
-          <p>UP</p>
-        </slot>
-      </KitButton>
       <p v-if="pending"
          class="blog__info blog__info_success"
       >Загрузка...</p>
@@ -18,11 +13,40 @@
                 :key="post.id"
                 :post="post"
       />
+      <div v-if="showLoadMoreButton || isLoadingMore || loadMoreError"
+           class="blog__actions"
+      >
+        <p v-if="loadMoreError"
+           class="blog__info blog__info_error"
+        >
+          {{ loadMoreError }}
+        </p>
+        <KitButton v-if="showLoadMoreButton || isLoadingMore"
+                   :disabled="isLoadingMore"
+                   @click="loadMorePosts"
+        >
+          {{ isLoadingMore ? 'Загрузка...' : 'Загрузить ещё' }}
+        </KitButton>
+      </div>
+      <p v-if="!pending && !error && !hasMore && postList.length > 0"
+         class="blog__info blog__info_muted"
+      >
+        Больше постов нет.
+      </p>
     </div>
+    <KitButton v-if="showScrollTopButton"
+               class="up__btn"
+               aria-label="Прокрутить наверх"
+               @click="scrollToTop"
+    >
+      UP
+    </KitButton>
   </section>
 </template>
 
 <script setup lang="ts">
+import {nextTick} from 'vue'
+
 useSeoMeta({
   title: 'Блог - Главная',
 })
@@ -33,33 +57,136 @@ definePageMeta({
 
 import type {BlogPost} from '~/types/blog'
 
-const postList = computed(() => data.value || [])
+const PAGE_SIZE = 10
+const SHOW_BUTTON_THRESHOLD = 8
+const HIDE_BUTTON_THRESHOLD = 120
+const SHOW_SCROLL_TOP_THRESHOLD = 280
 
 const blogListRef = ref<HTMLElement | null>(null)
+const postList = ref<BlogPost[]>([])
+const isLoadingMore = ref(false)
+const hasMore = ref(true)
+const hasReachedListEnd = ref(false)
+const showScrollTopButton = ref(false)
+const loadMoreError = ref('')
 
-const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts')
+const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts', {
+  query: {
+    limit: PAGE_SIZE,
+    offset: 0,
+  },
+})
 
+postList.value = data.value || []
+hasMore.value = postList.value.length === PAGE_SIZE
 
+const showLoadMoreButton = computed(() => (
+  hasReachedListEnd.value && hasMore.value && !pending.value && !error.value
+))
+
+function syncBottomState() {
+  const container = blogListRef.value
+
+  if (!container) {
+    return
+  }
+
+  const distanceToBottom = container.scrollHeight - (container.scrollTop + container.clientHeight)
+
+  if (!hasReachedListEnd.value && distanceToBottom <= SHOW_BUTTON_THRESHOLD) {
+    hasReachedListEnd.value = true
+    return
+  }
+
+  if (hasReachedListEnd.value && distanceToBottom > HIDE_BUTTON_THRESHOLD) {
+    hasReachedListEnd.value = false
+  }
+
+  showScrollTopButton.value = container.scrollTop >= SHOW_SCROLL_TOP_THRESHOLD
+}
+
+async function loadMorePosts() {
+  if (isLoadingMore.value || !hasMore.value) {
+    return
+  }
+
+  isLoadingMore.value = true
+  loadMoreError.value = ''
+
+  try {
+    const nextChunk = await $fetch<BlogPost[]>('/api/posts', {
+      query: {
+        limit: PAGE_SIZE,
+        offset: postList.value.length,
+      },
+    })
+
+    postList.value = [...postList.value, ...nextChunk]
+    hasMore.value = nextChunk.length === PAGE_SIZE
+    hasReachedListEnd.value = false
+    await nextTick()
+    syncBottomState()
+  } catch {
+    loadMoreError.value = 'Не удалось загрузить ещё посты. Попробуйте снова.'
+  } finally {
+    isLoadingMore.value = false
+  }
+}
+
+function scrollToTop() {
+  blogListRef.value?.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+}
+
+onMounted(async () => {
+  await nextTick()
+  syncBottomState()
+  blogListRef.value?.addEventListener('scroll', syncBottomState)
+})
+
+onBeforeUnmount(() => {
+  blogListRef.value?.removeEventListener('scroll', syncBottomState)
+})
 </script>
 
 <style scoped>
 .blog__list {
-  padding: 16px;
+  padding-bottom: 200px;
   height: 100vh;
-  width: fit-content;
+  width: 100%;
+  max-width: 100%;
+}
+
+.blog__actions {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.blog__info {
+  margin: 10px 0;
+}
+
+.blog__info_error {
+  color: var(--color-danger);
+}
+
+.blog__info_success {
+  color: var(--color-success);
+}
+
+.blog__info_muted {
+  color: var(--color-muted);
 }
 
 .up__btn {
-  display: none;
   position: fixed;
-  bottom: 100px;
-  right: 100px;
-  z-index: 10;
-}
-
-@media (min-width: 768px) {
-  .up__btn {
-    display: block;
-  }
+  right: clamp(16px, 4vw, 40px);
+  bottom: clamp(16px, 6vh, 40px);
+  z-index: 20;
 }
 </style>
