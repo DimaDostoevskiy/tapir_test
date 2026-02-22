@@ -66,7 +66,7 @@ const formattedDate = computed(() => {
 
 .blog-page__state {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-primary);
 }
 
 .blog-page__state--error {

@@ -2,12 +2,12 @@
   <header class="header">
     <div class="container">
       <KitAvatar
-          :src="userImageUrl"
+          :src="String(userImageUrl)"
           :size="'sm'"
       />
       <div class="user__info">
-        <p class="user__info__text">dfsdfsdffds</p>
-        <p class="user__info__text">dfsdfsdffds</p>
+        <p class="user__info__text">{{ userName }}</p>
+        <p class="user__info__text">{{ userRole }}</p>
       </div>
     </div>
     <div class="container">
@@ -32,6 +32,8 @@
 <script setup lang="ts">
 const userImageUrl = ref<string | null>(null)
 const searchString = ref<string>('')
+const userName = ref<string>('')
+const userRole = ref<string>('')
 
 const onSearchInput = (value: string) => {
   searchString.value = value
@@ -40,6 +42,7 @@ const onSearchInput = (value: string) => {
 const searchPost = async () => {
   console.log(searchString.value)
 }
+
 </script>
 
 <style scoped>
@@ -56,7 +59,6 @@ const searchPost = async () => {
   margin: 0 auto;
   background: rgb(var(--color-bg-rgb) / 0.0);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--color-border);
   z-index: 10;
 }
 
