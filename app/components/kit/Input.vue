@@ -31,11 +31,11 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount } from 'vue'
+import {ref, onBeforeUnmount} from 'vue'
 
 const props = defineProps({
   modelValue: null,
-  type: { type: String, default: 'text' },
+  type: {type: String, default: 'text'},
   placeholder: String,
   label: String,
   disabled: Boolean,
@@ -46,8 +46,8 @@ const props = defineProps({
   error: String,
   success: Boolean,
   hint: String,
-  size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v) },
-  debounce: { type: Number, default: 300 }
+  size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v)},
+  debounce: {type: Number, default: 300}
 })
 
 const emit = defineEmits(['update:modelValue', 'focus', 'blur', 'enter'])
@@ -77,9 +77,10 @@ onBeforeUnmount(() => {
 .input__label {
   display: block;
   margin-bottom: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.015em;
   color: rgb(var(--color-text-rgb));
   opacity: 0.9;
 }
@@ -90,9 +91,11 @@ onBeforeUnmount(() => {
   border: 1px solid rgb(var(--color-border-rgb) / 0.15);
   border-radius: var(--radius-sm);
   color: rgb(var(--color-text-rgb));
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
+  font-family: inherit;
+  font-size: clamp(0.95rem, 0.92rem + 0.14vw, 1.05rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
   outline: none;
   width: 100%;
   transition: all 0.2s ease;
@@ -140,15 +143,17 @@ onBeforeUnmount(() => {
 }
 
 .input::placeholder {
-  color: rgb(var(--color-muted-rgb) / 0.5);
-  font-weight: 300;
+  color: rgb(var(--color-muted-rgb) / 0.72);
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 400;
   font-style: normal;
 }
 
 .input__error {
   margin-top: 4px;
   font-size: 0.875rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.4;
   color: rgb(var(--color-danger-rgb));
 }
@@ -156,9 +161,9 @@ onBeforeUnmount(() => {
 .input__hint {
   margin-top: 4px;
   font-size: 0.875rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.4;
   color: rgb(var(--color-muted-rgb));
-  font-style: italic;
+  font-style: normal;
 }
 </style>
