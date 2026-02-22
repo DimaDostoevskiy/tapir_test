@@ -53,7 +53,7 @@ async function removePost(id: number) {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .admin-page {
   display: grid;
   gap: 16px;
@@ -94,7 +94,7 @@ async function removePost(id: number) {
 
 .admin-post-list__item {
   border: 1px solid var(--color-border);
-  border-radius: $radius-sm;
+  border-radius: var(--radius-sm);
   padding: 12px;
   display: flex;
   align-items: center;

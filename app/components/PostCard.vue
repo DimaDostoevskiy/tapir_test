@@ -55,11 +55,11 @@ function handleImageError() {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .post__card {
   position: relative;
   border: 1px solid var(--color-primary);
-  border-radius: $radius-md;
+  border-radius: var(--radius-md);
   padding: 14px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
@@ -91,8 +91,8 @@ function handleImageError() {
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-sm;
-  color: $color-muted;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
   font-weight: 600;
 }
 
@@ -130,7 +130,7 @@ function handleImageError() {
   letter-spacing: -0.25px;
   line-height: 1.22;
   font-weight: 800;
-  color: $color-text;
+  color: var(--color-text);
   text-wrap: balance;
 }
 
@@ -178,7 +178,7 @@ function handleImageError() {
 }
 
 .post__card__content :deep(a) {
-  color: $color-primary;
+  color: var(--color-primary);
   font-weight: 700;
   text-decoration: underline;
 }

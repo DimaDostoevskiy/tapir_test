@@ -79,7 +79,7 @@ function emitSubmit() {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .post-form {
   display: grid;
   gap: 14px;
@@ -91,7 +91,7 @@ function emitSubmit() {
 }
 
 .post-form__label {
-  color: $color-muted;
+  color: var(--color-muted);
   font-size: 14px;
 }
 

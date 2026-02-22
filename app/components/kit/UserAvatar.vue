@@ -25,7 +25,7 @@ const resolvedImageUrl = ref(props.imageUrl?.trim() || '/avatar/default.svg')
 
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .avatar__wrapper {
   display: flex;
   align-items: center;

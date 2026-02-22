@@ -5,7 +5,12 @@
       <KitButton to="/admin/blog" variant="ghost">Назад к списку</KitButton>
     </header>
 
-    <PostForm v-model="form" :loading="loading" submit-label="Создать" @submit="submit" />
+    <PostForm
+        v-model="form"
+        :loading="loading"
+        submit-label="Создать"
+        @submit="submit"
+    />
 
     <p v-if="errorMessage" class="blog-page__state blog-page__state--error">{{ errorMessage }}</p>
   </section>
@@ -13,7 +18,7 @@
 
 <script setup lang="ts">
 import PostForm from '~/components/admin/PostForm.vue'
-import type { PostFormPayload } from '~/types/blog'
+import type {PostFormPayload} from '~/types/blog'
 
 definePageMeta({
   middleware: ['auth'],
@@ -26,6 +31,7 @@ const form = ref<PostFormPayload>({
   excerpt: '',
   content: '',
   published: true,
+  slug: '',
 })
 
 async function submit() {
@@ -47,7 +53,7 @@ async function submit() {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .admin-page {
   display: grid;
   gap: 16px;
@@ -72,6 +78,6 @@ async function submit() {
 }
 
 .blog-page__state--error {
-  color: $color-error;
+  color: var(--color-error);
 }
 </style>

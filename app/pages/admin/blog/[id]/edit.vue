@@ -63,7 +63,7 @@ async function submit() {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .admin-page {
   display: grid;
   gap: 16px;

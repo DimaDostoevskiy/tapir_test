@@ -49,14 +49,14 @@ function onInput(event: Event) {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .kit-form-control {
   width: 100%;
   min-height: 46px;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   background: rgb(var(--color-surface-rgb) / 0.8);
-  color: $color-text;
+  color: var(--color-text);
   padding: 10px 14px;
   line-height: 1.45;
   transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
