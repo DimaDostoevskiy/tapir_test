@@ -14,7 +14,7 @@
               variant="outline"
               size="md"
               title="Перейти"
-              @click.stop="testClick"
+              @click.stop="goToUserPage"
           >
             Перейти на страницу
           </KitButton>
@@ -39,12 +39,11 @@ const searchQuery = useState<string>('postsSearchQuery', () => '')
 const user = ref<IUserCookie | null>(null)
 const isHomePage = computed(() => route.path === '/')
 
-const testClick = () => {
+const goToUserPage = () => {
   console.log(22)
 }
 
 onMounted(() => {
-  // Правильное присваивание с проверкой
   if (cookieUser.value) {
     try {
       // Если кука хранит JSON строку
@@ -89,7 +88,7 @@ onMounted(() => {
   width: min(560px, 100%);
 }
 
-.avatar-tooltip{
+.avatar-tooltip {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -98,7 +97,7 @@ onMounted(() => {
   z-index: 999;
 }
 
-.avatar-tooltip__text{
+.avatar-tooltip__text {
   margin: 0 0 12px 12px;
   width: 100%;
   text-align: left;

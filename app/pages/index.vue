@@ -13,6 +13,9 @@
       <p v-if="loadMoreError"
          class="blog__info"
       >{{ loadMoreError }}</p>
+      <p v-if="!pending && !error && !hasMore && postList.length > 0"
+         class="blog__info"
+      >элементов больше нет</p>
     </div>
     <KitButton v-if="showScrollTopButton"
                class="up__btn"
@@ -157,7 +160,7 @@ watch(searchQuery, async () => {
 
 <style scoped>
 .blog__list {
-  padding-bottom: 200px;
+  padding-bottom: 100px;
   height: 100vh;
   width: 100%;
   max-width: 100%;
