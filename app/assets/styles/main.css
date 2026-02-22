@@ -61,21 +61,44 @@ a {
 }
 
 .scroll::-webkit-scrollbar {
-    width: 10px;
+    display: none;
+    background: var(--color-bg);
 }
 
 .scroll::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
+    background: var(--color-bg);
     border-radius: 999px;
 }
 
 .scroll::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, rgba(157, 66, 245, 0.95), rgba(157, 66, 245, 0.65));
-    border: 1px solid rgba(157, 66, 245, 0.55);
+    display: none;
+    background: var(--color-primary);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
+    min-height: 100px;
+    cursor: pointer;
 }
 
 .scroll::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, rgba(139, 53, 232, 0.98), rgba(157, 66, 245, 0.7));
+    background: var(--color-primary-hover);
+}
+
+@media (min-width: 1190px) {
+    .scroll::-webkit-scrollbar {
+        display: block;
+    }
+
+    .scroll::-webkit-scrollbar-track {
+        display: block;
+    }
+
+    .scroll::-webkit-scrollbar-thumb {
+        display: block;
+    }
+
+    .scroll::-webkit-scrollbar-thumb:hover {
+        background: var(--color-primary-hover);
+    }
+
 }
