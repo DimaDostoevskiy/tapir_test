@@ -7,10 +7,11 @@
       </div>
     </header>
 
-    <p v-if="pending" class="admin-page__state">Загрузка...</p>
-    <p v-else-if="error" class="admin-page__state admin-page__state--error">Не удалось загрузить список</p>
+    <div class="admin-page__list scroll">
+      <p v-if="pending" class="admin-page__state">Загрузка...</p>
+      <p v-else-if="error" class="admin-page__state admin-page__state--error">Не удалось загрузить список</p>
 
-    <div v-else class="admin-post-list">
+      <div v-else class="admin-post-list">
       <article v-for="post in posts || []" :key="post.id" class="admin-post-list__item">
         <div class="admin-post-list__main">
           <h2 class="admin-post-list__title">{{ post.title }}</h2>
@@ -23,6 +24,7 @@
           <KitButton type="button" variant="danger" size="sm" @click="removePost(post.id)">Удалить</KitButton>
         </div>
       </article>
+      </div>
     </div>
   </section>
 </template>
@@ -55,11 +57,21 @@ async function removePost(id: number) {
 
 <style scoped>
 .admin-page {
-  display: grid;
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   padding: clamp(16px, 4vw, 32px);
   max-width: min(900px, 100%);
   margin: 0 auto;
+  height: 100vh;
+  min-height: 0;
+}
+
+.admin-page__list {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 100px;
+  margin-top: 20px;
 }
 
 .admin-page__header {
