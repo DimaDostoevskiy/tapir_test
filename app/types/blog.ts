@@ -14,4 +14,5 @@ export interface PostFormPayload {
   excerpt: string
   content: string
   published: boolean
+  slug: string
 }

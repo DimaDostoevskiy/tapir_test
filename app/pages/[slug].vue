@@ -1,8 +1,8 @@
 <template>
-  <article v-if="post" class="blog-post container">
-    <header class="blog-post__header">
-      <h1 class="blog-post__title">{{ post.title }}</h1>
-      <p class="blog-post__meta">Обновлено: {{ formattedDate }}</p>
+  <article v-if="post" class="post">
+    <header class="post__header">
+      <h1 class="post__title">{{ post.title }}</h1>
+      <p class="post__meta">Обновлено: {{ formattedDate }}</p>
     </header>
 
     <p v-if="post.excerpt" class="blog-post__excerpt">{{ post.excerpt }}</p>
@@ -34,38 +34,34 @@ const formattedDate = computed(() => {
 })
 </script>
 
-<style scoped lang="scss">
-.blog-post {
+<style scoped>
+.post {
   display: grid;
   gap: 16px;
 }
 
-.blog-post__header {
+.post__header {
   display: grid;
   gap: 8px;
 }
 
-.blog-post__title {
-  margin: 0;
+.post__title {
+  margin-bottom: 8px;
   font-size: 34px;
 }
 
-.blog-post__meta {
+.post__meta {
   margin: 0;
-  color: $color-muted;
+  color: var(--color-text);
 }
 
 .blog-post__excerpt {
   margin: 0;
-  color: $color-accent;
+  color: var(--color-text);
 }
 
 .blog-post__content {
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  padding: 18px;
-  line-height: 1.65;
-  background: rgb(var(--color-text-rgb) / 0.02);
+
 }
 
 .blog-page__state {

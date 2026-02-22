@@ -58,7 +58,7 @@ function handleImageError() {
 <style scoped lang="scss">
 .post__card {
   position: relative;
-  border: 1px solid rgba(250, 250, 250, 0.18);
+  border: 1px solid var(--color-primary);
   border-radius: $radius-md;
   padding: 14px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
@@ -124,7 +124,6 @@ function handleImageError() {
   padding-inline: 6px;
   height: 160px;
 }
-
 
 .post__card__title {
   font-size: clamp(20px, 2.2vw, 26px);

@@ -1,31 +1,35 @@
 <template>
   <header class="header">
-    <div class="header__inner">
-      <UserAvatar :image-url="userImageUrl" />
-      <div class="search__container">
-        <KitInput
+    <div class="container">
+      <KitAvatar
+          :src="userImageUrl"
+          :size="'sm'"
+      />
+      <div class="user__info">
+        <p class="user__info__text">dfsdfsdffds</p>
+        <p class="user__info__text">dfsdfsdffds</p>
+      </div>
+    </div>
+    <div class="container">
+      <KitInput
           :placeholder="`Поиск...`"
           :model-value="searchString"
           @update:model-value="onSearchInput"
           @enter:value="searchPost"
-        />
-        <KitButton
-            variant="primary"
-            size="md"
-            @click="searchPost"
-
-        >
-          Найти
-        </KitButton>
-      </div>
+      />
+      <KitButton
+          class=""
+          variant="primary"
+          size="md"
+          @click="searchPost"
+      >
+        Найти
+      </KitButton>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import UserAvatar from '~/components/kit/UserAvatar.vue'
-import {ref} from "vue";
-
 const userImageUrl = ref<string | null>(null)
 const searchString = ref<string>('')
 
@@ -42,50 +46,50 @@ const searchPost = async () => {
 .header {
   position: sticky;
   top: 0;
-  z-index: 10;
-  background: rgb(var(--color-bg-rgb) / 0.7);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.header__inner {
-  width: min(100% - 32px, var(--container-max));
-  margin: 0 auto;
-  min-height: 56px;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 8px 0;
+  max-width: 100vw;
+  width: 1190px;
+  height: 64px;
+  margin: 0 auto;
+  background: rgb(var(--color-bg-rgb) / 0.0);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 10;
 }
 
-.search__container {
+.container {
   display: flex;
+  position: sticky;
+  top: 0;
+  flex-direction: row;
   align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-  width: fit-content;
-  margin-left: auto;
+  justify-content: left;
+
 }
 
-.search__container :deep(.kit-input) {
-  width: clamp(180px, 28vw, 320px);
-  min-width: 0;
+.user__info {
+  display: none;
+  align-items: center;
+  flex-direction: column;
 }
 
-@media (max-width: 760px) {
-  .header__inner {
-    gap: 10px;
-    min-height: 52px;
+.user__info__text {
+  align-items: center;
+  flex-direction: column;
+  padding: 0 0 0 8px;
+  margin: 0;
+
+}
+
+
+@media (min-width: 768px) {
+  .user__info {
+    display: flex;
   }
 
-  .search__container {
-    gap: 8px;
-  }
-
-  .search__container :deep(.kit-input) {
-    width: clamp(140px, 40vw, 220px);
-  }
 }
 </style>
 
