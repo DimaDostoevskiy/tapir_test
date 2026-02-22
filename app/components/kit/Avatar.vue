@@ -3,12 +3,15 @@
   <div
       class="avatar"
       :class="{
-      'avatar--clickable': clickable,
       'avatar--sm': size === 'sm',
       'avatar--lg': size === 'lg',
-      'avatar--xl': size === 'xl'
+      'avatar--xl': size === 'xl',
+      'avatar--clickable': clickable
     }"
       @click="$emit('click', $event)"
+      @mouseenter="showInfo = true"
+      @mouseleave="showInfo = false"
+      ref="avatarRef"
       v-bind="$attrs"
   >
     <img
@@ -16,39 +19,88 @@
         :src="src"
         :alt="alt"
         class="avatar__image"
-        @error="handleError"
     />
-    <div v-else class="avatar__fallback">
-      <slot>{{ initials }}</slot>
-    </div>
+
+    <!-- Телепортируем информацию в body -->
+    <Teleport to="body">
+      <div
+          v-if="showInfo"
+          class="avatar__info"
+          :style="infoStyle"
+      >
+        <p class="avatar__info-name">{{ userName }}</p>
+        <p class="avatar__info-role">{{ userRole }}</p>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
-  src: String,
-  alt: { type: String, default: 'avatar' },
-  size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg', 'xl'].includes(v) },
-  name: String, // для инициалов
-  clickable: { type: Boolean, default: false }
+  src: {type: String, default: '/avatar.jpg'},
+  alt: {type: String, default: 'avatar'},
+  size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg', 'xl'].includes(v)},
+  userImg: {type: String, default: ''},
+  userName: {type: String, default: ''},
+  userLink: {type: String, default: ''},
+  userRole: {type: String, default: ''},
+  clickable: {type: Boolean, default: false}
 })
 
-const emit = defineEmits(['click', 'error'])
+const emit = defineEmits(['click', 'mouseover'])
+const showInfo = ref(false)
+const avatarRef = ref(null)
+const infoPosition = ref({ top: 0, left: 0 })
 
-const initials = computed(() => {
-  if (!props.name) return '?'
-  return props.name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
+// Вычисляем позицию для всплывающего окна
+const infoStyle = computed(() => ({
+  position: 'fixed',
+  top: infoPosition.value.top + 'px',
+  left: infoPosition.value.left + 'px',
+  transform: 'translateX(-50%)',
+  marginTop: '8px',
+  zIndex: 9999
+}))
+
+// Обновляем позицию при появлении
+const updatePosition = () => {
+  if (avatarRef.value) {
+    const rect = avatarRef.value.getBoundingClientRect()
+    infoPosition.value = {
+      top: rect.bottom,
+      left: rect.left + rect.width / 2
+    }
+  }
+}
+
+// Следим за скроллом и ресайзом
+const handleScroll = () => {
+  if (showInfo.value) {
+    updatePosition()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, true)
+  window.addEventListener('resize', handleScroll)
 })
 
-const handleError = (e) => {
-  emit('error', e)
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll, true)
+  window.removeEventListener('resize', handleScroll)
+})
+
+// Обновляем позицию при показе
+watch(showInfo, (newVal) => {
+  if (newVal) {
+    updatePosition()
+  }
+})
+
+const mouseOver = () => {
+  emit('mouseover')
 }
 </script>
 
@@ -67,6 +119,7 @@ const handleError = (e) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: default;
 }
 
 .avatar--clickable {
@@ -104,29 +157,58 @@ const handleError = (e) => {
   object-fit: cover;
   display: block;
 }
+</style>
 
-.avatar__fallback {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+<!-- Глобальные стили для информации (не скопированные) -->
+<style>
+.avatar__info {
+  position: fixed;
+  width: 220px;
+  padding: 12px 16px;
+  background: rgb(var(--color-surface-rgb));
+  border: 1px solid rgb(var(--color-border-rgb) / 0.2);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.avatar__info::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: rgb(var(--color-surface-rgb));
+  border-left: 1px solid rgb(var(--color-border-rgb) / 0.2);
+  border-top: 1px solid rgb(var(--color-border-rgb) / 0.2);
+}
+
+.avatar__info-name {
+  font-weight: 600;
   font-size: 1rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  background: rgb(var(--color-primary-rgb) / 0.2);
-  color: rgb(var(--color-primary-rgb));
+  color: rgb(var(--color-text-rgb));
+  margin: 0 0 4px 0;
 }
 
-.avatar--sm .avatar__fallback {
-  font-size: 0.75rem;
+.avatar__info-role {
+  font-size: 0.875rem;
+  color: rgb(var(--color-muted-rgb));
+  margin: 0;
 }
 
-.avatar--lg .avatar__fallback {
-  font-size: 1.25rem;
-}
-
-.avatar--xl .avatar__fallback {
-  font-size: 2rem;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 </style>

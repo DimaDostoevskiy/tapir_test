@@ -1,16 +1,12 @@
 <template>
   <header class="header">
-    <div class="container">
-      <KitAvatar
-          :src="userImageUrl"
-          :size="'sm'"
-      />
-      <div class="user__info">
-        <p class="user__info__text">{{ user.name }}</p>
-        <p class="user__info__text">{{ user.role }}</p>
-      </div>
-    </div>
-    <div class="container">
+    <KitAvatar
+        v-if="user"
+        :userName="user?.name ?? ''"
+        :userRole="user?.role ?? ''"
+        :size="'md'"
+    />
+    <div class="search__container">
       <KitInput
           :placeholder="`Поиск...`"
           :model-value="searchString"
@@ -30,31 +26,40 @@
 </template>
 
 <script setup lang="ts">
-import { type BlogPost } from '~/types/blog'
-import { type IUserCookie } from '~/types/user'
+import type { BlogPost } from '~/types/blog'
+import type { IUserCookie } from '../types/user'
 
 const searchString = ref<string>('')
-const postList = ref<BlogPost[]>([])
-const userImageUrl = ref<string>('')
-const user = reactive<IUserCookie>({
-  name: undefined,
-  role: undefined,
-})
+const cookieUser = useCookie('auth_user')
 
-const userCookie = useCookie('auth_user')
+// Вариант 1: С проверкой на существование (рекомендуется)
+const user = ref<IUserCookie | null>(null)
 
 // Функция для получения постов
 const fetchPosts = async () => {
-  await useFetch<BlogPost[]>('/api/admin/posts')
-      .then((res) => {
-        console.log('Посты:', res)
-      })
+  try {
+    const { data } = await useFetch<BlogPost[]>('/api/admin/posts')
+    console.log('Посты:', data.value)
+  } catch (error) {
+    console.error('Ошибка загрузки постов:', error)
+  }
 }
 
 onMounted(() => {
-  if (userCookie && userCookie.value) {
-    // user.name = userCookie.value?.name.toString() || 'Инкогнито'
-    // user.role = userCookie.value?.role.toString() || 'USER'
+  // Правильное присваивание с проверкой
+  if (cookieUser.value) {
+    try {
+      // Если кука хранит JSON строку
+      if (typeof cookieUser.value === 'string') {
+        user.value = JSON.parse(cookieUser.value) as IUserCookie
+      } else {
+        // Если кука уже объект
+        user.value = cookieUser.value as IUserCookie
+      }
+    } catch (error) {
+      console.error('Ошибка парсинга пользователя:', error)
+      user.value = null
+    }
   }
 })
 
@@ -78,32 +83,14 @@ onMounted(() => {
   z-index: 10;
 }
 
-.container {
+.search__container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: left;
 }
 
-.user__info {
-  display: none;
-  flex-direction: column;
-  align-items: start;
-  justify-content: center;
-  margin-left: 8px;
-}
-
-.user__info__text {
-  align-items: center;
-  flex-direction: column;
-  padding: 0 0 0 8px;
-  margin: 0;
-}
-
 @media (min-width: 768px) {
-  .user__info {
-    display: flex;
-  }
 }
 </style>
 
