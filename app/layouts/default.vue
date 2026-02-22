@@ -33,11 +33,8 @@ import AppFooter from '~/components/AppFooter.vue'
   width: 1190px;
   max-width: 100vw;
   min-width: 320px;
+  height: fit-content;
   min-height: 100vh;
-}
-
-/* Тонкая линия внизу для глубины */
-@media (min-width: 768px) {
-
+  max-height: 100vh;
 }
 </style>

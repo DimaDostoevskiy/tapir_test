@@ -3,9 +3,7 @@
     <div class="blog__list scroll"
          ref="blogListRef"
     >
-      <KitButton
-          class="up__btn"
-      >
+      <KitButton class="up__btn">
         <slot>
           <p>UP</p>
         </slot>
@@ -47,7 +45,7 @@ const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts')
 <style scoped>
 .blog__list {
   padding: 16px;
-  height: 90vh;
+  height: 100vh;
   width: fit-content;
 }
 

@@ -5,9 +5,15 @@
         <section class="footer__col" aria-label="Раздел: КАТАЛОГ">
           <h2 class="footer__title">Навигация</h2>
           <ul class="footer__list">
-            <li class="footer__item"><NuxtLink class="footer__link" to="/">Главная</NuxtLink></li>
-            <li class="footer__item"><NuxtLink class="footer__link" to="/blog">Блог</NuxtLink></li>
-            <li class="footer__item"><NuxtLink class="footer__link" to="/admin/blog">Админка</NuxtLink></li>
+            <li class="footer__item">
+              <NuxtLink class="footer__link" to="/">Главная</NuxtLink>
+            </li>
+            <li class="footer__item">
+              <NuxtLink class="footer__link" to="/blog">Блог</NuxtLink>
+            </li>
+            <li class="footer__item">
+              <NuxtLink class="footer__link" to="/admin/blog">Админка</NuxtLink>
+            </li>
           </ul>
         </section>
 
@@ -47,12 +53,23 @@
 
 <style scoped>
 .footer {
-  border-top: 1px solid rgb(var(--color-text-rgb) / 0.08);
-  background: var(--color-bg);
+  top: -100px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.1);
+  transition: all 1s ease-in-out;
+}
+
+.footer:hover {
+  top: -300px;
+  background-color: var(--color-bg);
+  transition: all 1s ease-in-out;
+  z-index: 999;
 }
 
 .footer__inner {
-  width: min(100% - 32px, var(--container-max));
+  width: 100vw;
+  min-width: 320px;
+  max-width: 1190px;
   margin-inline: auto;
   padding: 44px 0;
 }
@@ -93,7 +110,7 @@
 }
 
 .footer__link:hover {
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 @media (max-width: 900px) {
