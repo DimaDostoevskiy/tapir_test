@@ -1,120 +1,51 @@
 <template>
   <section class="blog">
-    <p v-if="pending || error"
-       class="blog__info"
-    >Загрузка...</p>
-    <div ref="blogListRef" class="blog-list" @wheel="handleWheelFlip">
+    <div class="blog__list scroll"
+         ref="blogListRef"
+    >
       <PostCard v-for="post in postList"
                 :key="post.id"
                 :post="post"
       />
+      <p v-if="pending"
+         class="blog__info blog__info_success"
+      >Загрузка...</p>
+      <p v-if="error"
+         class="blog__info blog__info_error"
+      >Ошибка...</p>
     </div>
-    <KitButton class="blog__to-top" type="button" @click="scrollListToTop">
+    <KitButton
+        class="blog__to-top"
+        type="button"
+    >
+      <slot>
       <span class="blog__to-top-chevrons" aria-hidden="true">
         <span class="blog__to-top-chevron"/>
         <span class="blog__to-top-chevron"/>
       </span>
+      </slot>
       <span>Наверх</span>
     </KitButton>
   </section>
 </template>
 
 <script setup lang="ts">
-import type {BlogPost} from '~/types/blog'
-
-const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts')
-const postList = computed(() => data.value || [])
-const blogListRef = ref<HTMLElement | null>(null)
-let flipLock = false
-let flipUnlockTimer: ReturnType<typeof setTimeout> | null = null
-
-function getCardOffsets(container: HTMLElement) {
-  const cards = Array.from(container.querySelectorAll<HTMLElement>('.post__card'))
-  const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight)
-  const snappedOffsets = cards.map(card => Math.min(card.offsetTop, maxScrollTop))
-
-  return [...new Set(snappedOffsets)].sort((a, b) => a - b)
-}
-
-function handleWheelFlip(event: WheelEvent) {
-  const container = blogListRef.value
-
-  if (!container || Math.abs(event.deltaY) < 8) {
-    return
-  }
-
-  const offsets = getCardOffsets(container)
-
-  if (!offsets.length) {
-    return
-  }
-
-  event.preventDefault()
-
-  if (flipLock) {
-    return
-  }
-
-  flipLock = true
-
-  const direction = event.deltaY > 0 ? 1 : -1
-  const currentTop = container.scrollTop
-
-  let nextTop = currentTop
-
-  if (direction > 0) {
-    nextTop = offsets.find(top => top > currentTop + 2) ?? offsets[offsets.length - 1]
-  } else {
-    for (let idx = offsets.length - 1; idx >= 0; idx -= 1) {
-      if (offsets[idx] < currentTop - 2) {
-        nextTop = offsets[idx]
-        break
-      }
-    }
-    if (nextTop === currentTop) {
-      nextTop = offsets[0]
-    }
-  }
-
-  container.scrollTo({
-    top: nextTop,
-    behavior: 'smooth',
-  })
-
-  if (flipUnlockTimer) {
-    clearTimeout(flipUnlockTimer)
-  }
-
-  flipUnlockTimer = setTimeout(() => {
-    flipLock = false
-  }, 260)
-}
-
-function scrollListToTop() {
-  const container = blogListRef.value
-  if (!container) {
-    return
-  }
-
-  container.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  })
-}
-
-onBeforeUnmount(() => {
-  if (flipUnlockTimer) {
-    clearTimeout(flipUnlockTimer)
-  }
-})
-
 useSeoMeta({
-  title: 'Блог — Pro Moto Blog',
+  title: 'Блог - Главная',
 })
 
 definePageMeta({
   middleware: ['auth'],
 })
+
+import type {BlogPost} from '~/types/blog'
+
+const postList = computed(() => data.value || [])
+
+const blogListRef = ref<HTMLElement | null>(null)
+
+const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts')
+
 
 </script>
 
@@ -131,37 +62,16 @@ definePageMeta({
   position: relative;
 }
 
-.blog-list {
+.blog__list {
   width: min(100% - 32px, 1200px);
   margin-inline: auto;
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(157, 66, 245, 0.75) rgba(255, 255, 255, 0.04);
-}
-
-.blog-list::-webkit-scrollbar {
-  width: 10px;
-}
-
-.blog-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-}
-
-.blog-list::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(157, 66, 245, 0.95), rgba(157, 66, 245, 0.65));
-  border: 1px solid rgba(157, 66, 245, 0.55);
-  border-radius: 999px;
-}
-
-.blog-list::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(139, 53, 232, 0.98), rgba(157, 66, 245, 0.7));
+  min-height: 100vh;
+  max-height: 100vh;
 }
 
 .blog__to-top {
+  display: none;
   position: absolute;
   right: 24px;
   bottom: 110px;
@@ -175,6 +85,7 @@ definePageMeta({
 }
 
 .blog__to-top-chevrons {
+  padding-right: 8px;
   display: inline-grid;
   gap: 1px;
 }
@@ -190,24 +101,19 @@ definePageMeta({
 .blog__to-top:hover {
   border-color: rgb(var(--color-primary-rgb) / 0.68);
   background: linear-gradient(135deg, rgb(var(--color-primary-rgb) / 0.96), rgb(var(--color-primary-rgb) / 0.72));
-  color: $color-text;
+  color: var(--color-text);
 }
 
 .blog__to-top:focus-visible {
   border-color: rgb(var(--color-primary-rgb) / 0.68);
   background: linear-gradient(135deg, rgb(var(--color-primary-rgb) / 0.96), rgb(var(--color-primary-rgb) / 0.72));
-  color: $color-text;
+  color: var(--color-text);
 }
 
-@media (max-width: 900px) {
+@media (min-width: 768px) {
   .blog__to-top {
-    display: none;
+    display: flex;
   }
-}
 
-@media (max-width: 640px) {
-  .blog-list {
-    width: calc(100% - 20px);
-  }
 }
 </style>
