@@ -13,21 +13,12 @@
                 :key="post.id"
                 :post="post"
       />
-      <div v-if="showLoadMoreButton || isLoadingMore || loadMoreError"
-           class="blog__actions"
-      >
-        <p v-if="loadMoreError"
-           class="blog__info blog__info_error"
-        >
-          {{ loadMoreError }}
-        </p>
-        <KitButton v-if="showLoadMoreButton || isLoadingMore"
-                   :disabled="isLoadingMore"
-                   @click="loadMorePosts"
-        >
-          {{ isLoadingMore ? 'Загрузка...' : 'Загрузить ещё' }}
-        </KitButton>
-      </div>
+      <p v-if="isLoadingMore"
+         class="blog__info blog__info_success"
+      >Загрузка ещё постов...</p>
+      <p v-if="loadMoreError"
+         class="blog__info blog__info_error"
+      >{{ loadMoreError }}</p>
       <p v-if="!pending && !error && !hasMore && postList.length > 0"
          class="blog__info blog__info_muted"
       >
@@ -58,15 +49,13 @@ definePageMeta({
 import type {BlogPost} from '~/types/blog'
 
 const PAGE_SIZE = 10
-const SHOW_BUTTON_THRESHOLD = 8
-const HIDE_BUTTON_THRESHOLD = 120
+const AUTO_LOAD_THRESHOLD = 40
 const SHOW_SCROLL_TOP_THRESHOLD = 280
 
 const blogListRef = ref<HTMLElement | null>(null)
 const postList = ref<BlogPost[]>([])
 const isLoadingMore = ref(false)
 const hasMore = ref(true)
-const hasReachedListEnd = ref(false)
 const showScrollTopButton = ref(false)
 const loadMoreError = ref('')
 
@@ -80,10 +69,6 @@ const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts', {
 postList.value = data.value || []
 hasMore.value = postList.value.length === PAGE_SIZE
 
-const showLoadMoreButton = computed(() => (
-  hasReachedListEnd.value && hasMore.value && !pending.value && !error.value
-))
-
 function syncBottomState() {
   const container = blogListRef.value
 
@@ -92,17 +77,17 @@ function syncBottomState() {
   }
 
   const distanceToBottom = container.scrollHeight - (container.scrollTop + container.clientHeight)
-
-  if (!hasReachedListEnd.value && distanceToBottom <= SHOW_BUTTON_THRESHOLD) {
-    hasReachedListEnd.value = true
-    return
-  }
-
-  if (hasReachedListEnd.value && distanceToBottom > HIDE_BUTTON_THRESHOLD) {
-    hasReachedListEnd.value = false
-  }
-
   showScrollTopButton.value = container.scrollTop >= SHOW_SCROLL_TOP_THRESHOLD
+
+  if (
+    distanceToBottom <= AUTO_LOAD_THRESHOLD
+    && hasMore.value
+    && !pending.value
+    && !error.value
+    && !isLoadingMore.value
+  ) {
+    void loadMorePosts()
+  }
 }
 
 async function loadMorePosts() {
@@ -123,7 +108,6 @@ async function loadMorePosts() {
 
     postList.value = [...postList.value, ...nextChunk]
     hasMore.value = nextChunk.length === PAGE_SIZE
-    hasReachedListEnd.value = false
     await nextTick()
     syncBottomState()
   } catch {
@@ -157,14 +141,6 @@ onBeforeUnmount(() => {
   height: 100vh;
   width: 100%;
   max-width: 100%;
-}
-
-.blog__actions {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
 }
 
 .blog__info {
