@@ -1,5 +1,5 @@
 <template>
-  <section class="admin-page">
+  <section class="admin-page scroll">
     <header class="admin-page__header">
       <h1 class="admin-page__title">Редактировать пост</h1>
       <KitButton to="/admin/blog" variant="outline">Назад к списку</KitButton>
@@ -33,19 +33,7 @@
             required
             :debounce="0"
         />
-        <div class="admin-page__image">
-          <label class="admin-page__image-label">Изображение</label>
-          <input
-              type="file"
-              accept="image/*"
-              class="admin-page__file-input"
-              @change="onImageChange"
-          />
-          <p v-if="imageError" class="admin-page__state admin-page__state--error">{{ imageError }}</p>
-          <div v-if="form.image" class="admin-page__preview">
-            <img :src="form.image" alt="Превью" class="admin-page__preview-img"/>
-          </div>
-        </div>
+        <KitImageUpload v-model="form.image" label="Изображение" />
         <label class="kit-form__checkbox">
           <input v-model="form.published" type="checkbox"/>
           <span>Опубликовано</span>
@@ -72,7 +60,6 @@ const id = Number(route.params.id)
 
 const loading = ref(false)
 const errorMessage = ref('')
-const imageError = ref('')
 const form = ref<PostFormPayload>({
   title: '',
   excerpt: '',
@@ -101,25 +88,6 @@ watch(
     {immediate: true}
 )
 
-async function onImageChange(event: Event) {
-  imageError.value = ''
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-  try {
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await $fetch<{ path: string }>('/api/admin/upload', {
-      method: 'POST',
-      body: formData,
-    })
-    form.value.image = res.path
-  } catch {
-    imageError.value = 'Не удалось загрузить изображение'
-  }
-  input.value = ''
-}
-
 async function submit() {
   loading.value = true
   errorMessage.value = ''
@@ -146,6 +114,9 @@ async function submit() {
   padding: clamp(16px, 4vw, 32px);
   max-width: min(900px, 100%);
   margin: 0 auto;
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .admin-page__header {
@@ -169,29 +140,5 @@ async function submit() {
 
 .admin-page__state--error {
   color: var(--color-danger);
-}
-
-.admin-page__image {
-  display: grid;
-  gap: 8px;
-}
-
-.admin-page__image-label {
-  font-weight: 500;
-}
-
-.admin-page__file-input {
-  max-width: 100%;
-}
-
-.admin-page__preview {
-  max-width: min(400px, 100%);
-}
-
-.admin-page__preview-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
 }
 </style>
