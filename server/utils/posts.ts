@@ -1,36 +1,43 @@
-import {createError} from 'h3'
-import {PostPayload} from '../models/Post'
+import { createError } from 'h3'
 
-export function validatePostPayload(payload: PostPayload): PostPayload {
+export interface ValidatedPostPayload {
+    title: string
+    slug: string
+    excerpt: string | null
+    content: string
+    published: boolean
+}
+
+export function validatePostPayload(payload: unknown): ValidatedPostPayload {
     if (!payload || typeof payload !== 'object') {
-        throw createError({statusCode: 400, statusMessage: 'Payload must be an object'})
+        throw createError({ statusCode: 400, statusMessage: 'Payload must be an object' })
     }
 
-    const body = payload as PostPayload
-    const title = String(body.title || '').trim()
-    const excerpt = body.excerpt
-    const content = String(body.content || '').trim()
-    const published = typeof body.published === 'boolean' ? !!body.published : false
-    const slug = body.slug || ''
+    const body = payload as Record<string, unknown>
+    const title = String(body.title ?? '').trim()
+    const excerpt = body.excerpt != null ? String(body.excerpt) : null
+    const content = String(body.content ?? '').trim()
+    const published = typeof body.published === 'boolean' ? body.published : true
+    const slug = String(body.slug ?? '').trim()
 
     if (!title) {
-        throw createError({statusCode: 400, statusMessage: 'Title is required'})
+        throw createError({ statusCode: 400, statusMessage: 'Title is required' })
     }
 
     if (title.length > 255) {
-        throw createError({statusCode: 400, statusMessage: 'Title is too long'})
+        throw createError({ statusCode: 400, statusMessage: 'Title is too long' })
     }
 
     if (!content) {
-        throw createError({statusCode: 400, statusMessage: 'Content is required'})
+        throw createError({ statusCode: 400, statusMessage: 'Content is required' })
     }
 
-    return new PostPayload({
+    return {
         title,
         slug,
-        excerpt,
+        excerpt: excerpt || null,
         content,
         published,
-    })
+    }
 }
 
