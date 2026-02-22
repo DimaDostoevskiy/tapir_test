@@ -1,11 +1,26 @@
 <template>
   <header class="header">
-    <KitAvatar
-        v-if="user"
-        :userName="user?.name ?? ''"
-        :userRole="user?.role ?? ''"
-        :size="'md'"
-    />
+    <KitTooltip position="bottom">
+      <template #trigger>
+        <KitAvatar
+            :size="'md'"
+        />
+      </template>
+      <template #content>
+        <div class="avatar-tooltip">
+          <div class="avatar-tooltip__text">{{ user?.name || "" }}</div>
+          <div class="avatar-tooltip__text">{{ user?.role || "" }}</div>
+          <KitButton
+              variant="outline"
+              size="md"
+              title="Перейти"
+              @click.stop="testClick"
+          >
+            Перейти на страницу
+          </KitButton>
+        </div>
+      </template>
+    </KitTooltip>
     <div class="search__container">
       <KitInput
           :placeholder="`Поиск...`"
@@ -26,19 +41,20 @@
 </template>
 
 <script setup lang="ts">
-import type { BlogPost } from '~/types/blog'
-import type { IUserCookie } from '../types/user'
+import type {BlogPost} from '~/types/blog'
+import type {IUserCookie} from '../types/user'
 
-const searchString = ref<string>('')
 const cookieUser = useCookie('auth_user')
-
-// Вариант 1: С проверкой на существование (рекомендуется)
+const searchString = ref<string>('')
 const user = ref<IUserCookie | null>(null)
 
-// Функция для получения постов
+const testClick = () => {
+  console.log(22)
+}
+
 const fetchPosts = async () => {
   try {
-    const { data } = await useFetch<BlogPost[]>('/api/admin/posts')
+    const {data} = await useFetch<BlogPost[]>('/api/admin/posts')
     console.log('Посты:', data.value)
   } catch (error) {
     console.error('Ошибка загрузки постов:', error)
@@ -88,6 +104,21 @@ onMounted(() => {
   flex-direction: row;
   align-items: center;
   justify-content: left;
+}
+
+.avatar-tooltip{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  z-index: 999;
+}
+
+.avatar-tooltip__text{
+  margin: 0 0 12px 12px;
+  width: 100%;
+  text-align: left;
 }
 
 @media (min-width: 768px) {
