@@ -21,44 +21,26 @@
         </div>
       </template>
     </KitTooltip>
-    <div class="search__container">
+    <div v-if="isHomePage" class="search__container">
       <KitInput
           :placeholder="`Поиск...`"
-          :model-value="searchString"
-          @change="fetchPosts"
-          @enter:value="fetchPosts"
+          v-model="searchQuery"
       />
-      <KitButton
-          class=""
-          variant="primary"
-          size="md"
-          @click="fetchPosts"
-      >
-        Найти
-      </KitButton>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import type {BlogPost} from '~/types/blog'
 import type {IUserCookie} from '../types/user'
 
+const route = useRoute()
 const cookieUser = useCookie('auth_user')
-const searchString = ref<string>('')
+const searchQuery = useState<string>('postsSearchQuery', () => '')
 const user = ref<IUserCookie | null>(null)
+const isHomePage = computed(() => route.path === '/')
 
 const testClick = () => {
   console.log(22)
-}
-
-const fetchPosts = async () => {
-  try {
-    const {data} = await useFetch<BlogPost[]>('/api/admin/posts')
-    console.log('Посты:', data.value)
-  } catch (error) {
-    console.error('Ошибка загрузки постов:', error)
-  }
 }
 
 onMounted(() => {
@@ -104,6 +86,7 @@ onMounted(() => {
   flex-direction: row;
   align-items: center;
   justify-content: left;
+  width: min(560px, 100%);
 }
 
 .avatar-tooltip{

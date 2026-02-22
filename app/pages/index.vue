@@ -3,27 +3,16 @@
     <div class="blog__list scroll"
          ref="blogListRef"
     >
-      <p v-if="pending"
-         class="blog__info blog__info_success"
-      >Загрузка...</p>
-      <p v-if="error"
-         class="blog__info blog__info_error"
-      >Ошибка...</p>
+      <p v-if="isLoadingMore"
+         class="blog__info"
+      >Загрузка постов...</p>
       <PostCard v-for="post in postList"
                 :key="post.id"
                 :post="post"
       />
-      <p v-if="isLoadingMore"
-         class="blog__info blog__info_success"
-      >Загрузка ещё постов...</p>
       <p v-if="loadMoreError"
-         class="blog__info blog__info_error"
+         class="blog__info"
       >{{ loadMoreError }}</p>
-      <p v-if="!pending && !error && !hasMore && postList.length > 0"
-         class="blog__info blog__info_muted"
-      >
-        Больше постов нет.
-      </p>
     </div>
     <KitButton v-if="showScrollTopButton"
                class="up__btn"
@@ -52,22 +41,19 @@ const PAGE_SIZE = 10
 const AUTO_LOAD_THRESHOLD = 40
 const SHOW_SCROLL_TOP_THRESHOLD = 280
 
+const searchQuery = useState<string>('postsSearchQuery', () => '')
 const blogListRef = ref<HTMLElement | null>(null)
 const postList = ref<BlogPost[]>([])
+const pending = ref(false)
+const error = ref('')
 const isLoadingMore = ref(false)
 const hasMore = ref(true)
 const showScrollTopButton = ref(false)
 const loadMoreError = ref('')
 
-const {data, pending, error} = await useFetch<BlogPost[]>('/api/posts', {
-  query: {
-    limit: PAGE_SIZE,
-    offset: 0,
-  },
-})
-
-postList.value = data.value || []
-hasMore.value = postList.value.length === PAGE_SIZE
+function getSearchQuery() {
+  return searchQuery.value.trim()
+}
 
 function syncBottomState() {
   const container = blogListRef.value
@@ -91,7 +77,7 @@ function syncBottomState() {
 }
 
 async function loadMorePosts() {
-  if (isLoadingMore.value || !hasMore.value) {
+  if (isLoadingMore.value || !hasMore.value || pending.value || Boolean(error.value)) {
     return
   }
 
@@ -103,6 +89,7 @@ async function loadMorePosts() {
       query: {
         limit: PAGE_SIZE,
         offset: postList.value.length,
+        q: getSearchQuery(),
       },
     })
 
@@ -117,6 +104,34 @@ async function loadMorePosts() {
   }
 }
 
+async function loadFirstPostsPage() {
+  pending.value = true
+  error.value = ''
+  loadMoreError.value = ''
+  hasMore.value = true
+  postList.value = []
+
+  try {
+    const firstChunk = await $fetch<BlogPost[]>('/api/posts', {
+      query: {
+        limit: PAGE_SIZE,
+        offset: 0,
+        q: getSearchQuery(),
+      },
+    })
+
+    postList.value = firstChunk
+    hasMore.value = firstChunk.length === PAGE_SIZE
+    await nextTick()
+    syncBottomState()
+  } catch {
+    error.value = 'Ошибка загрузки постов.'
+    hasMore.value = false
+  } finally {
+    pending.value = false
+  }
+}
+
 function scrollToTop() {
   blogListRef.value?.scrollTo({
     top: 0,
@@ -126,12 +141,17 @@ function scrollToTop() {
 
 onMounted(async () => {
   await nextTick()
+  await loadFirstPostsPage()
   syncBottomState()
   blogListRef.value?.addEventListener('scroll', syncBottomState)
 })
 
 onBeforeUnmount(() => {
   blogListRef.value?.removeEventListener('scroll', syncBottomState)
+})
+
+watch(searchQuery, async () => {
+  await loadFirstPostsPage()
 })
 </script>
 
@@ -144,20 +164,13 @@ onBeforeUnmount(() => {
 }
 
 .blog__info {
-  margin: 10px 0;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.blog__info_error {
-  color: var(--color-danger);
-}
-
-.blog__info_success {
-  color: var(--color-success);
-}
-
-.blog__info_muted {
-  color: var(--color-muted);
-}
 
 .up__btn {
   position: fixed;
