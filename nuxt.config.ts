@@ -67,5 +67,14 @@ export default defineNuxtConfig({
 
         // Компрессия
         compressPublicAssets: true,
+
+        // Раздавать uploads так же, как public (по пути /uploads/...)
+        publicAssets: [
+            {
+                baseURL: 'uploads',
+                dir: 'uploads',
+                maxAge: 86400,
+            },
+        ],
     }
 })
