@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import type {IUserCookie} from '../types/user'
+import type {IUserCookie} from '../../../types/user'
 
 const route = useRoute()
 const cookieUser = useCookie('auth_user')
