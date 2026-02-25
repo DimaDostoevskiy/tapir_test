@@ -1,6 +1,5 @@
 import {createError, defineEventHandler, readMultipartFormData} from 'h3'
-import {writeFileSync, mkdirSync, existsSync} from 'node:fs'
-import {join} from 'node:path'
+import {useRuntimeConfig, useStorage} from '#imports'
 import {randomUUID} from 'node:crypto'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
@@ -20,48 +19,38 @@ function getExt(filename: string, mimeType?: string): string {
 }
 
 export default defineEventHandler(async (event) => {
-    try {
-        const form = await readMultipartFormData(event)
-        if (!form?.length) {
-            createError({statusCode: 400, statusMessage: 'No file in request'})
-            return
-        }
-
-        const filePart = form.find((p) => p.name === 'file' || p.name === 'image')
-        if (!filePart) {
-            createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
-            return
-        }
-        if (!filePart.data || !(filePart.data instanceof Buffer)) {
-            createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
-            return
-        }
-
-        if (filePart.data.length > MAX_SIZE) {
-            createError({statusCode: 400, statusMessage: 'File too large (max 5 MB)'})
-            return
-        }
-
-        const mime = ((filePart.type || '').toLowerCase().split(';')[0] ?? '').trim()
-        const isAllowedType = ALLOWED_TYPES.some((t) => mime === t)
-        if (!isAllowedType) {
-            createError({statusCode: 400, statusMessage: 'Invalid file type. Use JPEG, PNG, WebP or GIF'})
-            return
-        }
-
-        const ext = getExt(filePart.filename || '', mime)
-        const filename = `${randomUUID()}${ext}`
-        const uploadDir = join(process.cwd(), 'uploads')
-
-        if (!existsSync(uploadDir)) {
-            mkdirSync(uploadDir, {recursive: true})
-        }
-        const filePath = join(uploadDir, filename)
-        writeFileSync(filePath, filePart.data)
-
-        const config = useRuntimeConfig()
-        return {path: config.filesBaseUrl + filename}
-    } catch (err) {
-        throw createError({statusCode: 500, statusMessage: 'Ошибка при загрузке файла!'})
+    const form = await readMultipartFormData(event)
+    if (!form?.length) {
+        throw createError({statusCode: 400, statusMessage: 'No file in request'})
     }
+
+    const filePart = form.find((p) => p.name === 'file' || p.name === 'image')
+    if (!filePart) {
+        throw createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
+    }
+    if (!filePart.data || typeof (filePart.data as any).length !== 'number') {
+        throw createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
+    }
+
+    if (filePart.data.length > MAX_SIZE) {
+        throw createError({statusCode: 400, statusMessage: 'File too large (max 5 MB)'})
+    }
+
+    const mime = ((filePart.type || '').toLowerCase().split(';')[0] ?? '').trim()
+    const isAllowedType = ALLOWED_TYPES.some((t) => mime === t)
+    if (!isAllowedType) {
+        throw createError({statusCode: 400, statusMessage: 'Invalid file type. Use JPEG, PNG, WebP or GIF'})
+    }
+
+    const ext = getExt(filePart.filename || '', mime)
+    const filename = `${randomUUID()}${ext}`
+    const storage = useStorage('uploads')
+    await storage.setItemRaw(filename, filePart.data)
+
+    const config = useRuntimeConfig()
+    const base = (config.filesBaseUrl || '').endsWith('/')
+        ? config.filesBaseUrl
+        : `${config.filesBaseUrl || ''}/`
+
+    return {path: base + filename}
 })

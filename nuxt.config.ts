@@ -37,6 +37,12 @@ export default defineNuxtConfig({
     },
 
     nitro: {
+        storage: {
+            uploads: {
+                driver: 'fs',
+                base: process.env.UPLOAD_DIR || './uploads',
+            },
+        },
 
         routeRules: {
             '/api/**': {
