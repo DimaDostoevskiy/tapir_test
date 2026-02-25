@@ -3,16 +3,10 @@
     <div class="blog__list scroll"
          ref="blogListRef"
     >
-      <p v-if="isLoadingMore"
-         class="blog__info"
-      >Загрузка постов...</p>
       <PostCard v-for="post in postList"
                 :key="post.id"
                 :post="post"
       />
-      <p v-if="loadMoreError"
-         class="blog__info"
-      >{{ loadMoreError }}</p>
       <p v-if="!pending && !error && !hasMore && postList.length > 0"
          class="blog__info"
       >элементов больше нет</p>
@@ -20,10 +14,9 @@
     <KitButton v-if="showScrollTopButton"
                class="up__btn"
                aria-label="Прокрутить наверх"
+               text="UP"
                @click="scrollToTop"
-    >
-      UP
-    </KitButton>
+    />
   </section>
 </template>
 
@@ -40,25 +33,21 @@ definePageMeta({
 
 import type {BlogPost} from '~/types/blog'
 
-const PAGE_SIZE = 10
-const AUTO_LOAD_THRESHOLD = 40
-const SHOW_SCROLL_TOP_THRESHOLD = 280
+const PAGE_SIZE = 5
+const AUTO_LOAD_THRESHOLD = 5
+const SHOW_SCROLL_TOP_THRESHOLD = 5
 
 const searchQuery = useState<string>('postsSearchQuery', () => '')
 const blogListRef = ref<HTMLElement | null>(null)
 const postList = ref<BlogPost[]>([])
 const pending = ref(false)
 const error = ref('')
+const errorMessage = ref('')
 const isLoadingMore = ref(false)
 const hasMore = ref(true)
 const showScrollTopButton = ref(false)
-const loadMoreError = ref('')
 
-function getSearchQuery() {
-  return searchQuery.value.trim()
-}
-
-function syncBottomState() {
+const syncBottomState = () => {
   const container = blogListRef.value
 
   if (!container) {
@@ -69,70 +58,42 @@ function syncBottomState() {
   showScrollTopButton.value = container.scrollTop >= SHOW_SCROLL_TOP_THRESHOLD
 
   if (
-    distanceToBottom <= AUTO_LOAD_THRESHOLD
-    && hasMore.value
-    && !pending.value
-    && !error.value
-    && !isLoadingMore.value
+      distanceToBottom <= AUTO_LOAD_THRESHOLD
+      && hasMore.value
+      && !pending.value
+      && !error.value
+      && !isLoadingMore.value
   ) {
     void loadMorePosts()
   }
 }
 
-async function loadMorePosts() {
-  if (isLoadingMore.value || !hasMore.value || pending.value || Boolean(error.value)) {
+const loadMorePosts = async () => {
+  if (
+      isLoadingMore.value
+      || !hasMore.value
+      || pending.value
+      || Boolean(error.value)
+  ) {
     return
   }
 
   isLoadingMore.value = true
-  loadMoreError.value = ''
 
-  try {
-    const nextChunk = await $fetch<BlogPost[]>('/api/posts', {
-      query: {
-        limit: PAGE_SIZE,
-        offset: postList.value.length,
-        q: getSearchQuery(),
-      },
-    })
+  const nextChunk = await $fetch<BlogPost[]>('api/posts/get-all', {
+    query: {
+      q: searchQuery.value.trim(),
+      limit: PAGE_SIZE,
+      offset: postList.value.length,
+    },
+  }).catch(() => {
+    return []
+  })
 
-    postList.value = [...postList.value, ...nextChunk]
-    hasMore.value = nextChunk.length === PAGE_SIZE
-    await nextTick()
-    syncBottomState()
-  } catch {
-    loadMoreError.value = 'Не удалось загрузить ещё посты. Попробуйте снова.'
-  } finally {
-    isLoadingMore.value = false
-  }
-}
-
-async function loadFirstPostsPage() {
-  pending.value = true
-  error.value = ''
-  loadMoreError.value = ''
-  hasMore.value = true
-  postList.value = []
-
-  try {
-    const firstChunk = await $fetch<BlogPost[]>('/api/posts', {
-      query: {
-        limit: PAGE_SIZE,
-        offset: 0,
-        q: getSearchQuery(),
-      },
-    })
-
-    postList.value = firstChunk
-    hasMore.value = firstChunk.length === PAGE_SIZE
-    await nextTick()
-    syncBottomState()
-  } catch {
-    error.value = 'Ошибка загрузки постов.'
-    hasMore.value = false
-  } finally {
-    pending.value = false
-  }
+  postList.value = [...postList.value, ...nextChunk]
+  hasMore.value = nextChunk.length === PAGE_SIZE
+  await nextTick()
+  syncBottomState()
 }
 
 function scrollToTop() {
@@ -144,7 +105,7 @@ function scrollToTop() {
 
 onMounted(async () => {
   await nextTick()
-  await loadFirstPostsPage()
+  await loadMorePosts()
   syncBottomState()
   blogListRef.value?.addEventListener('scroll', syncBottomState)
 })
@@ -154,7 +115,7 @@ onBeforeUnmount(() => {
 })
 
 watch(searchQuery, async () => {
-  await loadFirstPostsPage()
+  await loadMorePosts()
 })
 </script>
 
