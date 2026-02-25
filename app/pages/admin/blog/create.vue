@@ -1,9 +1,13 @@
 <template>
   <section class="admin-page scroll">
-    <header class="admin-page__header">
+    <div class="admin-page__header">
       <h1 class="admin-page__title">Создать пост</h1>
-      <KitButton to="/admin/blog" variant="outline">Назад к списку</KitButton>
-    </header>
+      <KitButton
+          to="/admin/blog"
+          variant="outline"
+          text="Назад к списку"
+      />
+    </div>
 
     <KitForm
         submit-label="Создать"
@@ -50,15 +54,16 @@
 </template>
 
 <script setup lang="ts">
-import type {PostFormPayload} from '~/types/blog'
 
 definePageMeta({
   middleware: ['auth'],
 })
 
+import type {IPostFormPayload} from '~/types/blog'
+
 const loading = ref(false)
 const errorMessage = ref('')
-const form = ref<PostFormPayload>({
+const form = ref<IPostFormPayload>({
   title: '',
   excerpt: '',
   content: '',
@@ -67,22 +72,24 @@ const form = ref<PostFormPayload>({
   image: '',
 })
 
-async function submit() {
+const submit = async () => {
   loading.value = true
   errorMessage.value = ''
-
-  try {
-    await $fetch('/api/posts', {
-      method: 'POST',
-      body: form.value,
-    } as Record<string, unknown>)
-
-    await navigateTo('/admin/blog')
-  } catch {
-    errorMessage.value = 'Не удалось сохранить пост'
-  } finally {
-    loading.value = false
-  }
+  await $fetch('/api/posts/create', {
+    method: 'POST',
+    body: form.value,
+  } as Record<string, unknown>)
+      .then(res => {
+        console.log(res)
+        // await navigateTo(`/blog/${res.slug}`)
+      })
+      .catch(err => {
+        console.log(err)
+        errorMessage.value = 'Не удалось сохранить пост'
+      })
+      .finally(() => {
+        loading.value = false
+      })
 }
 </script>
 

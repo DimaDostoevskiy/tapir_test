@@ -1,32 +1,38 @@
 <template>
   <header class="header">
-    <KitTooltip position="bottom">
-      <template #trigger>
-        <KitAvatar
-            :size="'md'"
-        />
-      </template>
-      <template #content>
-        <div class="avatar-tooltip">
-          <div class="avatar-tooltip__text">{{ user?.name || "" }}</div>
-          <div class="avatar-tooltip__text">{{ user?.role || "" }}</div>
-          <KitButton
-              variant="outline"
-              size="md"
-              title="Перейти"
-              @click.stop="goToUserPage"
-          >
-            Перейти на страницу
-          </KitButton>
-        </div>
-      </template>
-    </KitTooltip>
+    <NuxtLink
+        class="logo"
+        to="/"
+    >Logo
+    </NuxtLink>
     <div v-if="isHomePage" class="search__container">
       <KitInput
           :placeholder="`Поиск...`"
           v-model="searchQuery"
       />
     </div>
+    <div class="info__container">
+      <div class="info">
+        <div class="info__text">{{ user?.name || "" }}</div>
+        <div class="info__text">{{ user?.role || "" }}</div>
+      </div>
+      <KitTooltip position="bottom">
+        <template #trigger>
+          <KitAvatar
+              :size="'md'"
+          />
+        </template>
+        <template v-if="isHomePage" #content>
+          <kit-button
+              :full-width="true"
+              :to="'/admin'"
+              variant="outline"
+              text="Панель администратора"
+          />
+        </template>
+      </KitTooltip>
+    </div>
+
   </header>
 </template>
 
@@ -38,10 +44,6 @@ const cookieUser = useCookie('auth_user')
 const searchQuery = useState<string>('postsSearchQuery', () => '')
 const user = ref<IUserCookie | null>(null)
 const isHomePage = computed(() => route.path === '/')
-
-const goToUserPage = () => {
-  console.log(22)
-}
 
 onMounted(() => {
   if (cookieUser.value) {
@@ -72,9 +74,10 @@ onMounted(() => {
   justify-content: space-between;
   max-width: 100vw;
   width: 1190px;
+  min-width: 320px;
   height: 64px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 16px;
   background: rgb(var(--color-bg-rgb) / 0.0);
   backdrop-filter: blur(10px);
   z-index: 10;
@@ -88,22 +91,32 @@ onMounted(() => {
   width: min(560px, 100%);
 }
 
-.avatar-tooltip {
+.info__container {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  height: fit-content;
-  z-index: 999;
+  justify-content: space-around;
+  text-align: right;
 }
 
-.avatar-tooltip__text {
-  margin: 0 0 12px 12px;
-  width: 100%;
-  text-align: left;
+.info {
+  margin: 0 12px 0 0;
 }
 
-@media (min-width: 768px) {
+.logo {
+  display: flex;
+  color: var(--color-primary);
+  font-size: 2em;
+  font-weight: 800;
+  text-shadow: var(--color-primary);
+}
+
+@media (max-width: 768px)  {
+  .logo {
+    display: none;
+  }
+
+
 }
 </style>
 

@@ -1,12 +1,9 @@
 import { defineEventHandler, readBody } from 'h3'
 import { PostModel } from '../../models/Post'
-import { ensureDbReady } from '../../utils/initDb'
 import makeSlug from '../../utils/makeSlugUtil'
 import { validatePostPayload } from '../../utils/posts'
 
 export default defineEventHandler(async (event) => {
-    await ensureDbReady()
-
     const body = await readBody(event)
     const payload = validatePostPayload(body)
     const slug = await makeSlug(payload.title)

@@ -1,5 +1,5 @@
 <template>
-  <article v-if="post" class="post">
+  <section v-if="post" class="post">
     <header class="post__header">
       <h1 class="post__title">{{ post.title }}</h1>
       <p class="post__meta">Обновлено: {{ formattedDate }}</p>
@@ -13,7 +13,7 @@
     <div class="blog-post__content">
       <p v-for="(paragraph, idx) in paragraphs" :key="idx">{{ paragraph }}</p>
     </div>
-  </article>
+  </section>
 
   <section v-else class="container">
     <p class="blog-page__state blog-page__state--error">Пост не найден</p>
@@ -21,15 +21,16 @@
 </template>
 
 <script setup lang="ts">
+
+useSeoMeta({
+  title: () => (post.value ? `${post.value.title} — pro_moto_blog` : 'Пост — pro_moto_blog'),
+})
+
 import type {BlogPost} from '~/types/blog'
 
 const route = useRoute()
 
 const {data: post} = await useFetch<BlogPost | null>(() => `/api/posts/${route.params.slug}`)
-
-useSeoMeta({
-  title: () => (post.value ? `${post.value.title} — pro_moto_blog` : 'Пост — pro_moto_blog'),
-})
 
 const paragraphs = computed(() => post.value?.content.split(/\n{2,}/).filter(Boolean) || [])
 const formattedDate = computed(() => {

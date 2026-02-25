@@ -113,14 +113,14 @@
   color: var(--color-primary);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .footer__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 26px;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 768px) {
   .footer__grid {
     grid-template-columns: 1fr;
     gap: 22px;

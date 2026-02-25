@@ -1,10 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { PostModel } from '../../models/Post'
-import { ensureDbReady } from '../../utils/initDb'
 
 export default defineEventHandler(async () => {
-  await ensureDbReady()
-
   const batchId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   const now = new Date()
 

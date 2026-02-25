@@ -6,8 +6,7 @@
       <KitButton
           to="/admin/blog"
           variant="outline"
-          title="Назад к списку"
-      />
+      >Назад к списку</KitButton>
     </div>
     <p v-if="pending"
        class="admin-page__state"
@@ -59,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import type {BlogPost, PostFormPayload} from '~/types/blog'
+import type {BlogPost, IPostFormPayload} from '~/types/blog'
 
 definePageMeta({
   middleware: ['auth'],
@@ -74,7 +73,7 @@ const id = Number(route.params.id)
 
 const isLoading = ref(false)
 const errorMessage = ref('')
-const form = ref<PostFormPayload>({
+const form = ref<IPostFormPayload>({
   title: '',
   excerpt: '',
   content: '',
@@ -103,22 +102,17 @@ watch(post, (newValue) => {
 const submit = async () => {
   errorMessage.value = ''
   isLoading.value = true
-  await $fetch(`/api/posts/update`, {
-    method: 'POST',
-    body: form.value,
-  })
-      .then(res => {
-        console.log(res)
-        return res
-      })
-      .catch(err => {
-        if (err.response.message) {
-          errorMessage.value = err.response.message
-        }
-        errorMessage.value = 'Не удалось обновить пост'
-      })
 
-  await navigateTo('/admin/blog')
+  const res = await $fetch(`/api/posts/update`, {
+    method: 'POST',
+    body: form.value
+  }as Record<string, unknown>)
+
+  console.log(res)
+
+  isLoading.value = false
+
+  // await navigateTo('/admin/blog')
 }
 </script>
 

@@ -10,7 +10,7 @@ export interface BlogPost {
     updatedAt: string
 }
 
-export interface PostFormPayload {
+export interface IPostFormPayload {
     title: string
     excerpt: string
     content: string

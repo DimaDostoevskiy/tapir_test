@@ -11,6 +11,7 @@
       <Teleport to="body">
         <div
             v-if="isShow"
+            ref="contentRef"
             class="tooltip"
             :class="'tooltip--' + position"
             :style="{
@@ -28,7 +29,7 @@
 
 
 <script setup>
-import {ref, watch} from 'vue'
+import {ref, watch, nextTick} from 'vue'
 
 const props = defineProps({
   text: String,
@@ -40,14 +41,21 @@ const props = defineProps({
 })
 const isShow = ref(false)
 const wrapperRef = ref(null)
+const contentRef = ref(null)
 const top = ref(0)
 const left = ref(0)
+
+const hasContent = () => {
+  if (props.text?.trim()) return true
+  const text = contentRef.value?.textContent?.trim()
+  return Boolean(text)
+}
 
 const updatePosition = () => {
   if (!wrapperRef?.value) return
 
   const rect = wrapperRef.value.getBoundingClientRect()
-  const tooltipWidth = 120 // примерная ширина
+  const tooltipWidth = 120
 
   switch (props.position) {
     case 'top':
@@ -73,8 +81,13 @@ const stopShow = () => {
   isShow.value = false
 }
 
-watch(isShow, (newVal) => {
+watch(isShow, async (newVal) => {
   if (newVal) {
+    await nextTick()
+    if (!hasContent()) {
+      isShow.value = false
+      return
+    }
     updatePosition()
     setTimeout(stopShow, 2000)
   }
