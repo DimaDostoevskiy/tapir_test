@@ -1,38 +1,26 @@
 <!-- BaseButton.vue -->
 <template>
-  <NuxtLink
-    v-if="to"
-    :to="to"
-    class="btn"
-    :class="btnClasses"
-    :aria-disabled="disabled || loading ? true : undefined"
-    v-bind="linkAttrs"
-    @click="onLinkClick"
-  >
-    <span v-if="loading" class="btn__spinner" />
-    <span v-if="icon && !loading" class="btn__icon" :class="iconPosition">{{ icon }}</span>
-    <span class="btn__text"><slot /></span>
-    <span v-if="iconRight && !loading" class="btn__icon btn__icon--right">{{ iconRight }}</span>
-  </NuxtLink>
-  <button
-    v-else
-    :type="type"
-    :disabled="disabled || loading"
-    class="btn"
-    :class="btnClasses"
-    v-bind="$attrs"
-    @click="$emit('click', $event)"
-  >
-    <span v-if="loading" class="btn__spinner" />
-    <span v-if="icon && !loading" class="btn__icon" :class="iconPosition">{{ icon }}</span>
-    <span v-if="text" class="btn__text">{{text}}</span>
-    <span class="btn__text"><slot /></span>
-    <span v-if="iconRight && !loading" class="btn__icon btn__icon--right">{{ iconRight }}</span>
-  </button>
+  <div :class="{ 'btn-wrap--full': fullWidth }">
+    <button
+        class="btn"
+        :type="type"
+        :disabled="disabled || loading"
+        :class="btnClasses"
+        v-bind="$attrs"
+        @click="clickHandler"
+    >
+      <span class="btn__spinner" v-if="loading"/>
+      <span class="btn__icon" v-if="icon && !loading" :class="iconPosition">{{ icon }}</span>
+      <span v-if="(text || $slots.default) && !loading" class="btn__text">
+        <slot>{{ text }}</slot>
+      </span>
+      <span class="btn__icon btn__icon--right" v-if="iconRight && !loading">{{ iconRight }}</span>
+    </button>
+  </div>
 </template>
 
 <script setup>
-import { computed, useAttrs } from 'vue'
+import {computed} from 'vue'
 
 const props = defineProps({
   variant: {
@@ -40,20 +28,27 @@ const props = defineProps({
     default: 'primary',
     validator: v => ['primary', 'secondary', 'outline', 'danger', 'success'].includes(v)
   },
-  type: { type: String, default: 'button' },
-  text: { type: String, default: 'button' },
-  to: { type: [String, Object], default: null },
-  size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v) },
+  type: {type: String, default: 'button'},
+  text: {type: String, default: null},
+  to: {type: String, default: null},
+  size: {
+    type: String,
+    default: 'md',
+    validator: v => ['sm', 'md', 'lg'].includes(v)
+  },
   disabled: Boolean,
   loading: Boolean,
   fullWidth: Boolean,
   icon: String,
   iconRight: String,
-  iconPosition: { type: String, default: 'left', validator: v => ['left', 'right'].includes(v) }
+  iconPosition: {
+    type: String,
+    default: 'left',
+    validator: v => ['left', 'right'].includes(v)
+  }
 })
 
 const emit = defineEmits(['click'])
-const attrs = useAttrs()
 
 const btnClasses = computed(() => ({
   'btn--primary': props.variant === 'primary',
@@ -68,16 +63,15 @@ const btnClasses = computed(() => ({
   'btn--disabled': props.disabled
 }))
 
-const linkAttrs = computed(() => {
-  const { type, ...rest } = attrs
-  return rest
-})
-
-function onLinkClick(e) {
+const clickHandler = (e) => {
   if (props.disabled || props.loading) {
     e.preventDefault()
   }
-  emit('click', e)
+  if (props.to) {
+    navigateTo(props.to)
+  } else {
+    emit('click')
+  }
 }
 </script>
 
@@ -101,6 +95,10 @@ function onLinkClick(e) {
   outline: none;
   transition: all 0.2s ease;
   width: auto;
+}
+
+.btn-wrap--full {
+  width: 100%;
 }
 
 .btn--full {
@@ -209,7 +207,9 @@ function onLinkClick(e) {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Icon */
