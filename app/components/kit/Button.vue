@@ -25,6 +25,7 @@
   >
     <span v-if="loading" class="btn__spinner" />
     <span v-if="icon && !loading" class="btn__icon" :class="iconPosition">{{ icon }}</span>
+    <span v-if="text" class="btn__text">{{text}}</span>
     <span class="btn__text"><slot /></span>
     <span v-if="iconRight && !loading" class="btn__icon btn__icon--right">{{ iconRight }}</span>
   </button>
@@ -34,13 +35,14 @@
 import { computed, useAttrs } from 'vue'
 
 const props = defineProps({
-  type: { type: String, default: 'button' },
-  to: { type: [String, Object], default: null },
   variant: {
     type: String,
     default: 'primary',
     validator: v => ['primary', 'secondary', 'outline', 'danger', 'success'].includes(v)
   },
+  type: { type: String, default: 'button' },
+  text: { type: String, default: 'button' },
+  to: { type: [String, Object], default: null },
   size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v) },
   disabled: Boolean,
   loading: Boolean,
@@ -225,16 +227,9 @@ function onLinkClick(e) {
 
 /* Text styles */
 .btn__text {
-  font-weight: 500;
+  width: 100%;
+  font-weight: 600;
   text-transform: none;
   letter-spacing: 0.03em;
-}
-
-.btn--primary .btn__text {
-  font-weight: 600;
-}
-
-.btn--outline .btn__text {
-  font-weight: 400;
 }
 </style>
