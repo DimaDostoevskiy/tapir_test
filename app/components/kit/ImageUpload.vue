@@ -6,28 +6,28 @@
     </label>
     <label class="kit-image-upload__trigger">
       <input
-        type="file"
-        accept="image/*"
-        class="kit-image-upload__input"
-        @change="onChange"
+          type="file"
+          accept="image/*"
+          class="kit-image-upload__input"
+          @change="onChange"
       />
       <span class="kit-image-upload__trigger-text">Выбрать файл</span>
     </label>
     <p v-if="error" class="kit-image-upload__error">{{ error }}</p>
     <div v-if="(modelValue ?? '').trim()" class="kit-image-upload__preview">
-      <img :src="modelValue ?? ''" alt="Превью" class="kit-image-upload__preview-img" />
+      <img :src="modelValue ?? ''" alt="Превью" class="kit-image-upload__preview-img"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const props = withDefaults(
-  defineProps<{
-    modelValue?: string | null
-    label?: string
-    required?: boolean
-  }>(),
-  { required: false }
+    defineProps<{
+      modelValue?: string | null
+      label?: string
+      required?: boolean
+    }>(),
+    {required: false}
 )
 
 const emit = defineEmits<{
@@ -36,22 +36,21 @@ const emit = defineEmits<{
 
 const error = ref('')
 
-async function onChange(event: Event) {
+const onChange = async (event: Event) => {
   error.value = ''
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
-  try {
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await $fetch<{ path: string }>('/api/upload', {
-      method: 'POST',
-      body: formData,
-    })
+  const formData = new FormData()
+  formData.append('file', file)
+  await $fetch<{ path: string }>('/api/upload', {
+    method: 'POST',
+    body: formData,
+  }).then(res => {
     emit('update:modelValue', res.path)
-  } catch {
+  }).catch(() => {
     error.value = 'Не удалось загрузить изображение'
-  }
+  })
   input.value = ''
 }
 </script>
