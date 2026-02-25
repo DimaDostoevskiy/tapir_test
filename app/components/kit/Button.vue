@@ -1,12 +1,11 @@
 <!-- BaseButton.vue -->
 <template>
   <div :class="{ 'btn-wrap--full': fullWidth }">
-    <button
+    <component
+        :is="props.to ? 'NuxtLink' : 'button'"
+        v-bind="tagAttrs"
         class="btn"
-        :type="type"
-        :disabled="disabled || loading"
         :class="btnClasses"
-        v-bind="$attrs"
         @click="clickHandler"
     >
       <span class="btn__spinner" v-if="loading"/>
@@ -15,7 +14,7 @@
         <slot>{{ text }}</slot>
       </span>
       <span class="btn__icon btn__icon--right" v-if="iconRight && !loading">{{ iconRight }}</span>
-    </button>
+    </component>
   </div>
 </template>
 
@@ -63,13 +62,19 @@ const btnClasses = computed(() => ({
   'btn--disabled': props.disabled
 }))
 
+const attrs = useAttrs()
+const tagAttrs = computed(() =>
+  props.to
+    ? { to: props.to, ...attrs }
+    : { type: props.type, disabled: props.disabled || props.loading, ...attrs }
+)
+
 const clickHandler = (e) => {
   if (props.disabled || props.loading) {
     e.preventDefault()
+    return
   }
-  if (props.to) {
-    navigateTo(props.to)
-  } else {
+  if (!props.to) {
     emit('click')
   }
 }

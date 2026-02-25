@@ -2,17 +2,18 @@
   <div class="post__card">
     <div class="card__image__wrapper">
       <img
-        v-if="displayImageSrc && !isImageBroken"
-        class="post__card__image"
-        :src="displayImageSrc"
-        :alt="`Изображение к посту: ${post.title}`"
-        loading="lazy"
-        @error="handleImageError"
+          v-if="displayImageSrc && !isImageBroken"
+          class="post__card__image"
+          :src="displayImageSrc"
+          :alt="`Изображение к посту: ${post.title}`"
+          loading="lazy"
+          @error="handleImageError"
       >
       <div v-else class="post__card__media-fallback">Нет изображения</div>
-      <NuxtLink class="post__card__link" :to="`/${post.slug}`">
-        Перейти на страницу
-      </NuxtLink>
+      <a
+          :href="postHref"
+          class="post__card__link"
+      >Перейти на страницу</a>
     </div>
     <div class="post__card__body">
       <h2 class="post__card__title">{{ post.title }}</h2>
@@ -34,6 +35,9 @@ type BlogPostWithImage = BlogPost & {
 const props = defineProps<{
   post: BlogPost
 }>()
+
+const { app: appConfig } = useRuntimeConfig()
+const postHref = computed(() => `${appConfig.baseURL || '/blog/'}${props.post.slug}`)
 
 const placeholderImageSrc = 'https://placehold.co/1200x620/222222/fafafa?text=Post+image'
 const isImageBroken = ref(false)
@@ -101,6 +105,10 @@ function handleImageError() {
   position: absolute;
   right: 10px;
   bottom: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: rgba(250, 250, 250, 0.78);
   font-weight: 600;
   font-size: 14px;

@@ -10,7 +10,7 @@
         <h2 class="admin-page__card-title">Посты</h2>
         <p class="admin-page__card-desc">Создание, редактирование и удаление записей блога.</p>
         <div class="admin-page__actions">
-          <KitButton to="/admin/blog" variant="primary">Управление постами</KitButton>
+          <a :href="baseUrl + 'admin/blog'" class="link-btn link-btn--primary">Управление постами</a>
         </div>
       </div>
     </div>
@@ -25,6 +25,9 @@ definePageMeta({
 useSeoMeta({
   title: 'Admin — Pro Moto Blog',
 })
+
+const { app: appConfig } = useRuntimeConfig()
+const baseUrl = appConfig.baseURL || '/blog/'
 </script>
 
 <style scoped>

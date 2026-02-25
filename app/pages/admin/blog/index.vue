@@ -3,7 +3,7 @@
     <header class="admin-page__header">
       <h1 class="admin-page__title">Посты</h1>
       <div class="admin-page__actions">
-        <KitButton to="/admin/blog/create" variant="primary">Создать пост</KitButton>
+        <a :href="baseUrl + 'admin/blog/create'" class="link-btn link-btn--primary">Создать пост</a>
       </div>
     </header>
 
@@ -20,7 +20,7 @@
           </p>
         </div>
         <div class="admin-post-list__actions">
-          <KitButton :to="`/admin/blog/${post.id}/edit`" variant="outline" size="sm">Редактировать</KitButton>
+          <a :href="baseUrl + 'admin/blog/' + post.id + '/edit'" class="link-btn link-btn--outline link-btn--sm">Редактировать</a>
           <KitButton type="button" variant="danger" size="sm" @click="removePost(post.id)">Удалить</KitButton>
         </div>
       </article>
@@ -40,6 +40,8 @@ useSeoMeta({
   title: 'Админка',
 })
 
+const { app: appConfig } = useRuntimeConfig()
+const baseUrl = appConfig.baseURL || '/blog/'
 const {data: posts, pending, error, refresh} = await useFetch<BlogPost[]>('/api/posts/get-all')
 
 async function removePost(id: number) {

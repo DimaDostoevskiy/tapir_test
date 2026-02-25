@@ -3,10 +3,7 @@
     <div class="admin-page__header">
       <h1 class="admin-page__title"
       >Редактировать пост</h1>
-      <KitButton
-          to="/admin/blog"
-          variant="outline"
-      >Назад к списку</KitButton>
+      <a :href="baseUrl + 'admin/blog'" class="link-btn link-btn--outline">Назад к списку</a>
     </div>
     <p v-if="pending"
        class="admin-page__state"
@@ -70,6 +67,8 @@ useSeoMeta({
 
 const route = useRoute()
 const id = Number(route.params.id)
+const { app: appConfig } = useRuntimeConfig()
+const baseUrl = appConfig.baseURL || '/blog/'
 
 const isLoading = ref(false)
 const errorMessage = ref('')

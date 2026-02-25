@@ -1,10 +1,9 @@
 <template>
   <header class="header">
-    <NuxtLink
+    <a
         class="logo"
-        to="/"
-    >Logo
-    </NuxtLink>
+        :href="baseUrl"
+    >Logo</a>
     <div v-if="isHomePage" class="search__container">
       <KitInput
           :placeholder="`Поиск...`"
@@ -23,12 +22,10 @@
           />
         </template>
         <template v-if="isHomePage" #content>
-          <kit-button
-              :full-width="true"
-              :to="'/admin'"
-              variant="outline"
-              text="Панель администратора"
-          />
+          <a
+              :href="baseUrl + 'admin'"
+              class="header-tooltip__link"
+          >Панель администратора</a>
         </template>
       </KitTooltip>
     </div>
@@ -40,6 +37,8 @@
 import type {IUserCookie} from '../../../types/user'
 
 const route = useRoute()
+const { app: appConfig } = useRuntimeConfig()
+const baseUrl = appConfig.baseURL || '/blog/'
 const cookieUser = useCookie('auth_user')
 const searchQuery = useState<string>('postsSearchQuery', () => '')
 const user = ref<IUserCookie | null>(null)
@@ -109,6 +108,26 @@ onMounted(() => {
   font-size: 2em;
   font-weight: 800;
   text-shadow: var(--color-primary);
+}
+
+.header-tooltip__link {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: center;
+  color: rgb(var(--color-text-rgb));
+  background: transparent;
+  border: 1px solid rgb(var(--color-border-rgb) / 0.5);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.header-tooltip__link:hover {
+  background: rgb(var(--color-surface-2-rgb) / 0.5);
+  border-color: rgb(var(--color-primary-rgb));
 }
 
 @media (max-width: 768px)  {

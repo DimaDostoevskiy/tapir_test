@@ -2,11 +2,7 @@
   <section class="admin-page scroll">
     <div class="admin-page__header">
       <h1 class="admin-page__title">Создать пост</h1>
-      <KitButton
-          to="/admin/blog"
-          variant="outline"
-          text="Назад к списку"
-      />
+      <a :href="baseUrl + 'admin/blog'" class="link-btn link-btn--outline">Назад к списку</a>
     </div>
 
     <KitForm
@@ -61,6 +57,8 @@ definePageMeta({
 
 import type {IPostFormPayload} from '~/types/blog'
 
+const { app: appConfig } = useRuntimeConfig()
+const baseUrl = appConfig.baseURL || '/blog/'
 const loading = ref(false)
 const errorMessage = ref('')
 const form = ref<IPostFormPayload>({

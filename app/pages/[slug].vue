@@ -29,8 +29,12 @@ useSeoMeta({
 import type {BlogPost} from '~/types/blog'
 
 const route = useRoute()
+const slug = computed(() => String(route.params.slug ?? ''))
 
-const {data: post} = await useFetch<BlogPost | null>(() => `/api/posts/${route.params.slug}`)
+const { data: post } = await useFetch<BlogPost | null>(
+  () => `/api/posts/${slug.value}`,
+  { key: `post-${slug.value}` }
+)
 
 const paragraphs = computed(() => post.value?.content.split(/\n{2,}/).filter(Boolean) || [])
 const formattedDate = computed(() => {
