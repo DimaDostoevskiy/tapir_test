@@ -107,8 +107,6 @@ const submit = async () => {
     body: form.value
   }as Record<string, unknown>)
 
-  console.log(res)
-
   isLoading.value = false
 
   // await navigateTo('/admin/blog')

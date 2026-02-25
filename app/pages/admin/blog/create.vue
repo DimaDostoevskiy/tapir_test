@@ -78,11 +78,9 @@ const submit = async () => {
     body: form.value,
   } as Record<string, unknown>)
       .then(res => {
-        console.log(res)
         // await navigateTo(`/blog/${res.slug}`)
       })
-      .catch(err => {
-        console.log(err)
+      .catch(() => {
         errorMessage.value = 'Не удалось сохранить пост'
       })
       .finally(() => {
