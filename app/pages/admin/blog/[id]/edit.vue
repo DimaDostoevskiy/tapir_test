@@ -69,7 +69,7 @@ const form = ref<PostFormPayload>({
   image: '',
 })
 
-const {data: post, pending, error: fetchError} = await useFetch<BlogPost>(`/api/admin/posts/${id}`)
+const {data: post, pending, error: fetchError} = await useFetch<BlogPost>(`/api/posts/${id}`)
 
 watch(
     post,
@@ -93,7 +93,7 @@ async function submit() {
   errorMessage.value = ''
 
   try {
-    await $fetch(`/api/admin/posts/${id}`, {
+    await $fetch(`/api/posts/${id}`, {
       method: 'PUT',
       body: form.value,
     } as Record<string, unknown>)

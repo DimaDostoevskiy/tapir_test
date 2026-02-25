@@ -20,41 +20,48 @@ function getExt(filename: string, mimeType?: string): string {
 }
 
 export default defineEventHandler(async (event) => {
-    const form = await readMultipartFormData(event)
-    if (!form?.length) {
-        throw createError({statusCode: 400, statusMessage: 'No file in request'})
-    }
+    try {
+        const form = await readMultipartFormData(event)
+        if (!form?.length) {
+            createError({statusCode: 400, statusMessage: 'No file in request'})
+            return
+        }
 
-    const filePart = form.find((p) => p.name === 'file' || p.name === 'image')
-    if (!filePart) {
-        throw createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
-    }
-    if (!filePart.data || !(filePart.data instanceof Buffer)) {
-        throw createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
-    }
+        const filePart = form.find((p) => p.name === 'file' || p.name === 'image')
+        if (!filePart) {
+            createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
+            return
+        }
+        if (!filePart.data || !(filePart.data instanceof Buffer)) {
+            createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
+            return
+        }
 
-    const size = filePart.data.length
-    if (size > MAX_SIZE) {
-        throw createError({statusCode: 400, statusMessage: 'File too large (max 5 MB)'})
-    }
+        if (filePart.data.length > MAX_SIZE) {
+            createError({statusCode: 400, statusMessage: 'File too large (max 5 MB)'})
+            return
+        }
 
-    const mime = ((filePart.type || '').toLowerCase().split(';')[0] ?? '').trim()
-    const isAllowedType = ALLOWED_TYPES.some((t) => mime === t)
-    if (!isAllowedType) {
-        throw createError({statusCode: 400, statusMessage: 'Invalid file type. Use JPEG, PNG, WebP or GIF'})
-    }
+        const mime = ((filePart.type || '').toLowerCase().split(';')[0] ?? '').trim()
+        const isAllowedType = ALLOWED_TYPES.some((t) => mime === t)
+        if (!isAllowedType) {
+            createError({statusCode: 400, statusMessage: 'Invalid file type. Use JPEG, PNG, WebP or GIF'})
+            return
+        }
 
-    const ext = getExt(filePart.filename || '', mime)
-    const filename = `${randomUUID()}${ext}`
-    const uploadDir = join(process.cwd(), 'uploads')
-    if (!existsSync(uploadDir)) {
-        mkdirSync(uploadDir, {recursive: true})
-    }
-    const filePath = join(uploadDir, filename)
-    writeFileSync(filePath, filePart.data)
+        const ext = getExt(filePart.filename || '', mime)
+        const filename = `${randomUUID()}${ext}`
+        const uploadDir = join(process.cwd(), 'uploads')
 
-    const config = useRuntimeConfig()
-    const base = (config.filesBaseUrl as string)?.trim()
-    const path = base ? `${base.replace(/\/$/, '')}/${filename}` : `/uploads/${filename}`
-    return {path}
+        if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, {recursive: true})
+        }
+        const filePath = join(uploadDir, filename)
+        writeFileSync(filePath, filePart.data)
+
+        const config = useRuntimeConfig()
+        return {path: config.filesBaseUrl + filename}
+    } catch (err) {
+        throw createError({statusCode: 500, statusMessage: 'Ошибка при загрузке файла!'})
+    }
 })

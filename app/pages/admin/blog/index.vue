@@ -40,14 +40,14 @@ useSeoMeta({
   title: 'Админка',
 })
 
-const { data: posts, pending, error, refresh } = await useFetch<BlogPost[]>('/api/admin/posts')
+const { data: posts, pending, error, refresh } = await useFetch<BlogPost[]>('/api/posts')
 
 async function removePost(id: number) {
   if (!confirm('Удалить пост?')) {
     return
   }
 
-  await $fetch(`/api/admin/posts/${id}`, {
+  await $fetch(`/api/posts/${id}`, {
     method: 'DELETE',
   } as Record<string, unknown>)
 

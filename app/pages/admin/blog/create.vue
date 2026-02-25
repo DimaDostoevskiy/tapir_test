@@ -13,28 +13,32 @@
     >
       <KitInput
           label="Заголовок"
-          v-model="form.title"
           type="text"
           maxlength="255"
           required
-          :debounce="0"
+          :debounce="200"
+          v-model="form.title"
       />
       <KitInput
           label="Краткое описание"
-          v-model="form.excerpt"
           as="textarea"
           :rows="3"
-          :debounce="0"
+          :debounce="200"
+          v-model="form.excerpt"
       />
       <KitInput
           label="Контент"
-          v-model="form.content"
           as="textarea"
           :rows="12"
           required
-          :debounce="0"
+          :debounce="200"
+          v-model="form.content"
       />
-      <KitImageUpload v-model="form.image" label="Изображение" :required="true" />
+      <KitImageUpload
+          label="Изображение"
+          required
+          v-model="form.image"
+      />
       <label class="kit-form__checkbox">
         <input v-model="form.published" type="checkbox"/>
         <span>Опубликовано</span>
@@ -68,7 +72,7 @@ async function submit() {
   errorMessage.value = ''
 
   try {
-    await $fetch('/api/admin/posts', {
+    await $fetch('/api/posts', {
       method: 'POST',
       body: form.value,
     } as Record<string, unknown>)
