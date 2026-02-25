@@ -49,7 +49,7 @@ async function removePost(id: number) {
 
   await $fetch(`/api/admin/posts/${id}`, {
     method: 'DELETE',
-  })
+  } as Record<string, unknown>)
 
   await refresh()
 }

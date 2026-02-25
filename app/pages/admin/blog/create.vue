@@ -71,7 +71,7 @@ async function submit() {
     await $fetch('/api/admin/posts', {
       method: 'POST',
       body: form.value,
-    })
+    } as Record<string, unknown>)
 
     await navigateTo('/admin/blog')
   } catch {
