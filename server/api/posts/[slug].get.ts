@@ -1,6 +1,5 @@
 import { createError, defineEventHandler, getRouterParam } from 'h3'
 import { PostModel } from '../../models/Post'
-import { ensureDbReady } from '../../utils/initDb'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
@@ -8,8 +7,6 @@ export default defineEventHandler(async (event) => {
   if (!slug) {
     throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
   }
-
-  await ensureDbReady()
 
   const post = await PostModel.findOne({
     where: {

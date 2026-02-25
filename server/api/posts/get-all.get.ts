@@ -6,10 +6,9 @@ import {Op} from 'sequelize'
 export default defineEventHandler(async (event) => {
     await ensureDbReady()
 
-    const query = getQuery(event)
-    const limit = Number(query.limit) || 1000
-    const offset = Number(query.offset) || 0
-    const searchString = query.q
+    const limit = Number(getQuery(event).limit) || 1000
+    const offset = Number(getQuery(event).offset) || 0
+    const searchString = getQuery(event).q || ''
 
     const where: Record<string | symbol, unknown> = {
         published: true,

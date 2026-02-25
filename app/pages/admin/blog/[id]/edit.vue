@@ -1,15 +1,26 @@
 <template>
   <section class="admin-page scroll">
-    <header class="admin-page__header">
-      <h1 class="admin-page__title">Редактировать пост</h1>
-      <KitButton to="/admin/blog" variant="outline">Назад к списку</KitButton>
-    </header>
-
-    <p v-if="pending" class="admin-page__state">Загрузка...</p>
-    <p v-else-if="fetchError" class="admin-page__state admin-page__state--error">Не удалось загрузить пост</p>
+    <div class="admin-page__header">
+      <h1 class="admin-page__title"
+      >Редактировать пост</h1>
+      <KitButton
+          to="/admin/blog"
+          variant="outline"
+          title="Назад к списку"
+      />
+    </div>
+    <p v-if="pending"
+       class="admin-page__state"
+    >Загрузка...</p>
+    <p v-else-if="fetchError"
+       class="admin-page__state admin-page__state--error"
+    >Не удалось загрузить пост</p>
 
     <template v-else-if="post">
-      <KitForm :loading="loading" submit-label="Сохранить" @submit="submit">
+      <KitForm
+          :loading="isLoading"
+          submit-label="Сохранить"
+          @submit="submit">
         <KitInput
             label="Заголовок"
             v-model="form.title"
@@ -33,7 +44,10 @@
             required
             :debounce="0"
         />
-        <KitImageUpload v-model="form.image" label="Изображение" />
+        <KitImageUpload
+            v-model="form.image"
+            label="Изображение"
+        />
         <label class="kit-form__checkbox">
           <input v-model="form.published" type="checkbox"/>
           <span>Опубликовано</span>
@@ -58,7 +72,7 @@ useSeoMeta({
 const route = useRoute()
 const id = Number(route.params.id)
 
-const loading = ref(false)
+const isLoading = ref(false)
 const errorMessage = ref('')
 const form = ref<PostFormPayload>({
   title: '',
@@ -71,39 +85,40 @@ const form = ref<PostFormPayload>({
 
 const {data: post, pending, error: fetchError} = await useFetch<BlogPost>(`/api/posts/${id}`)
 
-watch(
-    post,
-    (p) => {
-      if (p) {
+watch(post, (newValue) => {
+      if (newValue) {
         form.value = {
-          title: p.title,
-          excerpt: p.excerpt ?? '',
-          content: p.content,
-          published: p.published,
-          slug: p.slug,
-          image: p.image ?? '',
+          title: newValue.title,
+          excerpt: newValue.excerpt ?? '',
+          content: newValue.content,
+          published: newValue.published,
+          slug: newValue.slug,
+          image: newValue.image ?? '',
         }
       }
     },
     {immediate: true}
 )
 
-async function submit() {
-  loading.value = true
+const submit = async () => {
   errorMessage.value = ''
+  isLoading.value = true
+  await $fetch(`/api/posts/update`, {
+    method: 'POST',
+    body: form.value,
+  })
+      .then(res => {
+        console.log(res)
+        return res
+      })
+      .catch(err => {
+        if (err.response.message) {
+          errorMessage.value = err.response.message
+        }
+        errorMessage.value = 'Не удалось обновить пост'
+      })
 
-  try {
-    await $fetch(`/api/posts/${id}`, {
-      method: 'PUT',
-      body: form.value,
-    } as Record<string, unknown>)
-
-    await navigateTo('/admin/blog')
-  } catch {
-    errorMessage.value = 'Не удалось обновить пост'
-  } finally {
-    loading.value = false
-  }
+  await navigateTo('/admin/blog')
 }
 </script>
 
