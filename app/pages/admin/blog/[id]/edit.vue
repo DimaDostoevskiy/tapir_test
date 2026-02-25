@@ -94,7 +94,7 @@ async function submit() {
 
   try {
     await $fetch(`/api/admin/posts/${id}`, {
-      method: 'PUT',
+      method: 'PUT' as const,
       body: form.value,
     })
 
