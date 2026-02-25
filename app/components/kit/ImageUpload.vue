@@ -43,7 +43,7 @@ const onChange = async (event: Event) => {
   if (!file) return
   const formData = new FormData()
   formData.append('file', file)
-  await $fetch<{ path: string }>('/api/upload', {
+  await $fetch<{ path: string }>('/api/files/upload', {
     method: 'POST',
     body: formData,
   }).then(res => {
