@@ -1,3 +1,4 @@
+import { defineEventHandler } from 'h3'
 import { PostModel } from '../../models/Post'
 import { ensureDbReady } from '../../utils/initDb'
 

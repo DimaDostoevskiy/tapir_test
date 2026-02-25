@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         host: process.env.HOST || '127.0.0.1',
         port: Number(process.env.PORT) || 3000,
         mailKey: process.env.MAIL_KEY || 'key',
+        filesBaseUrl: process.env.FILES_BASE_URL || '',
         externalAuthUrl: process.env.EXTERNAL_AUTH_URL || 'http://127.0.0.1:8000/api/auth/',
         mysql: {
             host: process.env.DB_HOST || '127.0.0.1',
@@ -67,14 +68,5 @@ export default defineNuxtConfig({
 
         // Компрессия
         compressPublicAssets: true,
-
-        // Раздавать uploads так же, как public (по пути /uploads/...)
-        publicAssets: [
-            {
-                baseURL: 'uploads',
-                dir: 'uploads',
-                maxAge: 86400,
-            },
-        ],
     }
 })

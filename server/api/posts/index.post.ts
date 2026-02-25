@@ -1,3 +1,4 @@
+import { defineEventHandler, readBody } from 'h3'
 import {PostModel} from '../../../models/Post'
 import {ensureDbReady} from '../../../utils/initDb'
 import makeSlug from '../../../utils/makeSlugUtil'

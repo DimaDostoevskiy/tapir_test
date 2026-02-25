@@ -1,3 +1,5 @@
+import { defineEventHandler } from 'h3'
+
 const MASKED_QUERY_KEYS = new Set(['token', 'access_token', 'refresh_token', 'authorization', 'password'])
 const STATIC_FILE_EXTENSIONS = new Set([
   '.js', '.css', '.map', '.ico', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.woff', '.woff2', '.ttf'

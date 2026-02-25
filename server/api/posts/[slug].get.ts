@@ -1,4 +1,4 @@
-import { createError, getRouterParam } from 'h3'
+import { createError, defineEventHandler, getRouterParam } from 'h3'
 import { PostModel } from '../../models/Post'
 import { ensureDbReady } from '../../utils/initDb'
 

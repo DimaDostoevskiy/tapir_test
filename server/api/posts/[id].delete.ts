@@ -1,6 +1,6 @@
-import { createError, getRouterParam } from 'h3'
-import { PostModel } from '../../../models/Post'
-import { ensureDbReady } from '../../../utils/initDb'
+import { createError, defineEventHandler, getRouterParam } from 'h3'
+import { PostModel } from '../../models/Post'
+import { ensureDbReady } from '../../utils/initDb'
 
 export default defineEventHandler(async (event) => {
   await ensureDbReady()
@@ -10,11 +10,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid post id' })
   }
 
-  const post = await PostModel.findByPk(id)
+  const deletedCount = await PostModel.destroy({ where: { id } })
 
-  if (!post) {
+  if (deletedCount === 0) {
     throw createError({ statusCode: 404, statusMessage: 'Post not found' })
   }
 
-  return post.get({ plain: true })
+  return { ok: true }
 })

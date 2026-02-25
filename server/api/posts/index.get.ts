@@ -1,8 +1,8 @@
-import {PostModel} from '../../models/Post'
-import {ensureDbReady} from '../../utils/initDb'
-import {getQuery} from 'h3'
-import {normalizePositiveInt} from '../../utils/normalizePositiveInt'
-import {Op} from 'sequelize'
+import { defineEventHandler, getQuery } from 'h3'
+import { PostModel } from '../../models/Post'
+import { ensureDbReady } from '../../utils/initDb'
+import { normalizePositiveInt } from '../../utils/normalizePositiveInt'
+import { Op } from 'sequelize'
 
 const DEFAULT_LIMIT = 10
 const MAX_LIMIT = 50
@@ -27,10 +27,11 @@ export default defineEventHandler(async (event) => {
         ]
     }
 
-    return await PostModel.findAll({
+    const list = await PostModel.findAll({
         where,
         order: [['createdAt', 'DESC']],
         limit,
         offset,
     })
+    return list.map((p) => p.get({plain: true}))
 })

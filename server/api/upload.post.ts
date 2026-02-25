@@ -1,4 +1,4 @@
-import {createError} from 'h3'
+import {createError, defineEventHandler, readMultipartFormData} from 'h3'
 import {writeFileSync, mkdirSync, existsSync} from 'node:fs'
 import {join} from 'node:path'
 import {randomUUID} from 'node:crypto'
@@ -53,5 +53,8 @@ export default defineEventHandler(async (event) => {
     const filePath = join(uploadDir, filename)
     writeFileSync(filePath, filePart.data)
 
-    return {path: `/api/uploads/${filename}`}
+    const config = useRuntimeConfig()
+    const base = (config.filesBaseUrl as string)?.trim()
+    const path = base ? `${base.replace(/\/$/, '')}/${filename}` : `/uploads/${filename}`
+    return {path}
 })

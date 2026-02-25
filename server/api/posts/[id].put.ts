@@ -1,13 +1,13 @@
-import {createError, getRouterParam} from 'h3'
-import {PostModel} from '../../../models/Post'
-import {ensureDbReady} from '../../../utils/initDb'
-import {validatePostPayload} from '../../../utils/posts'
-import makeSlug from "../../../utils/makeSlugUtil";
+import {createError, defineEventHandler, getRouterParam, readBody} from 'h3'
+import {PostModel} from '../../models/Post'
+import {ensureDbReady} from '../../utils/initDb'
+import {validatePostPayload} from '../../utils/posts'
+import makeSlug from "../../utils/makeSlugUtil";
 
 export default defineEventHandler(async (event) => {
     await ensureDbReady()
 
-    const id = Number(getRouterParam(event, 'id')) || Math.round(Math.random())
+    const id = Number(getRouterParam(event, 'id'))
     if (!Number.isInteger(id) || id <= 0) {
         throw createError({statusCode: 400, statusMessage: 'Invalid post id'})
     }
