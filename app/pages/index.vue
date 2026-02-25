@@ -34,7 +34,7 @@ definePageMeta({
 import type {BlogPost} from '~/types/blog'
 
 const PAGE_SIZE = 5
-const AUTO_LOAD_THRESHOLD = 5
+const AUTO_LOAD_THRESHOLD = 300
 const SHOW_SCROLL_TOP_THRESHOLD = 5
 
 const searchQuery = useState<string>('postsSearchQuery', () => '')
@@ -68,10 +68,10 @@ const syncBottomState = () => {
   }
 }
 
-const loadMorePosts = async () => {
+const loadMorePosts = async (reset = false) => {
   if (
       isLoadingMore.value
-      || !hasMore.value
+      || (!reset && !hasMore.value)
       || pending.value
       || Boolean(error.value)
   ) {
@@ -79,21 +79,27 @@ const loadMorePosts = async () => {
   }
 
   isLoadingMore.value = true
+  if (reset) {
+    postList.value = []
+    hasMore.value = true
+  }
 
-  const nextChunk = await $fetch<BlogPost[]>('api/posts/get-all', {
-    query: {
-      q: searchQuery.value.trim(),
-      limit: PAGE_SIZE,
-      offset: postList.value.length,
-    },
-  }).catch(() => {
-    return []
-  })
-
-  postList.value = [...postList.value, ...nextChunk]
-  hasMore.value = nextChunk.length === PAGE_SIZE
-  await nextTick()
-  syncBottomState()
+  try {
+    const nextChunk = await $fetch<BlogPost[]>('/api/posts/get-all', {
+      query: {
+        q: searchQuery.value.trim(),
+        limit: PAGE_SIZE,
+        offset: postList.value.length,
+      },
+    })
+    const list = Array.isArray(nextChunk) ? nextChunk : []
+    postList.value = [...postList.value, ...list]
+    hasMore.value = list.length === PAGE_SIZE
+    await nextTick()
+    syncBottomState()
+  } finally {
+    isLoadingMore.value = false
+  }
 }
 
 function scrollToTop() {
@@ -115,7 +121,7 @@ onBeforeUnmount(() => {
 })
 
 watch(searchQuery, async () => {
-  await loadMorePosts()
+  await loadMorePosts(true)
 })
 </script>
 
