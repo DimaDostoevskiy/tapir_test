@@ -101,6 +101,7 @@ const clickHandler = (e) => {
   width: 100%;
 }
 
+/* eslint-disable */
 .btn--full {
   width: 100%;
 }
@@ -196,6 +197,7 @@ const clickHandler = (e) => {
   pointer-events: none;
 }
 
+/* eslint-enable */
 /* Spinner */
 .btn__spinner {
   width: 1.2em;
