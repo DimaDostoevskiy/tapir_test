@@ -1,5 +1,5 @@
 import {createError, defineEventHandler, readMultipartFormData} from 'h3'
-import {useRuntimeConfig, useStorage} from '#imports'
+import {useRuntimeConfig} from '#imports'
 import {randomUUID} from 'node:crypto'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
