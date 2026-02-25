@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BlogPost } from '~/types/blog'
+import type {BlogPost} from '~/types/blog'
 
 definePageMeta({
   middleware: ['auth'],
@@ -40,7 +40,7 @@ useSeoMeta({
   title: 'Админка',
 })
 
-const { data: posts, pending, error, refresh } = await useFetch<BlogPost[]>('/api/posts')
+const {data: posts, pending, error, refresh} = await useFetch<BlogPost[]>('/api/posts/get-all')
 
 async function removePost(id: number) {
   if (!confirm('Удалить пост?')) {

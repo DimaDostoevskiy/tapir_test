@@ -1,6 +1,6 @@
 import {createError} from 'h3'
 
-export interface ValidatedPostPayload {
+export interface PostPayload {
     title: string
     slug: string
     excerpt: string | null
@@ -9,7 +9,7 @@ export interface ValidatedPostPayload {
     image: string | null
 }
 
-export function validatePostPayload(payload: unknown): ValidatedPostPayload {
+export function validatePostPayload(payload: unknown): PostPayload {
     if (!payload || typeof payload !== 'object') {
         throw createError({statusCode: 400, statusMessage: 'Payload must be an object'})
     }
