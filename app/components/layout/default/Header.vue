@@ -15,19 +15,9 @@
         <div class="info__text">{{ user?.name || "" }}</div>
         <div class="info__text">{{ user?.role || "" }}</div>
       </div>
-      <KitTooltip position="bottom">
-        <template #trigger>
-          <KitAvatar
-              :size="'md'"
-          />
-        </template>
-        <template v-if="isHomePage" #content>
-          <a
-              :href="baseUrl + 'admin'"
-              class="header-tooltip__link"
-          >Панель администратора</a>
-        </template>
-      </KitTooltip>
+      <KitAvatar
+          :size="'md'"
+      />
     </div>
 
   </header>
@@ -37,7 +27,7 @@
 import type {IUserCookie} from '../../../types/user'
 
 const route = useRoute()
-const { app: appConfig } = useRuntimeConfig()
+const {app: appConfig} = useRuntimeConfig()
 const baseUrl = appConfig.baseURL || '/blog/'
 const cookieUser = useCookie('auth_user')
 const searchQuery = useState<string>('postsSearchQuery', () => '')
@@ -130,7 +120,7 @@ onMounted(() => {
   border-color: rgb(var(--color-primary-rgb));
 }
 
-@media (max-width: 768px)  {
+@media (max-width: 768px) {
   .logo {
     display: none;
   }

@@ -6,13 +6,13 @@
           <h2 class="footer__title">Навигация</h2>
           <ul class="footer__list">
             <li class="footer__item">
-              <NuxtLink class="footer__link" to="/">Главная</NuxtLink>
+              <a class="footer__link" :href="baseUrl + '/'">Главная</a>
             </li>
             <li class="footer__item">
-              <NuxtLink class="footer__link" to="/blog">Блог</NuxtLink>
+              <a class="footer__link" :href="baseUrl">Блог</a>
             </li>
             <li class="footer__item">
-              <NuxtLink class="footer__link" to="/admin/blog">Админка</NuxtLink>
+              <a class="footer__link" :href="baseUrl +'admin/'">Админка</a>
             </li>
           </ul>
         </section>
@@ -50,6 +50,11 @@
     </div>
   </footer>
 </template>
+
+<script setup lang="ts">
+const {app: appConfig} = useRuntimeConfig()
+const baseUrl = appConfig.baseURL || '/blog/'
+</script>
 
 <style scoped>
 .footer {

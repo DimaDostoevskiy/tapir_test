@@ -121,7 +121,14 @@ onBeforeUnmount(() => {
   const el = blogListRef.value
   if (el) {
     el.removeEventListener('scroll', syncBottomState)
-    listMutationObserver?.disconnect()
+  }
+  if (listMutationObserver) {
+    try {
+      listMutationObserver.disconnect()
+    } catch (_) {
+      // ignore cleanup errors
+    }
+    listMutationObserver = null
   }
 })
 
