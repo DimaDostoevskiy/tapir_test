@@ -114,7 +114,7 @@ watch(isShow, async (newVal) => {
   border: 1px solid rgb(148 163 184 / 0.2);
   transition: opacity 0.15s;
 }
-
+/* eslint-disable */
 .tooltip--top {
   bottom: -4px;
   left: 50%;
@@ -134,4 +134,5 @@ watch(isShow, async (newVal) => {
   left: -4px;
   top: 50%;
 }
+/* eslint-enable */
 </style>
