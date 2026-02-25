@@ -48,7 +48,7 @@ async function removePost(id: number) {
   }
 
   await $fetch(`/api/admin/posts/${id}`, {
-    method: 'DELETE' as const,
+    method: 'DELETE',
   })
 
   await refresh()

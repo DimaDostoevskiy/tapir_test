@@ -69,7 +69,7 @@ async function submit() {
 
   try {
     await $fetch('/api/admin/posts', {
-      method: 'POST' as const,
+      method: 'POST',
       body: form.value,
     })
 
