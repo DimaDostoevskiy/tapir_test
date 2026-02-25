@@ -21,8 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import {nextTick} from 'vue'
-
 useSeoMeta({
   title: 'Блог - Главная',
 })
@@ -42,7 +40,6 @@ const blogListRef = ref<HTMLElement | null>(null)
 const postList = ref<BlogPost[]>([])
 const pending = ref(false)
 const error = ref('')
-const errorMessage = ref('')
 const isLoadingMore = ref(false)
 const hasMore = ref(true)
 const showScrollTopButton = ref(false)
@@ -79,6 +76,7 @@ const loadMorePosts = async (reset = false) => {
   }
 
   isLoadingMore.value = true
+
   if (reset) {
     postList.value = []
     hasMore.value = true
@@ -95,29 +93,36 @@ const loadMorePosts = async (reset = false) => {
     const list = Array.isArray(nextChunk) ? nextChunk : []
     postList.value = [...postList.value, ...list]
     hasMore.value = list.length === PAGE_SIZE
-    await nextTick()
-    syncBottomState()
   } finally {
     isLoadingMore.value = false
   }
 }
 
-function scrollToTop() {
+const scrollToTop = () => {
   blogListRef.value?.scrollTo({
     top: 0,
     behavior: 'smooth',
   })
 }
 
+let listMutationObserver: MutationObserver | null = null
+
 onMounted(async () => {
-  await nextTick()
   await loadMorePosts()
-  syncBottomState()
-  blogListRef.value?.addEventListener('scroll', syncBottomState)
+  const el = blogListRef.value
+  if (el) {
+    el.addEventListener('scroll', syncBottomState)
+    listMutationObserver = new MutationObserver(syncBottomState)
+    listMutationObserver.observe(el, { childList: true, subtree: true })
+  }
 })
 
 onBeforeUnmount(() => {
-  blogListRef.value?.removeEventListener('scroll', syncBottomState)
+  const el = blogListRef.value
+  if (el) {
+    el.removeEventListener('scroll', syncBottomState)
+    listMutationObserver?.disconnect()
+  }
 })
 
 watch(searchQuery, async () => {
