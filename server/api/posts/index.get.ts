@@ -1,29 +1,25 @@
-import { defineEventHandler, getQuery } from 'h3'
-import { PostModel } from '../../models/Post'
-import { ensureDbReady } from '../../utils/initDb'
-import { normalizePositiveInt } from '../../utils/normalizePositiveInt'
-import { Op } from 'sequelize'
-
-const DEFAULT_LIMIT = 10
-const MAX_LIMIT = 50
+import {defineEventHandler, getQuery} from 'h3'
+import {PostModel} from '../../models/Post'
+import {ensureDbReady} from '../../utils/initDb'
+import {Op} from 'sequelize'
 
 export default defineEventHandler(async (event) => {
     await ensureDbReady()
 
     const query = getQuery(event)
-    const limit = Math.min(normalizePositiveInt(query.limit, DEFAULT_LIMIT), MAX_LIMIT)
-    const offset = normalizePositiveInt(query.offset, 0)
-    const q = typeof query.q === 'string' ? query.q.trim() : ''
+    const limit = Number(query.limit) || 1000
+    const offset = Number(query.offset) || 0
+    const searchString = query.q
 
     const where: Record<string | symbol, unknown> = {
         published: true,
     }
 
-    if (q) {
+    if (searchString) {
         where[Op.or] = [
-            {title: {[Op.like]: `%${q}%`}},
-            {excerpt: {[Op.like]: `%${q}%`}},
-            {content: {[Op.like]: `%${q}%`}},
+            {title: {[Op.like]: `%${searchString}%`}},
+            {excerpt: {[Op.like]: `%${searchString}%`}},
+            {content: {[Op.like]: `%${searchString}%`}},
         ]
     }
 
@@ -33,5 +29,6 @@ export default defineEventHandler(async (event) => {
         limit,
         offset,
     })
-    return list.map((p) => p.get({plain: true}))
+
+    return list.map((post) => post.get({plain: true}))
 })
