@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
     const body = await readBody(event)
     const payload = validatePostPayload(body)
-    const slug = await makeSlug(payload.title, id)
+    const slug = await makeSlug(payload.title)
 
     await post.update({
         title: payload.title,
