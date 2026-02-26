@@ -6,6 +6,7 @@
     </div>
 
     <KitForm
+        v-if="form"
         submit-label="Создать"
         :loading="loading"
         :submit-disabled="!form.image?.trim()"
@@ -39,13 +40,15 @@
           required
           v-model="form.image"
       />
-      <label class="kit-form__checkbox">
-        <input v-model="form.published" type="checkbox"/>
-        <span>Опубликовано</span>
-      </label>
+      <KitInput
+        :type="'checkbox'"
+        v-model="form.published"
+      />
     </KitForm>
 
-    <p v-if="errorMessage" class="admin-page__state admin-page__state--error">{{ errorMessage }}</p>
+    <p v-if="errorMessage"
+       class="admin-page__state admin-page__state--error"
+    >{{ errorMessage }}</p>
   </section>
 </template>
 
@@ -57,15 +60,16 @@ definePageMeta({
 
 import type {IPostFormPayload} from '~/types/blog'
 
-const { app: appConfig } = useRuntimeConfig()
+const {app: appConfig} = useRuntimeConfig()
 const baseUrl = appConfig.baseURL || '/blog/'
 const loading = ref(false)
 const errorMessage = ref('')
 const form = ref<IPostFormPayload>({
+  id: 0,
   title: '',
   excerpt: '',
   content: '',
-  published: true,
+  published: false,
   slug: '',
   image: '',
 })
@@ -77,16 +81,18 @@ const submit = async () => {
     method: 'POST',
     body: form.value,
   } as Record<string, unknown>)
-      .then(res => {
-        // await navigateTo(`/blog/${res.slug}`)
+      .then(() => {
+        navigateTo(`/admin/blog`)
       })
       .catch(() => {
-        errorMessage.value = 'Не удалось сохранить пост'
+        errorMessage.value = 'Не удалось создать пост'
       })
       .finally(() => {
         loading.value = false
       })
 }
+
+
 </script>
 
 <style scoped>

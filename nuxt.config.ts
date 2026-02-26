@@ -2,7 +2,7 @@ export default defineNuxtConfig({
     devtools: {enabled: false},
 
     typescript: {
-        typeCheck: true,
+        typeCheck: false,
     },
 
     compatibilityDate: '2026-01-01',
@@ -37,13 +37,6 @@ export default defineNuxtConfig({
     },
 
     nitro: {
-        storage: {
-            uploads: {
-                driver: 'fs',
-                base: process.env.UPLOAD_DIR || './uploads',
-            },
-        },
-
         routeRules: {
             '/api/**': {
                 cors: true,

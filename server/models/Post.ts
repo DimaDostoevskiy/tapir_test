@@ -1,6 +1,7 @@
 import {DataTypes, Model, Sequelize} from 'sequelize'
 
 export class PostPayload extends Model {
+    declare id: number
     declare title: string
     declare slug: string
     declare excerpt: string

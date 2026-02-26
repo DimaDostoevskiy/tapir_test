@@ -10,7 +10,11 @@ export default defineEventHandler(async (event) => {
 
     payload.slug = await makeSlug(payload.title)
 
-    const post = await PostModel.create({...payload})
+    const { id, ...createData } = payload
+
+    createData.slug = await makeSlug(createData.title)
+
+    const post = await PostModel.create(createData)
 
     if (!post) {
         throw createError({statusCode: 400, statusMessage: 'Ошибка! Не удалось создать пост!'})

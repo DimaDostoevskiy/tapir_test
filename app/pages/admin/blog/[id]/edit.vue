@@ -45,11 +45,17 @@
             label="Изображение"
         />
         <label class="kit-form__checkbox">
-          <input v-model="form.published" type="checkbox"/>
+          <KitInput
+              v-model="form.published"
+              type="checkbox"
+          />
           <span>Опубликовано</span>
         </label>
       </KitForm>
-      <p v-if="errorMessage" class="admin-page__state admin-page__state--error">{{ errorMessage }}</p>
+      <p
+          v-if="errorMessage"
+          class="admin-page__state admin-page__state--error"
+      >{{ errorMessage }}</p>
     </template>
   </section>
 </template>
@@ -67,12 +73,13 @@ useSeoMeta({
 
 const route = useRoute()
 const id = Number(route.params.id)
-const { app: appConfig } = useRuntimeConfig()
-const baseUrl = appConfig.baseURL || '/blog/'
+const {app: appConfig} = useRuntimeConfig()
+const baseUrl = appConfig.baseURL
 
 const isLoading = ref(false)
-const errorMessage = ref('')
+const message = ref('')
 const form = ref<IPostFormPayload>({
+  id: undefined,
   title: '',
   excerpt: '',
   content: '',
@@ -83,34 +90,36 @@ const form = ref<IPostFormPayload>({
 
 const {data: post, pending, error: fetchError} = await useFetch<BlogPost>(`/api/posts/${id}`)
 
-watch(post, (newValue) => {
-      if (newValue) {
-        form.value = {
-          title: newValue.title,
-          excerpt: newValue.excerpt ?? '',
-          content: newValue.content,
-          published: newValue.published,
-          slug: newValue.slug,
-          image: newValue.image ?? '',
-        }
-      }
-    },
-    {immediate: true}
-)
-
 const submit = async () => {
-  errorMessage.value = ''
+  message.value = ''
   isLoading.value = true
 
-  const res = await $fetch(`/api/posts/update`, {
+  await $fetch(`/api/posts/update`, {
     method: 'POST',
     body: form.value
-  }as Record<string, unknown>)
-
-  isLoading.value = false
-
-  // await navigateTo('/admin/blog')
+  } as Record<string, unknown>)
+      .then(() => {
+        navigateTo(`/admin/blog`)
+      }).catch((err) => {
+        message.value = err.errorMessage || 'Ошибка!'
+      }).finally(() => {
+        isLoading.value = false
+      })
 }
+
+onMounted(() => {
+  if (post.value) {
+    form.value = {
+      id: post.value.id,
+      title: post.value.title,
+      excerpt: String(post.value.excerpt),
+      content: post.value.content,
+      published: post.value.published,
+      slug: post.value.slug,
+      image: post.value.image,
+    }
+  }
+})
 </script>
 
 <style scoped>

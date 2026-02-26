@@ -11,6 +11,7 @@ export interface BlogPost {
 }
 
 export interface IPostFormPayload {
+    id: number | undefined
     title: string
     excerpt: string
     content: string
