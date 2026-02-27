@@ -99,10 +99,25 @@
 | DELETE  | `/api/posts/:id`        | Удаление поста по id                      |                                   |
 | `Файлы` |                         |                                           |                                   |
 | POST    | `/api/files/upload`     | Загрузка изображения                      | multipart, поле `file`/`image`    |
-| GET     | `/api/files/:filename`  | Отдача загруженного файла                 | фактически `/api/files/[...path]` |
 | `LLM`   |                         |                                           |                                   |
 | POST    | `/api/ai/generate-post` | Генерация черновика поста (GitHub Models) |                                   |
+
 ## Автоматическая генерация постов
+
+ - Заходим на страницу создания поста (`/blog/admin/blog/create`)
+ - Нажимаем `Создать автоматически`,
+ - В появившемся поле вводим тему поста 
+ - Отправляем **POST** запрос на `/api/ai/generate-post` с телом:
+
+   ```json
+   { "promptTheme": "Тема поста" }
+   ```
+
+  - Читаем `githubModelsApiKey` из `runtimeConfig` (env `GITHUB_MODELS_API_KEY`);
+  - Вызываем GitHub Models (DeepSeek-R1) и просит вернуть чистый JSON `{ title, content, description }`;
+  - Если сервис отвечает ошибкой, пробрасывает `502` с текстом ошибки.
+  - Парсим ответ и подставляет поля в форму (`title`, `content`, `excerpt`); 
+  - Дальше админ может отредактировать текст и сохранить пост `/api/posts/create`.
 
 ## Переменные окружения
 
