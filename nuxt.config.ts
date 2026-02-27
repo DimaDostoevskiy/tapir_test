@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
+        githubModelsApiKey: process.env.GITHUB_MODELS_API_KEY || '',
         nodeEnv: process.env.NODE_ENV || 'development',
         host: process.env.HOST || '127.0.0.1',
         port: Number(process.env.PORT) || 3000,

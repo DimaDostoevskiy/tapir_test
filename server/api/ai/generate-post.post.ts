@@ -1,4 +1,5 @@
 import {defineEventHandler, readBody, createError} from 'h3'
+import {useRuntimeConfig} from '#imports'
 
 interface GeneratePostBody {
     promptTheme?: string
@@ -12,7 +13,8 @@ export default defineEventHandler(async (event) => {
         throw createError({statusCode: 400, statusMessage: 'Missing prompt theme'})
     }
 
-    const apiKey = process.env.GITHUB_MODELS_API_KEY
+    const config = useRuntimeConfig()
+    const apiKey = (config.githubModelsApiKey as string)
     if (!apiKey) {
         throw createError({statusCode: 500, statusMessage: 'Missing GitHub models API key'})
     }
