@@ -1,16 +1,19 @@
-# Блог с автоматической генерацией постов (Nuxt 4 + Sequelize + MySQL)
-
 ## Описание
 
-Блог с возможностью генерировать посты.
+Блог, с возможностью автоматически генерировать посты.
 
-## Задачи
+### Технический стек
 
-- SEO
-- Работает с отдельной базой и не имеет доступ к основной.
-- Работает как ещё один процесс в PM2
-- Proxy только на /blog
-- Посты можно генерировать
+- Nuxt 4 (публичная часть — SSR, админка — SPA)
+- Sequelize + MySQL
+
+### Основной функционал
+
+- Авторизация/аутентификация:
+- CRUD по постам для админа:
+- Возможность автоматически сгенерировать пост.
+- Поиск по постам
+- Автоматическая загрузка постов (бесконечная лента)
 
 ## Страницы
 
@@ -23,47 +26,100 @@
 
 ## Базы данных (Sequelize + MySQL):
 
-- База данных
+#### Подключение MySQL:
+
+- DB_NAME= -имя базы данных
+- DB_USER= -пользователь базы данных
+- DB_PASSWORD= -пароль пользователя базы данных
+- DB_HOST= -хост базы данных
+- DB_PORT= -порт базы данных
+
+#### Старт Sequelize
+
+- запускается plugin initDb там можно задать `{alter: true, force: false}`
+- модели в `/server/models/`
+
+### Таблицы:
+
+#### Posts
+
+            id: {
+                type: DataTypes.INTEGER.UNSIGNED,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            title: {
+                type: DataTypes.STRING(255),
+                allowNull: false,
+            },
+            slug: {
+                type: DataTypes.STRING(255),
+                allowNull: false,
+                unique: true,
+            },
+            excerpt: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
+            content: {
+                type: DataTypes.TEXT('long'),
+                allowNull: false,
+            },
+            published: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
+            image: {
+                type: DataTypes.STRING(512),
+                allowNull: true,
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
 
 ## Авторизация
 
-1. Пользователь заходит с параметром `?token=...` (например, `https://mysyte.pro.blog/?token=JWT`).
-2. `app/middleware/auth.ts` читает `token` из query.
-3. Middleware вызывает (тут надо переделать, наверное) `GET /api/auth/me?token=...`.
-4. `server/api/auth/me.get.ts` отправляет токен во внешний auth-сервис через заголовок `Authorization`.
-5. Если auth-сервис вернул пользователя, в cookie `auth_user` сохраняются:
-    - `role`
-    - `name`
-6. Для маршрутов `/admin*` доступ разрешен только если `auth_user.role === 'ADMIN'`.
+- При переходе из коневого `/` на `/blog` в запрос добавляется query параметр `token`, который у нас есть, если пользователь аутентифицирован.
+- Делаем запрос на внешний ресурс, который меняет `token` на пользователя.
+- Если нет токена, или внешний сервис не ответил или ответил 4**, то устанавливаем пользователя `{role: USER, name: John Doe}` 
+- Зашиваем в cookies юзера.
+- То есть авторизоваться можно только при непосредственном переходе из корневого домена.
 
-### Используемые точки
+**Для тестирования реализована простая смена ролей**
+ - `/blog/?token=ADMIN`
+ - `/blog/?token=USER`
+ - `/blog/?token=CUSTOMER`
 
-- `GET /api/auth/me?token=<jwt>` — прокси к внешнему auth‑сервису
-- Ожидаемый ответ:
+#### Роли
 
-```json
-{"role":"ADMIN","name":"..."}
-```
+- USER
+  
+  - Доступны страницы: `blog/`
 
-### Cookies
+- ADMIN
+  
+  - Доступны страницы: `все`
 
-- `auth_user` — объект пользователя `{ role, name }`
+- CUSTOMER
+  
+  - Доступны страницы: `blog/`, `blog/[slug, id]`
+
+
+#### Cookies
+
+
+- `auth_user { role: string, name: string }`
 - `sameSite: 'lax'`
 
-### Частые проблемы
+## Загрузка изображений
 
-- **Нет query `token`**: middleware не вызывает `/api/auth/me`.
-- **Роль не `ADMIN`**: для `/admin*` будет редирект на `/`.
-- **Неверный/просроченный токен**: auth-сервис возвращает ошибку, пользователь не авторизуется.
-- **Сломанный деплой `.output`**: `ERR_MODULE_NOT_FOUND` при старте Node (нужно пересобрать и перезапустить процесс).
-- **Неправильный путь под baseURL `/blog`**: проверяйте URL с префиксом `/blog`.
-
-
-
-## Загрузка и раздача изображений
-
-
-## Генерация постов (DeepSeek)
+## Автоматическая генерация постов
 
 ## Переменные окружения
 
@@ -71,23 +127,20 @@
 NODE_ENV= -окружение
 HOST= -хост
 PORT= -порт
-
 DB_NAME= -имя базы данных
 DB_USER= -пользователь базы данных
 DB_PASSWORD= -пароль пользователя базы данных
 DB_HOST= -хост базы данных
 DB_PORT= -порт базы данных
-
-MAIL_KEY= -ключ для отправки e-mail
-FILES_BASE_URL= -путь к папки со статикой
+FILES_BASE_URL= -путь к папке со статикой
 UPLOAD_DIR= -папка, в которую будет загружается статика
-
+EXTERNAL_AUTH_URL= -путь для обмена token на user 
 GITHUB_MODELS_API_KEY= -ключ github для генерации постов
-
+MAIL_KEY= -ключ для отправки e-mail
 ```
-
 ## Развёртывание
-Nuxt 4 требует Node **`^20.19.0`** или **`>=22.12.0`**
+
+! Nuxt 4 требует Node **`^20.19.0`** или **`>=22.12.0`**
 
 GitHub Actions. Файл конфигурации: `.github/workflows/deploy.yml`:
 
@@ -106,7 +159,7 @@ GitHub Actions. Файл конфигурации: `.github/workflows/deploy.yml
 - Шаги:
     - Подключаемся по SSH
     - Переходим в папку проекта `cd /project/folder`;
-    - Копируем папку с собранным проектом для восстановления, в случае неудачи. 
+    - Копируем папку с собранным проектом для восстановления, в случае неудачи.
     - Получаем последние изменения `git pull origin master`;
     - Устанавливаем зависимости `npm install`;
     - Собираем проект `npm run build`;
@@ -116,7 +169,18 @@ GitHub Actions. Файл конфигурации: `.github/workflows/deploy.yml
     - Отправляем уведомление в Telegram
 
 ## Локальный запуск
+
 - `npm install` - установить пакеты
-- `npm run build` - собрать проект
 - `npm run dev` - запустить в режиме dev
+- `npm run build` - собрать проект
 - `npm run preview` - запускает сервер, который отдаёт то, что лежит в `.output/`
+
+## Частые проблемы
+
+- Не изменились файлы в папке `.output`
+
+    - Удалить папку `.output` и пересобрать
+
+- Версия **Node.js** при развёртывании через actions не совпадает с той, которая в среде развёртывания.
+
+    - Если **Node.js** установлен через nvm, то нужно установить необходимую версию глобально.

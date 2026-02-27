@@ -102,7 +102,6 @@ a {
 
 }
 
-/* Ссылки в виде кнопок (полная перезагрузка при переходе) */
 .link-btn {
     display: inline-flex;
     align-items: center;

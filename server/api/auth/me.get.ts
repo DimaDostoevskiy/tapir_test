@@ -1,4 +1,5 @@
 import {defineEventHandler, getQuery} from 'h3'
+import {useRuntimeConfig} from '#imports'
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event)
@@ -14,7 +15,8 @@ export default defineEventHandler(async (event) => {
     if (token === 'ADMIN') return {role: 'ADMIN', name: 'Admin Admin'}
     if (token === 'CUSTOMER') return {role: 'CUSTOMER', name: 'Customer Customer'}
 
-    return await $fetch<{ user?: { Role?: string, Name?: string } }>('http://127.0.0.1:7000/api/auth', {
+    const authUrl = (useRuntimeConfig().externalAuthUrl as string) || 'http://127.0.0.1:7000/api/auth'
+    return await $fetch<{ user?: { Role?: string, Name?: string } }>(authUrl, {
         headers: {
             'Authorization': token,
         },
@@ -24,6 +26,6 @@ export default defineEventHandler(async (event) => {
             name: res?.user?.Name?.toString() || incognitoUser.name,
         }
     }).catch(() => {
-        return { ...incognitoUser }
+        return {...incognitoUser}
     })
 })
