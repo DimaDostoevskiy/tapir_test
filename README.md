@@ -24,9 +24,9 @@
 - Создать пост <https://motodart.pro/admin/blog/create>
 - Изменить пост <https://motodart.pro/blog/:id/edit>
 
-## Базы данных (Sequelize + MySQL):
+## Базы данных (Sequelize + MySQL)
 
-#### Подключение MySQL:
+#### Подключение MySQL
 
 - DB_NAME= -имя базы данных
 - DB_USER= -пользователь базы данных
@@ -39,86 +39,69 @@
 - запускается plugin initDb там можно задать `{alter: true, force: false}`
 - модели в `/server/models/`
 
-### Таблицы:
+### Таблицы
 
-#### Posts
-
-            id: {
-                type: DataTypes.INTEGER.UNSIGNED,
-                autoIncrement: true,
-                primaryKey: true,
-            },
-            title: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            slug: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-                unique: true,
-            },
-            excerpt: {
-                type: DataTypes.TEXT,
-                allowNull: true,
-            },
-            content: {
-                type: DataTypes.TEXT('long'),
-                allowNull: false,
-            },
-            published: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: true,
-            },
-            image: {
-                type: DataTypes.STRING(512),
-                allowNull: true,
-            },
-            createdAt: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            },
-            updatedAt: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            },
+| Поле        | Тип                                          | NULL  | По умолчанию | Описание           |
+|-------------|----------------------------------------------|-------|--------------|--------------------|
+| **Posts**   |                                              |       |              |                    |
+| `id`        | `INT`<br/> `UNSIGNED` <br/> `AUTO_INCREMENT` | `NO`  | —            | Первичный ключ     |
+| `title`     | `VARCHAR(255)`                               | `NO`  | —            | Заголовок поста    |
+| `slug`      | `VARCHAR(255)` <br/> `UNIQUE`                | `NO`  | —            | URL  slug          |
+| `excerpt`   | `TEXT`                                       | `YES` | `NULL`       | Краткое описание   |
+| `content`   | `LONGTEXT`                                   | `NO`  | —            | Полный текст поста |
+| `published` | `BOOLEAN`                                    | `NO`  | `TRUE`       | Флаг публикации    |
+| `image`     | `VARCHAR(512)`                               | `YES` | `NULL`       | URL картинки       |
+| `createdAt` | `DATETIME`                                   | `NO`  | —            | Дата создания      |
+| `updatedAt` | `DATETIME`                                   | `NO`  | —            | Дата обновления    |
 
 ## Авторизация
 
-- При переходе из коневого `/` на `/blog` в запрос добавляется query параметр `token`, который у нас есть, если пользователь аутентифицирован.
+- При переходе из коневого `/` на `/blog` в запрос добавляется query параметр `token`, который у нас есть, если
+  пользователь аутентифицирован.
 - Делаем запрос на внешний ресурс, который меняет `token` на пользователя.
-- Если нет токена, или внешний сервис не ответил или ответил 4**, то устанавливаем пользователя `{role: USER, name: John Doe}` 
+- Если нет токена, или внешний сервис не ответил или ответил 4**, то устанавливаем
+  пользователя `{role: USER, name: John Doe}`
 - Зашиваем в cookies юзера.
 - То есть авторизоваться можно только при непосредственном переходе из корневого домена.
 
-**Для тестирования реализована простая смена ролей**
- - `/blog/?token=ADMIN`
- - `/blog/?token=USER`
- - `/blog/?token=CUSTOMER`
+***Для тестирования реализована простая смена ролей***
+
+- `/blog/?token=ADMIN`
+- `/blog/?token=USER`
+- `/blog/?token=CUSTOMER`
 
 #### Роли
 
-- USER
-  
-  - Доступны страницы: `blog/`
-
-- ADMIN
-  
-  - Доступны страницы: `все`
-
-- CUSTOMER
-  
-  - Доступны страницы: `blog/`, `blog/[slug, id]`
-
+| Роль       | Разрешённые действия                                             | Доступные страницы                 |
+|------------|------------------------------------------------------------------|------------------------------------|
+| `ADMIN`    | - CRUD по постам                                                 | Все страницы                       |
+| `USER`     | - Просматривать ленту постов                                     | `/blog/`                           |
+| `CUSTOMER` | - Читать посты полностью. <br/> - Лайкать посты (не реализовано) | `/blog/`,`/blog/:slug`,`/blog/:id` |
 
 #### Cookies
-
 
 - `auth_user { role: string, name: string }`
 - `sameSite: 'lax'`
 
-## Загрузка изображений
+## Endpoints
 
+| Метод   | Путь                    | Описание                                  | Примечания                        |
+|---------|-------------------------|-------------------------------------------|-----------------------------------|
+| `Auth`  |                         |                                           |                                   |
+| GET     | `/api/auth/me`          | Обмен `token` на пользователя             |                                   |
+| GET     | `/api/auth/mok`         | Создание тестовых постов                  |                                   |
+| `Post`  |                         |                                           |                                   |
+| GET     | `/api/posts/:[id]`      | Один опубликованный пост                  | `:id` — числовой id               |
+| GET     | `/api/posts/:[slug]`    | Один опубликованный пост                  | `:slug` - строка slug             |
+| GET     | `/api/posts/get-all`    | Список опубликованных постов              | Параметры: `limit`, `offset`, `q` |
+| POST    | `/api/posts/create`     | Создание поста                            |                                   |
+| POST    | `/api/posts/update`     | Обновление поста                          |                                   |
+| DELETE  | `/api/posts/:id`        | Удаление поста по id                      |                                   |
+| `Файлы` |                         |                                           |                                   |
+| POST    | `/api/files/upload`     | Загрузка изображения                      | multipart, поле `file`/`image`    |
+| GET     | `/api/files/:filename`  | Отдача загруженного файла                 | фактически `/api/files/[...path]` |
+| `LLM`   |                         |                                           |                                   |
+| POST    | `/api/ai/generate-post` | Генерация черновика поста (GitHub Models) |                                   |
 ## Автоматическая генерация постов
 
 ## Переменные окружения
@@ -138,6 +121,7 @@ EXTERNAL_AUTH_URL= -путь для обмена token на user
 GITHUB_MODELS_API_KEY= -ключ github для генерации постов
 MAIL_KEY= -ключ для отправки e-mail
 ```
+
 ## Развёртывание
 
 ! Nuxt 4 требует Node **`^20.19.0`** или **`>=22.12.0`**
