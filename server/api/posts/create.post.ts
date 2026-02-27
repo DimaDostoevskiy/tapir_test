@@ -1,17 +1,18 @@
 import {createError, defineEventHandler, readBody} from 'h3'
 import {PostModel} from '../../models/Post'
 import makeSlug from '../../utils/makeSlugUtil'
-import {validatePostPayload} from '../../utils/posts'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
-    const payload = validatePostPayload(body)
-    payload.slug = makeSlug(payload.title)
-    const {id, ...createData} = payload
-    createData.slug = makeSlug(createData.title)
-    const post = await PostModel.create(createData)
-    if (!post) {
-        throw createError({statusCode: 400, statusMessage: 'Ошибка! Не удалось создать пост!'})
-    }
-    return post.get({plain: true})
+    body.slug = makeSlug(body.title)
+    return await PostModel.create(body)
+        .then(post => {
+            return post.get({plain: true})
+        })
+        .catch(() => {
+            throw createError({
+                statusCode: 400,
+                statusMessage: 'Ошибка! Не удалось создать пост!',
+            })
+        })
 })

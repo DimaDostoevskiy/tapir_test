@@ -111,8 +111,7 @@ const submit = async () => {
         navigateTo(`/admin/blog`)
       })
       .catch((err) => {
-        console.log(err)
-        errorMessage.value = err.error
+        errorMessage.value = err.data.message || 'Ошибка при создании поста'
       })
       .finally(() => {
         isLoading.value = false
