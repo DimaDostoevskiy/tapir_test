@@ -5,9 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
     "lint": "npm exec eslint . -- --no-warn-ignored",
     "lint:fix": "npm exec eslint . --fix -- --no-warn-ignored"
   },
