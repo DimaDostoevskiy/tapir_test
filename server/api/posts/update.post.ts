@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    payload.slug = await makeSlug(payload.title)
+    payload.slug = makeSlug(payload.title)
 
     const [updatedCount, updatedPosts] = await PostModel.update(
         {           // что обновляем

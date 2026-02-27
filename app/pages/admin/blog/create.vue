@@ -2,16 +2,29 @@
   <section class="admin-page scroll">
     <div class="admin-page__header">
       <h1 class="admin-page__title">Создать пост</h1>
+      <KitButton
+          :loading="isLoading"
+          :text="!isAutoGenerate ? 'Создать автоматически':'Ввести данные' "
+          @click="isAutoGenerate = !isAutoGenerate"
+
+      />
       <a :href="baseUrl + 'admin/blog'" class="link-btn link-btn--outline">Назад к списку</a>
     </div>
-
+    <p v-if="errorMessage"
+       class="admin-page__state admin-page__state--error"
+    >{{ errorMessage }}</p>
     <KitForm
-        v-if="form"
+        v-if="form && !isAutoGenerate"
         submit-label="Создать"
-        :loading="loading"
+        :loading="isLoading"
         :submit-disabled="!form.image?.trim()"
         @submit="submit"
     >
+      <KitImageUpload
+          label="Изображение"
+          required
+          v-model="form.image"
+      />
       <KitInput
           label="Заголовок"
           type="text"
@@ -35,20 +48,31 @@
           :debounce="200"
           v-model="form.content"
       />
-      <KitImageUpload
-          label="Изображение"
-          required
-          v-model="form.image"
-      />
+      <label for="input">
+        Опубликовано
+        <input
+            id="input"
+            :type="'checkbox'"
+            v-model="form.published"
+        />
+      </label>
+    </KitForm>
+    <KitForm
+        v-if="isAutoGenerate"
+        submit-label="Создать"
+        :loading="isLoading"
+        :submit-disabled="!promptTheme.trim()"
+        @submit="fetchDeepSeek"
+    >
       <KitInput
-        :type="'checkbox'"
-        v-model="form.published"
+          label="Тема поста"
+          type="text"
+          maxlength="255"
+          required
+          :debounce="200"
+          v-model="promptTheme"
       />
     </KitForm>
-
-    <p v-if="errorMessage"
-       class="admin-page__state admin-page__state--error"
-    >{{ errorMessage }}</p>
   </section>
 </template>
 
@@ -62,10 +86,9 @@ import type {IPostFormPayload} from '~/types/blog'
 
 const {app: appConfig} = useRuntimeConfig()
 const baseUrl = appConfig.baseURL || '/blog/'
-const loading = ref(false)
 const errorMessage = ref('')
 const form = ref<IPostFormPayload>({
-  id: 0,
+  id: undefined,
   title: '',
   excerpt: '',
   content: '',
@@ -73,9 +96,12 @@ const form = ref<IPostFormPayload>({
   slug: '',
   image: '',
 })
+const isLoading = ref(false)
+const isAutoGenerate = ref(false)
+const promptTheme = ref<string>('Подсолнечное масло')
 
 const submit = async () => {
-  loading.value = true
+  isLoading.value = true
   errorMessage.value = ''
   await $fetch('/api/posts/create', {
     method: 'POST',
@@ -84,15 +110,50 @@ const submit = async () => {
       .then(() => {
         navigateTo(`/admin/blog`)
       })
-      .catch(() => {
-        errorMessage.value = 'Не удалось создать пост'
+      .catch((err) => {
+        console.log(err)
+        errorMessage.value = err.error
       })
       .finally(() => {
-        loading.value = false
+        isLoading.value = false
       })
 }
 
+const fetchDeepSeek = () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  $fetch('/api/ai/generate-post', {
+    method: 'POST',
+    body: {
+      promptTheme: promptTheme.value,
+    },
+  })
+      .then(async (res) => {
+        const data = res as any
+        if (data?.error) {
+          errorMessage.value = data.error.message
+        } else {
+          const generatePost = await parseResponse(data)
+          form.value.title = generatePost.title || ''
+          form.value.content = generatePost.content || ''
+          form.value.excerpt = generatePost.description || ''
+        }
+      })
+      .catch(() => {
+        errorMessage.value = 'Ошибка! Не удалось сгенерировать пост!'
+      })
+      .finally(() => {
+        isLoading.value = false
+        isAutoGenerate.value = false
+      })
+}
 
+const parseResponse = async (data: any) => {
+  let content = data.choices[0].message.content
+  content = content.replace(/<think>[\s\S]*?<\/think>/g, '')
+  content = content.trim()
+  return JSON.parse(content)
+}
 </script>
 
 <style scoped>

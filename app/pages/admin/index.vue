@@ -1,8 +1,8 @@
 <template>
   <section class="admin-page">
     <header class="admin-page__header">
-      <h1 class="admin-page__title">Admin Panel</h1>
-      <p class="admin-page__subtitle">Управление контентом.</p>
+      <h1 class="admin-page__title">Панель администратора</h1>
+      <p class="admin-page__subtitle">Управление контентом</p>
     </header>
 
     <div class="admin-page__content">
@@ -26,7 +26,7 @@ useSeoMeta({
   title: 'Admin — Pro Moto Blog',
 })
 
-const { app: appConfig } = useRuntimeConfig()
+const {app: appConfig} = useRuntimeConfig()
 const baseUrl = appConfig.baseURL || '/blog/'
 </script>
 

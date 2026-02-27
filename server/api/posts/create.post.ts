@@ -5,20 +5,13 @@ import {validatePostPayload} from '../../utils/posts'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
-
     const payload = validatePostPayload(body)
-
-    payload.slug = await makeSlug(payload.title)
-
-    const { id, ...createData } = payload
-
-    createData.slug = await makeSlug(createData.title)
-
+    payload.slug = makeSlug(payload.title)
+    const {id, ...createData} = payload
+    createData.slug = makeSlug(createData.title)
     const post = await PostModel.create(createData)
-
     if (!post) {
         throw createError({statusCode: 400, statusMessage: 'Ошибка! Не удалось создать пост!'})
     }
-
     return post.get({plain: true})
 })

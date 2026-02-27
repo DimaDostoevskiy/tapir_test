@@ -30,28 +30,23 @@
 </template>
 
 <script setup lang="ts">
-
-useSeoMeta({
-  title: () => (post.value ? `${post.value.title} — pro_moto_blog` : 'Пост — pro_moto_blog'),
-})
-
 import type {BlogPost} from '~/types/blog'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug ?? ''))
 
-const {data: post, refresh} = await useLazyFetch<BlogPost | null>(
-    () => `/api/posts/${slug.value}`,
-    {
-      key: `post-${slug.value}`,
-      watch: [slug]
-    }
+const { data: post } = await useLazyFetch<BlogPost | null>(
+  () => `/api/posts/${slug.value}`,
+  { key: `post-${slug.value}`, watch: [slug] }
 )
 
-const paragraphs = computed(() => post.value?.content.split(/\n{2,}/).filter(Boolean) || [])
-const formattedDate = computed(() => {
-  if (!post.value) return ''
-  return new Date(post.value.updatedAt).toLocaleDateString('ru-RU')
+
+const paragraphs = computed(() => post.value?.content?.split(/\n{2,}/).filter(Boolean) ?? [])
+const formattedDate = computed(() =>
+  post.value?.updatedAt ? new Date(post.value.updatedAt).toLocaleDateString('ru-RU') : ''
+)
+useSeoMeta({
+  title: () => (post.value ? `${post.value.title} — pro_moto_blog` : 'Пост — pro_moto_blog'),
 })
 </script>
 
@@ -94,9 +89,7 @@ const formattedDate = computed(() => {
   color: var(--color-text);
 }
 
-.post__content {
-
-}
+.post__content {}
 
 .post__state {
   margin: 0;
