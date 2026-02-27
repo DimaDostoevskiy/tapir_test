@@ -1,4 +1,4 @@
-import { defineEventHandler, getQuery } from 'h3'
+import {defineEventHandler, getQuery} from 'h3'
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event)
@@ -8,6 +8,11 @@ export default defineEventHandler(async (event) => {
         role: 'USER',
         name: 'John Doe'
     }
+
+    // Для тестирования ролей
+    if (token === 'USER') return incognitoUser
+    if (token === 'ADMIN') return {role: 'ADMIN', name: 'Admin Admin'}
+    if (token === 'CUSTOMER') return {role: 'CUSTOMER', name: 'Customer Customer'}
 
     return await $fetch<{ user?: { Role?: string, Name?: string } }>('http://127.0.0.1:7000/api/auth', {
         headers: {
