@@ -17,12 +17,12 @@
 
 ## Страницы
 
-- Главная <https://motodart.pro/blog/>
-- Страница поста <https://motodart.pro/blog/:slug>
-- Панель администратора <https://motodart.pro/admin/>
-- Управление постами <https://motodart.pro/admin/blog>
-- Создать пост <https://motodart.pro/admin/blog/create>
-- Изменить пост <https://motodart.pro/blog/:id/edit>
+- Главная..............................<https://motodart.pro/blog/>
+- Страница поста.................<https://motodart.pro/blog/:slug>
+- Панель администратора...<https://motodart.pro/blog/admin/>
+- Управление постами.........<https://motodart.pro/blog/admin/blog>
+- Создать пост......................<https://motodart.pro/blog/admin/blog/create>
+- Изменить пост....................<https://motodart.pro/blog/admin/blog/:id/edit>
 
 ## Базы данных (Sequelize + MySQL)
 
@@ -34,7 +34,7 @@
 - DB_HOST= -хост базы данных
 - DB_PORT= -порт базы данных
 
-#### Старт Sequelize
+#### Init Sequelize
 
 - запускается plugin initDb там можно задать `{alter: true, force: false}`
 - модели в `/server/models/`
@@ -56,13 +56,13 @@
 
 ## Авторизация
 
-- При переходе из коневого `/` на `/blog` в запрос добавляется query параметр `token`, который у нас есть, если
-  пользователь аутентифицирован.
-- Делаем запрос на внешний ресурс, который меняет `token` на пользователя.
-- Если нет токена, или внешний сервис не ответил или ответил 4**, то устанавливаем
+- При переходе из коневого `mysite.pro/` на `mysite.pro/blog/` в запрос добавляется query-параметр `token`, если
+  пользователь авторизован.
+- Делаем запрос на внешний ресурс, который меняет `token` на пользователя (env EXTERNAL_AUTH_URL).
+- Если нет токена, или внешний сервис не ответил или ответил ошибкой, то устанавливаем
   пользователя `{role: USER, name: John Doe}`
 - Зашиваем в cookies юзера.
-- То есть авторизоваться можно только при непосредственном переходе из корневого домена.
+- То есть авторизоваться можно, только при непосредственном переходе из корневого домена.
 
 ***Для тестирования реализована простая смена ролей***
 
@@ -85,39 +85,39 @@
 
 ## Endpoints
 
-| Метод   | Путь                    | Описание                                  | Примечания                        |
-|---------|-------------------------|-------------------------------------------|-----------------------------------|
-| `Auth`  |                         |                                           |                                   |
-| GET     | `/api/auth/me`          | Обмен `token` на пользователя             |                                   |
-| GET     | `/api/auth/mok`         | Создание тестовых постов                  |                                   |
-| `Post`  |                         |                                           |                                   |
-| GET     | `/api/posts/:[id]`      | Один опубликованный пост                  | `:id` — числовой id               |
-| GET     | `/api/posts/:[slug]`    | Один опубликованный пост                  | `:slug` - строка slug             |
-| GET     | `/api/posts/get-all`    | Список опубликованных постов              | Параметры: `limit`, `offset`, `q` |
-| POST    | `/api/posts/create`     | Создание поста                            |                                   |
-| POST    | `/api/posts/update`     | Обновление поста                          |                                   |
-| DELETE  | `/api/posts/:id`        | Удаление поста по id                      |                                   |
-| `Файлы` |                         |                                           |                                   |
-| POST    | `/api/files/upload`     | Загрузка изображения                      | multipart, поле `file`/`image`    |
-| `LLM`   |                         |                                           |                                   |
-| POST    | `/api/ai/generate-post` | Генерация черновика поста (GitHub Models) |                                   |
+| Метод   | Endpoint                | Описание                                  | Параметры                                                                                                                                       |              |
+|---------|-------------------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| `Auth`  |                         |                                           |                                                                                                                                                 |              |
+| GET     | `/api/auth/me`          | Обмен `token` на пользователя             | `token`                                                                                                                                         |              |
+| GET     | `/api/auth/mok`         | Создание постов для теста                 | —                                                                                                                                               |              |
+| `Post`  |                         |                                           |                                                                                                                                                 |              |
+| GET     | `/api/posts/:[id]`      | Один пост                                 | `:id`  (number)                                                                                                                                 |              |
+| GET     | `/api/posts/:[slug]`    | Один опубликованный пост                  | `:slug` - (string)                                                                                                                              |              |
+| GET     | `/api/posts/get-all`    | Список опубликованных постов              | `limit` (number),<br/> `offset` (number), <br/> `q` (string) - search string)                                                                   |              |
+| POST    | `/api/posts/create`     | Создание поста                            | Object <br> `title` (string) <br> `slug` (string) <br> `excerpt` (string) <br> `content` (string) <br> `published` (bool) <br> `image` (string) |              |
+| POST    | `/api/posts/update`     | Обновление поста                          | Object <br> `title` (string) <br> `excerpt` (string) <br> `content` (string) <br> `published` (bool) <br> `image` (string)                      |              |
+| DELETE  | `/api/posts/:id`        | Удаление поста                            | `:id`                                                                                                                                           |              |
+| `Файлы` |                         |                                           |                                                                                                                                                 |              |
+| POST    | `/api/files/upload`     | Загрузка изображения                      | Multipart form data <br> `file`/`image`                                                                                                         |              |
+| `LLM`   |                         |                                           |                                                                                                                                                 |              |
+| POST    | `/api/ai/generate-post` | Генерация черновика поста (GitHub Models) | Object <br> `promptTheme`(string)                                                                                                               |              |
 
 ## Автоматическая генерация постов
 
- - Заходим на страницу создания поста (`/blog/admin/blog/create`)
- - Нажимаем `Создать автоматически`,
- - В появившемся поле вводим тему поста 
- - Отправляем **POST** запрос на `/api/ai/generate-post` с телом:
+- Заходим на страницу создания поста (`/blog/admin/blog/create`)
+- Нажимаем `Создать автоматически`,
+- В появившемся поле вводим тему поста
+- Отправляем **POST** запрос на `/api/ai/generate-post` с телом:
 
-   ```json
-   { "promptTheme": "Тема поста" }
-   ```
+  ```json
+  { "promptTheme": "Тема поста" }
+  ```
 
-  - Читаем `githubModelsApiKey` из `runtimeConfig` (env `GITHUB_MODELS_API_KEY`);
-  - Вызываем GitHub Models (DeepSeek-R1) и просит вернуть чистый JSON `{ title, content, description }`;
-  - Если сервис отвечает ошибкой, пробрасывает `502` с текстом ошибки.
-  - Парсим ответ и подставляет поля в форму (`title`, `content`, `excerpt`); 
-  - Дальше админ может отредактировать текст и сохранить пост `/api/posts/create`.
+- Читаем `githubModelsApiKey` из `runtimeConfig` (env `GITHUB_MODELS_API_KEY`);
+- Формируем и отправляем **POST** запрос на `https://models.inference.ai.azure.com/chat/completions`
+- Если сервис отвечает ошибкой: пробрасывает `502` с текстом ошибки.
+- Если 200: парсим ответ и подставляет в форму.
+- Дальше админ может отредактировать и сохранить пост `/api/posts/create`.
 
 ## Переменные окружения
 
