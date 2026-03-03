@@ -41,18 +41,18 @@
 
 ### Таблицы
 
-| Поле        | Тип                                          | NULL  | По умолчанию | Описание           |
-|-------------|----------------------------------------------|-------|--------------|--------------------|
-| **Posts**   |                                              |       |              |                    |
-| `id`        | `INT`<br/> `UNSIGNED` <br/> `AUTO_INCREMENT` | `NO`  | —            | Первичный ключ     |
-| `title`     | `VARCHAR(255)`                               | `NO`  | —            | Заголовок поста    |
-| `slug`      | `VARCHAR(255)` <br/> `UNIQUE`                | `NO`  | —            | URL  slug          |
-| `excerpt`   | `TEXT`                                       | `YES` | `NULL`       | Краткое описание   |
-| `content`   | `LONGTEXT`                                   | `NO`  | —            | Полный текст поста |
-| `published` | `BOOLEAN`                                    | `NO`  | `TRUE`       | Флаг публикации    |
-| `image`     | `VARCHAR(512)`                               | `YES` | `NULL`       | URL картинки       |
-| `createdAt` | `DATETIME`                                   | `NO`  | —            | Дата создания      |
-| `updatedAt` | `DATETIME`                                   | `NO`  | —            | Дата обновления    |
+| Поле           | Тип                                          | NULL  | По умолчанию | Описание           |
+|----------------|----------------------------------------------|-------|--------------|--------------------|
+| **Posts**      |                                              |       |              |                    |
+| `id`           | `INT`<br/> `UNSIGNED` <br/> `AUTO_INCREMENT` | `NO`  | —            | Первичный ключ     |
+| `title`        | `VARCHAR(255)`                               | `NO`  | —            | Заголовок поста    |
+| `slug`         | `VARCHAR(255)` <br/> `UNIQUE`                | `NO`  | —            | URL  slug          |
+| `description`  | `TEXT`                                       | `YES` | `NULL`       | Краткое описание   |
+| `content`      | `LONGTEXT`                                   | `NO`  | —            | Полный текст поста |
+| `published`    | `BOOLEAN`                                    | `NO`  | `TRUE`       | Флаг публикации    |
+| `image`        | `VARCHAR(512)`                               | `YES` | `NULL`       | URL картинки       |
+| `createdAt`    | `DATETIME`                                   | `NO`  | —            | Дата создания      |
+| `updatedAt`    | `DATETIME`                                   | `NO`  | —            | Дата обновления    |
 
 ## Авторизация
 
@@ -85,22 +85,22 @@
 
 ## Endpoints
 
-| Метод   | Endpoint                | Описание                                  | Параметры                                                                                                                                       |              |
-|---------|-------------------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| `Auth`  |                         |                                           |                                                                                                                                                 |              |
-| GET     | `/api/auth/me`          | Обмен `token` на пользователя             | `token`                                                                                                                                         |              |
-| GET     | `/api/auth/mok`         | Создание постов для теста                 | —                                                                                                                                               |              |
-| `Post`  |                         |                                           |                                                                                                                                                 |              |
-| GET     | `/api/posts/:[id]`      | Один пост                                 | `:id`  (number)                                                                                                                                 |              |
-| GET     | `/api/posts/:[slug]`    | Один опубликованный пост                  | `:slug` - (string)                                                                                                                              |              |
-| GET     | `/api/posts/get-all`    | Список опубликованных постов              | `limit` (number),<br/> `offset` (number), <br/> `q` (string) - search string)                                                                   |              |
-| POST    | `/api/posts/create`     | Создание поста                            | Object <br> `title` (string) <br> `slug` (string) <br> `excerpt` (string) <br> `content` (string) <br> `published` (bool) <br> `image` (string) |              |
-| POST    | `/api/posts/update`     | Обновление поста                          | Object <br> `title` (string) <br> `excerpt` (string) <br> `content` (string) <br> `published` (bool) <br> `image` (string)                      |              |
-| DELETE  | `/api/posts/:id`        | Удаление поста                            | `:id`                                                                                                                                           |              |
-| `Файлы` |                         |                                           |                                                                                                                                                 |              |
-| POST    | `/api/files/upload`     | Загрузка изображения                      | Multipart form data <br> `file`/`image`                                                                                                         |              |
-| `LLM`   |                         |                                           |                                                                                                                                                 |              |
-| POST    | `/api/ai/generate-post` | Генерация черновика поста (GitHub Models) | Object <br> `promptTheme`(string)                                                                                                               |              |
+| Метод   | Endpoint                | Описание                                  | Параметры                                                                                                                                            |              |
+|---------|-------------------------|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| `Auth`  |                         |                                           |                                                                                                                                                      |              |
+| GET     | `/api/auth/me`          | Обмен `token` на пользователя             | `token`                                                                                                                                              |              |
+| GET     | `/api/auth/mok`         | Создание постов для теста                 | —                                                                                                                                                    |              |
+| `Post`  |                         |                                           |                                                                                                                                                      |              |
+| GET     | `/api/posts/:[id]`      | Один пост                                 | `:id`  (number)                                                                                                                                      |              |
+| GET     | `/api/posts/:[slug]`    | Один опубликованный пост                  | `:slug` - (string)                                                                                                                                   |              |
+| GET     | `/api/posts/get-all`    | Список опубликованных постов              | `limit` (number),<br/> `offset` (number), <br/> `q` (string) - search string)                                                                        |              |
+| POST    | `/api/posts/create`     | Создание поста                            | Object <br> `title` (string) <br> `slug` (string) <br> `description`  (string) <br> `content` (string) <br> `published` (bool) <br> `image` (string) |              |
+| POST    | `/api/posts/update`     | Обновление поста                          | Object <br> `title` (string) <br> `description`  (string) <br> `content` (string) <br> `published` (bool) <br> `image` (string)                      |              |
+| DELETE  | `/api/posts/:id`        | Удаление поста                            | `:id`                                                                                                                                                |              |
+| `Файлы` |                         |                                           |                                                                                                                                                      |              |
+| POST    | `/api/files/upload`     | Загрузка изображения                      | Multipart form data <br> `file`/`image`                                                                                                              |              |
+| `LLM`   |                         |                                           |                                                                                                                                                      |              |
+| POST    | `/api/ai/generate-post` | Генерация черновика поста (GitHub Models) | Object <br> `promptTheme`(string)                                                                                                                    |              |
 
 ## Автоматическая генерация постов
 

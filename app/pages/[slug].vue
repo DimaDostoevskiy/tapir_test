@@ -15,7 +15,7 @@
       />
     </div>
 
-    <p v-if="post.excerpt" class="post__excerpt">{{ post.excerpt }}</p>
+    <p v-if="post.description" class="post__excerpt">{{ post.description }}</p>
     <div class="post__content">
       <p v-for="(paragraph, idx) in paragraphs" :key="idx">{{ paragraph }}</p>
     </div>
@@ -87,16 +87,5 @@ useSeoMeta({
 .post__excerpt {
   margin: 0;
   color: var(--color-text);
-}
-
-.post__content {}
-
-.post__state {
-  margin: 0;
-  color: var(--color-primary);
-}
-
-.blog-page__state--error {
-  color: var(--color-error);
 }
 </style>

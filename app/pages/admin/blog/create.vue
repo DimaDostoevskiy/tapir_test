@@ -38,7 +38,7 @@
           as="textarea"
           :rows="3"
           :debounce="200"
-          v-model="form.excerpt"
+          v-model="form.description"
       />
       <KitInput
           label="Контент"
@@ -90,7 +90,7 @@ const errorMessage = ref('')
 const form = ref<IPostFormPayload>({
   id: undefined,
   title: '',
-  excerpt: '',
+  description: '',
   content: '',
   published: false,
   slug: '',
@@ -135,7 +135,7 @@ const fetchDeepSeek = () => {
           const generatePost = await parseResponse(data)
           form.value.title = generatePost.title || ''
           form.value.content = generatePost.content || ''
-          form.value.excerpt = generatePost.description || ''
+          form.value.description = generatePost.description || ''
         }
       })
       .catch(() => {

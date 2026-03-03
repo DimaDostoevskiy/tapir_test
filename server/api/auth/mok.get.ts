@@ -10,7 +10,7 @@ export default defineEventHandler(async () => {
     return {
       title: `Mock post ${batchId}-${number}`,
       slug: `mock-post-${batchId}-${number}`,
-      excerpt: `Generated mock post ${number}`,
+      description: `Generated mock post ${number}`,
       content: `Auto-generated post #${number} for batch ${batchId}.`,
       published: true,
       createdAt: now,

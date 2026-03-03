@@ -1,30 +1,28 @@
 <template>
-  <div class="post__card">
-    <div class="card__image__wrapper">
-      <img
-          v-if="displayImageSrc && !isImageBroken"
-          class="post__card__image"
-          :src="displayImageSrc"
-          :alt="`Изображение к посту: ${post.title}`"
-          loading="lazy"
-          @error="handleImageError"
+  <div class="card">
+    <div class="image__wrapper">
+      <img class="image"
+           v-if="displayImageSrc && !isImageBroken"
+           :src="displayImageSrc"
+           :alt="`Изображение к посту: ${post.title}`"
+           loading="lazy"
+           @error="handleImageError"
       >
-      <div v-else class="post__card__media-fallback">Нет изображения</div>
-      <a
-          :href="postHref"
-          class="post__card__link"
+      <div v-else class="card__media-fallback">Нет изображения</div>
+      <a class="card__link"
+         :href="postHref"
       >Перейти на страницу</a>
     </div>
-    <div class="post__card__body">
-      <h2 class="post__card__title">{{ post.title }}</h2>
-      <p class="post__card__excerpt">{{ post.excerpt }}</p>
-      <div class="post__card__content" v-html="post.content" />
+    <div class="card__body">
+      <h2 class="card__title">{{ post.title }}</h2>
+      <p class="card__description">{{ post.description }}</p>
+      <div class="card__content" v-html="post.content"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { BlogPost } from '~/types/blog'
+import type {BlogPost} from '~/types/blog'
 
 type BlogPostWithImage = BlogPost & {
   image?: string | null
@@ -36,7 +34,7 @@ const props = defineProps<{
   post: BlogPost
 }>()
 
-const { app: appConfig } = useRuntimeConfig()
+const {app: appConfig} = useRuntimeConfig()
 const postHref = computed(() => `${appConfig.baseURL || '/blog/'}${props.post.slug}`)
 
 const placeholderImageSrc = 'https://placehold.co/1200x620/222222/fafafa?text=Post+image'
@@ -45,9 +43,9 @@ const isImageBroken = ref(false)
 const displayImageSrc = computed(() => {
   const postWithImage = props.post as BlogPostWithImage
   return postWithImage.image?.trim()
-    || postWithImage.imageUrl?.trim()
-    || postWithImage.cover?.trim()
-    || placeholderImageSrc
+      || postWithImage.imageUrl?.trim()
+      || postWithImage.cover?.trim()
+      || placeholderImageSrc
 })
 
 watch(() => props.post.id, () => {
@@ -60,7 +58,7 @@ function handleImageError() {
 </script>
 
 <style scoped>
-.post__card {
+.card {
   position: relative;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-md);
@@ -74,24 +72,24 @@ function handleImageError() {
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
 
-.post__card:hover {
+.card:hover {
   border-color: rgb(var(--color-primary-rgb) / 0.88);
   box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.24), 0 16px 34px rgb(var(--color-primary-rgb) / 0.3);
 }
 
-.post__card__image {
+.image {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
 
-.card__image__wrapper {
+.image__wrapper {
   position: relative;
   display: grid;
 }
 
-.post__card__media-fallback {
+.card__media-fallback {
   aspect-ratio: 16 / 9;
   display: grid;
   place-items: center;
@@ -101,7 +99,7 @@ function handleImageError() {
   font-weight: 600;
 }
 
-.post__card__link {
+.card__link {
   position: absolute;
   right: 10px;
   bottom: 10px;
@@ -121,20 +119,20 @@ function handleImageError() {
   transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
 }
 
-.post__card__link:hover {
+.card__link:hover {
   color: rgb(var(--color-primary-rgb) / 0.96);
   border-color: rgb(var(--color-primary-rgb) / 0.45);
   background: rgba(0, 0, 0, 0.44);
 }
 
-.post__card__body {
+.card__body {
   display: grid;
   gap: 1px;
   padding-inline: 6px;
   height: 160px;
 }
 
-.post__card__title {
+.card__title {
   font-size: clamp(20px, 2.2vw, 26px);
   letter-spacing: -0.25px;
   line-height: 1.22;
@@ -143,7 +141,7 @@ function handleImageError() {
   text-wrap: balance;
 }
 
-.post__card__excerpt {
+.card__description {
   margin: 0;
   color: rgba(250, 250, 250, 0.72);
   font-size: 15px;
@@ -151,7 +149,7 @@ function handleImageError() {
   max-width: 78ch;
 }
 
-.post__card__content {
+.card__content {
   position: relative;
   color: rgba(250, 250, 250, 0.88);
   font-size: 15px;
@@ -163,7 +161,7 @@ function handleImageError() {
   overflow-wrap: anywhere;
 }
 
-.post__card__content::after {
+.card__content::after {
   content: '';
   position: absolute;
   left: 0;
@@ -172,9 +170,9 @@ function handleImageError() {
   height: 26px;
   pointer-events: none;
   background: linear-gradient(
-    to bottom,
-    rgba(22, 22, 22, 0),
-    rgba(22, 22, 22, 0.72)
+      to bottom,
+      rgba(22, 22, 22, 0),
+      rgba(22, 22, 22, 0.72)
   );
 }
 
@@ -193,30 +191,30 @@ function handleImageError() {
 }
 
 @media (max-width: 900px) {
-  .post__card {
+  .card {
     padding: 12px;
   }
 
-  .post__card__body {
+  .card__body {
     height: auto;
     gap: 8px;
   }
 
-  .post__card__content {
+  .card__content {
     height: auto;
     max-height: 88px;
   }
 }
 
 @media (max-width: 560px) {
-  .post__card__link {
+  .card__link {
     right: 8px;
     bottom: 8px;
     padding: 7px 9px;
     font-size: 13px;
   }
 
-  .post__card__title {
+  .card__title {
     font-size: clamp(18px, 6vw, 22px);
   }
 }

@@ -27,7 +27,7 @@
         />
         <KitInput
             label="Краткое описание"
-            v-model="form.excerpt"
+            v-model="form.description"
             as="textarea"
             :rows="3"
             :debounce="0"
@@ -81,7 +81,7 @@ const message = ref('')
 const form = ref<IPostFormPayload>({
   id: undefined,
   title: '',
-  excerpt: '',
+  description: '',
   content: '',
   published: false,
   slug: '',
@@ -112,7 +112,7 @@ onMounted(() => {
     form.value = {
       id: post.value.id,
       title: post.value.title,
-      excerpt: String(post.value.excerpt),
+      description: String(post.value.description),
       content: post.value.content,
       published: post.value.published,
       slug: post.value.slug,
