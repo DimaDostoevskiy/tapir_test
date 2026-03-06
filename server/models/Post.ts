@@ -1,17 +1,15 @@
-import {DataTypes, Model, Sequelize} from 'sequelize'
+import {DataTypes, Model, Sequelize, InferAttributes, InferCreationAttributes, CreationOptional} from 'sequelize'
 
-export class PostPayload extends Model {
-    declare id: number
-    declare title: string
+export class PostModel extends Model<InferAttributes<PostModel>, InferCreationAttributes<PostModel>> {
+    declare id: CreationOptional<number>
+    declare createdAt: CreationOptional<Date>
+    declare updatedAt: CreationOptional<Date>
     declare slug: string
-    declare excerpt: string
+    declare title: string
+    declare description: string | null
     declare content: string
     declare published: boolean
     declare image: string | null
-}
-
-export class PostModel extends PostPayload {
-
 }
 
 let initialized = false
@@ -37,7 +35,7 @@ export function initPostModel(sequelize: Sequelize) {
                 allowNull: false,
                 unique: true,
             },
-            excerpt: {
+            description: {  // Изменено с description на excerpt
                 type: DataTypes.TEXT,
                 allowNull: true,
             },

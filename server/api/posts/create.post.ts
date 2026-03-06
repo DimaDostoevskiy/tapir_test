@@ -1,18 +1,7 @@
-import {createError, defineEventHandler, readBody} from 'h3'
-import {PostModel} from '../../models/Post'
-import makeSlug from '../../utils/makeSlugUtil'
+import {defineEventHandler, readBody} from 'h3'
+import {postsService} from '../../services/postsService'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
-    body.slug = makeSlug(body.title)
-    return await PostModel.create(body)
-        .then(post => {
-            return post.get({plain: true})
-        })
-        .catch(() => {
-            throw createError({
-                statusCode: 400,
-                statusMessage: 'Ошибка! Не удалось создать пост!',
-            })
-        })
+    return postsService.createPost(body)
 })

@@ -2,7 +2,7 @@ export interface BlogPost {
     id: number
     title: string
     slug: string
-    excerpt: string | null
+    description: string | null
     content: string
     published: boolean
     image?: string | null
@@ -13,7 +13,7 @@ export interface BlogPost {
 export interface IPostFormPayload {
     id: number | undefined
     title: string
-    excerpt: string
+    description: string
     content: string
     published: boolean
     slug: string

@@ -1,25 +1,7 @@
-import {createError, defineEventHandler, getRouterParam} from 'h3'
-import {PostModel} from '../../models/Post'
+import { defineEventHandler, getRouterParam } from 'h3'
+import { postsService } from '../../services/postsService'
 
 export default defineEventHandler(async (event) => {
-    const param = getRouterParam(event, 'id')
-
-    const where: Record<string | symbol, unknown> = {
-        published: true,
-    }
-
-    if (Number.isInteger(Number(param))) {
-        where.id = Number(param)
-    } else {
-        where.slug = param
-    }
-    const post = await PostModel.findOne({
-        where
-    })
-
-    if (!post) {
-        throw createError({statusCode: 400, statusMessage: 'Post not found'})
-    }
-
-    return post.get({plain: true})
+  const param = getRouterParam(event, 'id') ?? ''
+  return postsService.getOnePublicPost(param)
 })

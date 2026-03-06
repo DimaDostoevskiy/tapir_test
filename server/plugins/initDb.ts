@@ -6,7 +6,7 @@ import {useRuntimeConfig} from '#imports'
 let sequelizeInstance: Sequelize | null = null
 let initPromise: Promise<void> | null = null
 
-const  getSequelize = () => {
+const getSequelize = () => {
     if (sequelizeInstance) {
         return sequelizeInstance
     }
