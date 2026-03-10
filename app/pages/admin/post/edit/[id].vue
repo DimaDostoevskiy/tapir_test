@@ -71,33 +71,36 @@ onMounted(() => {
       <KitForm v-if="form"
                :loading="isLoading"
                submit-label="Сохранить"
-               @submit="submit">
+               @submit="submit"
+      >
+        <KitImage :path="String(form.image)"
+                  loading="lazy"
+        />
+        <KitImageUpload label="Изображение"
+                        v-model="form.image"
+        />
         <KitInput label="Заголовок"
                   v-model="form.title"
                   type="text"
                   maxlength="255"
                   required
-                  :debounce="0"
+                  :debounce="100"
         />
         <KitInput label="Краткое описание"
                   v-model="form.description"
                   as="textarea"
                   :rows="3"
-                  :debounce="0"
+                  :debounce="100"
         />
         <KitInput label="Контент"
                   v-model="form.content"
                   as="textarea"
                   :rows="12"
                   required
-                  :debounce="0"
-        />
-        <KitImageUpload label="Изображение"
-                        v-model="form.image"
+                  :debounce="100"
         />
         <KitInput
             :label="'Опубликовано'"
-
             type="checkbox"
             v-model="form.published"
         />
