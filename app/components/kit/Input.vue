@@ -1,54 +1,77 @@
 <!-- BaseInput.vue -->
 <template>
   <div class="input-wrapper">
-    <label v-if="label" :for="id" class="input__label">{{ label }}</label>
-    <textarea
-      v-if="as === 'textarea'"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      :readonly="readonly"
-      :required="required"
-      :name="name"
-      :id="id"
-      :rows="rows"
-      v-bind="$attrs"
-      class="input input_textarea"
-      :class="{
+    <!-- Checkbox режим -->
+    <template v-if="type === 'checkbox'">
+      <label class="kit-form__checkbox input__checkbox-wrapper" :for="id">
+        <input
+            :id="id"
+            :name="name"
+            type="checkbox"
+            :checked="Boolean(modelValue)"
+            :disabled="disabled"
+            :readonly="readonly"
+            :required="required"
+            class="input__checkbox"
+            @change="handleCheckboxChange"
+            @focus="$emit('focus')"
+            @blur="$emit('blur')"
+        />
+        <span v-if="label" class="input__label input__label--inline">
+          {{ label }}
+        </span>
+      </label>
+    </template>
+
+    <!-- Обычные input / textarea -->
+    <template v-else>
+      <label v-if="label" :for="id" class="input__label">{{ label }}</label>
+      <textarea v-if="as === 'textarea'"
+                :value="modelValue"
+                :placeholder="placeholder"
+                :disabled="disabled"
+                :readonly="readonly"
+                :required="required"
+                :name="name"
+                :id="id"
+                :rows="rows"
+                v-bind="$attrs"
+                class="input input_textarea"
+                :class="{
         'input_error': error,
         'input_success': success,
         'input_disabled': disabled,
         'input_lg': size === 'lg',
         'input_sm': size === 'sm'
       }"
-      @input="handleInput"
-      @focus="$emit('focus')"
-      @blur="$emit('blur')"
-    />
-    <input
-      v-else
-      :type="type"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      :readonly="readonly"
-      :required="required"
-      :name="name"
-      :id="id"
-      @input="handleInput"
-      @focus="$emit('focus')"
-      @blur="$emit('blur')"
-      @keyup.enter="$emit('enter')"
-      v-bind="$attrs"
-      class="input"
-      :class="{
-        'input_error': error,
-        'input_success': success,
-        'input_disabled': disabled,
-        'input_lg': size === 'lg',
-        'input_sm': size === 'sm'
-      }"
-    />
+                @input="handleInput"
+                @focus="$emit('focus')"
+                @blur="$emit('blur')"
+      />
+      <input v-else
+             :type="type"
+             :value="modelValue"
+             :placeholder="placeholder"
+             :disabled="disabled"
+             :readonly="readonly"
+             :required="required"
+             :name="name"
+             :id="id"
+             @input="handleInput"
+             @focus="$emit('focus')"
+             @blur="$emit('blur')"
+             @keyup.enter="$emit('enter')"
+             v-bind="$attrs"
+             class="input"
+             :class="{
+          'input_error': error,
+          'input_success': success,
+          'input_disabled': disabled,
+          'input_lg': size === 'lg',
+          'input_sm': size === 'sm'
+        }"
+      />
+    </template>
     <p v-if="error" class="input__error">{{ error }}</p>
     <p v-if="hint && !error" class="input__hint">{{ hint }}</p>
   </div>
@@ -59,9 +82,9 @@ import {onBeforeUnmount} from 'vue'
 
 const props = defineProps({
   modelValue: null,
-  type: { type: String, default: 'text' },
-  as: { type: String, default: 'input', validator: v => ['input', 'textarea'].includes(v) },
-  rows: { type: Number, default: 3 },
+  type: {type: String, default: 'text'},
+  as: {type: String, default: 'input', validator: v => ['input', 'textarea'].includes(v)},
+  rows: {type: Number, default: 3},
   placeholder: String,
   label: String,
   disabled: Boolean,
@@ -72,8 +95,8 @@ const props = defineProps({
   error: String,
   success: Boolean,
   hint: String,
-  size: { type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v) },
-  debounce: { type: Number, default: 300 }
+  size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v)},
+  debounce: {type: Number, default: 300}
 })
 
 const emit = defineEmits(['update:modelValue', 'focus', 'blur', 'enter'])
@@ -97,6 +120,11 @@ const handleInput = (e) => {
   }, props.debounce)
 }
 
+const handleCheckboxChange = (e) => {
+  const checked = e.target.checked
+  emit('update:modelValue', checked)
+}
+
 onBeforeUnmount(() => {
   if (debounceTimer) clearTimeout(debounceTimer)
 })
@@ -105,6 +133,13 @@ onBeforeUnmount(() => {
 <style scoped>
 .input-wrapper {
   width: 100%;
+}
+
+.input__checkbox-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
 }
 
 .input__label {
@@ -116,6 +151,34 @@ onBeforeUnmount(() => {
   letter-spacing: 0.015em;
   color: rgb(var(--color-text-rgb));
   opacity: 0.9;
+}
+
+.input__label--inline {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.input__checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  border: 1px solid rgb(var(--color-border-rgb) / 0.8);
+  background: rgb(var(--color-surface-2-rgb));
+  accent-color: rgb(var(--color-primary-rgb));
+  box-shadow: 0 0 0 1px rgb(15 23 42 / 0.5);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.input__checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.4);
+}
+
+.input__checkbox:hover {
+  transform: scale(1.04);
+  border-color: rgb(var(--color-primary-rgb));
 }
 
 .input {
