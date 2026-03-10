@@ -34,7 +34,7 @@ watch(() => (props.path), (newPath) => {
 <template>
   <NuxtImg class="kit__image"
            fit="cover"
-           :src="isError ? path : defaultImage"
+           :src="isError ? defaultImage : (path || defaultImage)"
            :alt="alt"
            :loading="loading"
            @error="handleError"
