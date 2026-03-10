@@ -84,7 +84,9 @@ const parseResponse = async (data: any) => {
       </NuxtLink>
     </template>
     <template #section-content>
-      <KitImage :path="form.image || '/default_post_image.webp'"/>
+      <KitImage :path="String(form.image)"
+                loading="lazy"
+      />
       <KitForm v-if="form && !isAutoGenerate"
                submit-label="Создать"
                :loading="isLoading"
