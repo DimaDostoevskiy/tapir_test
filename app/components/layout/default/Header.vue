@@ -100,32 +100,10 @@ onMounted(() => {
   text-shadow: var(--color-primary);
 }
 
-.header-tooltip__link {
-  display: block;
-  width: 100%;
-  padding: 10px 16px;
-  text-align: center;
-  color: rgb(var(--color-text-rgb));
-  background: transparent;
-  border: 1px solid rgb(var(--color-border-rgb) / 0.5);
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.header-tooltip__link:hover {
-  background: rgb(var(--color-surface-2-rgb) / 0.5);
-  border-color: rgb(var(--color-primary-rgb));
-}
-
 @media (max-width: 768px) {
   .logo {
     display: none;
   }
-
-
 }
 </style>
 

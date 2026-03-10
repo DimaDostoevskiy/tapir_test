@@ -1,4 +1,4 @@
-import {z, ZodError} from 'zod'
+import {z} from 'zod'
 import {createError} from 'h3'
 import {PostModel} from "../models/Post";
 import makeSlug from "./makeSlugUtil";
@@ -32,15 +32,19 @@ const PostSchema = z.object({
         .default(null),
 })
 
-export default function (payload: any, isCreate: boolean = false): PostModel {
+export default function (payload: unknown, isCreate: boolean = false): PostModel {
+    if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
+        throw createError({statusCode: 400, statusMessage: 'Invalid payload'})
+    }
+    const p = payload as Record<string, unknown>
 
-    if (payload.title && typeof payload.title === 'string') {
-        payload.slug = makeSlug(payload.title)
+    if (p.title && typeof p.title === 'string') {
+        p.slug = makeSlug(p.title)
     }
 
     if (!isCreate) {
         const idSchema = z.object({id: z.number()})
-        const idCheck = idSchema.safeParse(payload)
+        const idCheck = idSchema.safeParse(p)
 
         if (!idCheck.success) {
             throw createError({
@@ -50,10 +54,10 @@ export default function (payload: any, isCreate: boolean = false): PostModel {
         }
     }
 
-    console.log(payload)
+    console.log(p)
 
     // Валидация всех полей
-    const result = PostSchema.safeParse(payload)
+    const result = PostSchema.safeParse(p)
 
     if (!result.success) {
         // const error = result.error as ZodError

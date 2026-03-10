@@ -16,7 +16,7 @@
 <script setup lang="ts">
 withDefaults(
     defineProps<{
-      submitLabel?: string
+      submitLabel: string
       loading?: boolean
       loadingText?: string
       submitDisabled?: boolean
@@ -42,11 +42,5 @@ defineEmits<{
 .kit-form__actions {
   display: flex;
   justify-content: flex-start;
-}
-
-:deep(.kit-form__checkbox) {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
 </style>

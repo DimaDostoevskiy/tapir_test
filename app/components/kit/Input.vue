@@ -38,12 +38,12 @@
                 v-bind="$attrs"
                 class="input input_textarea"
                 :class="{
-        'input_error': error,
-        'input_success': success,
-        'input_disabled': disabled,
-        'input_lg': size === 'lg',
-        'input_sm': size === 'sm'
-      }"
+                  'input_error': error,
+                  'input_success': success,
+                  'input_disabled': disabled,
+                  'input_lg': size === 'lg',
+                  'input_sm': size === 'sm'
+                }"
                 @input="handleInput"
                 @focus="$emit('focus')"
                 @blur="$emit('blur')"
@@ -64,12 +64,12 @@
              v-bind="$attrs"
              class="input"
              :class="{
-          'input_error': error,
-          'input_success': success,
-          'input_disabled': disabled,
-          'input_lg': size === 'lg',
-          'input_sm': size === 'sm'
-        }"
+               'input_error': error,
+               'input_success': success,
+               'input_disabled': disabled,
+               'input_lg': size === 'lg',
+               'input_sm': size === 'sm'
+             }"
       />
     </template>
     <p v-if="error" class="input__error">{{ error }}</p>
@@ -81,20 +81,20 @@
 import {onBeforeUnmount} from 'vue'
 
 const props = defineProps({
-  modelValue: null,
+  modelValue: {type: [String, Boolean, Number], default: ''},
   type: {type: String, default: 'text'},
   as: {type: String, default: 'input', validator: v => ['input', 'textarea'].includes(v)},
   rows: {type: Number, default: 3},
-  placeholder: String,
-  label: String,
-  disabled: Boolean,
-  readonly: Boolean,
-  required: Boolean,
-  name: String,
-  id: String,
-  error: String,
-  success: Boolean,
-  hint: String,
+  placeholder: {type: String, default: ''},
+  label: {type: String, default: ''},
+  disabled: {type: Boolean, default: false},
+  readonly: {type: Boolean, default: false},
+  required: {type: Boolean, default: false},
+  name: {type: String, default: ''},
+  id: {type: String, default: ''},
+  error: {type: String, default: ''},
+  success: {type: Boolean, default: false},
+  hint: {type: String, default: ''},
   size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg'].includes(v)},
   debounce: {type: Number, default: 300}
 })

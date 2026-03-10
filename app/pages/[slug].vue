@@ -16,8 +16,7 @@
             :title="'Ошибка'"
             :text="'Не удалось загрузить пост'"
             :type="'error'"
-  >
-  </KitAlert>
+  />
 </template>
 
 <script setup lang="ts">

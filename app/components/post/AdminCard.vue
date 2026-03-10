@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import type {BlogPost} from '~/types/blog'
-
-const props = defineProps<{
-  post: BlogPost
-}>()
-
-const isImageBroken = ref(false)
-
-const handleImageError = () => {
-  isImageBroken.value = true
-}
-</script>
-
 <template>
   <div class="admin__card">
     <div class="image__wrapper">
@@ -21,7 +7,7 @@ const handleImageError = () => {
            :alt="`Изображение к посту: ${post.title}`"
            loading="lazy"
            @error="handleImageError"
-      >
+      />
       <div v-else
            class="card__media-fallback"
       >Нет изображения
@@ -38,6 +24,20 @@ const handleImageError = () => {
     </NuxtLink>
   </div>
 </template>
+
+<script setup lang="ts">
+import type {BlogPost} from '~/types/blog'
+
+const props = defineProps<{
+  post: BlogPost
+}>()
+
+const isImageBroken = ref(false)
+
+const handleImageError = () => {
+  isImageBroken.value = true
+}
+</script>
 
 <style scoped>
 .admin__card {

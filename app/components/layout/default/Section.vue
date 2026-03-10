@@ -1,9 +1,3 @@
-<script setup lang="ts">
-const props = defineProps({
-  title: String,
-})
-</script>
-
 <template>
   <section class="section">
     <div class="section__header">
@@ -15,6 +9,12 @@ const props = defineProps({
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+const props = defineProps({
+  title: {type: String, default: ''},
+})
+</script>
 
 <style scoped>
 .section {

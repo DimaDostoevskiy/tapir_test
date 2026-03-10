@@ -14,7 +14,7 @@
 
 <script setup>
 defineProps({
-  text: String,
+  text: {type: String, default: ''},
   position: {
     type: String,
     default: 'bottom',

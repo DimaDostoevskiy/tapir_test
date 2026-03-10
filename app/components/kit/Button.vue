@@ -38,8 +38,8 @@ const props = defineProps({
   disabled: Boolean,
   loading: Boolean,
   fullWidth: Boolean,
-  icon: String,
-  iconRight: String,
+  icon: {type: String, default: ''},
+  iconRight: {type: String, default: ''},
   iconPosition: {
     type: String,
     default: 'left',

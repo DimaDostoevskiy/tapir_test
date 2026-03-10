@@ -2,11 +2,11 @@
 <template>
   <div class="avatar"
        :class="{
-      'avatar_sm': size === 'sm',
-      'avatar_md': size === 'md',
-      'avatar_lg': size === 'lg',
-      'avatar_xl': size === 'xl',
-    }"
+         'avatar_sm': size === 'sm',
+         'avatar_md': size === 'md',
+         'avatar_lg': size === 'lg',
+         'avatar_xl': size === 'xl',
+       }"
        @click="$emit('click', $event)"
   >
     <img v-if="src"
@@ -18,11 +18,13 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   src: {type: String, default: '/avatar.jpg'},
   alt: {type: String, default: 'Картинка'},
   size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg', 'xl'].includes(v)},
 })
+
+defineEmits(['click'])
 </script>
 
 <style scoped>
@@ -74,7 +76,5 @@ const props = defineProps({
   height: 100%;
   object-fit: cover;
   display: block;
-
 }
-
 </style>

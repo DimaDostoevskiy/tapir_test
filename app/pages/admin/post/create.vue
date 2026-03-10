@@ -1,80 +1,3 @@
-<script setup lang="ts">
-
-definePageMeta({
-  middleware: ['auth'],
-})
-
-import type {IPostFormPayload} from '~/types/blog'
-
-const errorMessage = ref('')
-const form = ref<IPostFormPayload>({
-  id: undefined,
-  title: '',
-  description: '',
-  content: '',
-  published: false,
-  slug: '',
-  image: '',
-})
-const isLoading = ref(false)
-const isAutoGenerate = ref(false)
-const promptTheme = ref<string>('Например: Подсолнечное масло')
-
-const submit = async () => {
-  isLoading.value = true
-  errorMessage.value = ''
-  await $fetch('/api/posts/create', {
-    method: 'POST',
-    body: form.value,
-  } as Record<string, unknown>)
-      .then(() => {
-        navigateTo(`/admin/post`)
-      })
-      .catch((err) => {
-        errorMessage.value = err.data.message || 'Ошибка при создании поста'
-      })
-      .finally(() => {
-        isLoading.value = false
-      })
-}
-
-const fetchDeepSeek = () => {
-  isLoading.value = true
-  errorMessage.value = ''
-  $fetch('/api/ai/generate-post', {
-    method: 'POST',
-    body: {
-      promptTheme: promptTheme.value,
-    },
-  })
-      .then(async (res) => {
-        const data = res as any
-        if (data?.error) {
-          errorMessage.value = data.error.message
-        } else {
-          const generatePost = await parseResponse(data)
-          form.value.title = generatePost.title || ''
-          form.value.content = generatePost.content || ''
-          form.value.description = generatePost.description || ''
-        }
-      })
-      .catch(() => {
-        errorMessage.value = 'Ошибка! Не удалось сгенерировать пост!'
-      })
-      .finally(() => {
-        isLoading.value = false
-        isAutoGenerate.value = false
-      })
-}
-
-const parseResponse = async (data: any) => {
-  let content = data.choices[0].message.content
-  content = content.replace(/<think>[\s\S]*?<\/think>/g, '')
-  content = content.trim()
-  return JSON.parse(content)
-}
-</script>
-
 <template>
   <LayoutDefaultSection :title="'Создать пост'">
     <template #section-controls>
@@ -145,3 +68,88 @@ const parseResponse = async (data: any) => {
     </template>
   </LayoutDefaultSection>
 </template>
+
+<script setup lang="ts">
+
+definePageMeta({
+  middleware: ['auth'],
+})
+
+import type {IPostFormPayload} from '~/types/blog'
+
+interface AiGenerateError {
+  error: { message: string }
+}
+
+interface AiGenerateSuccess {
+  choices: Array<{ message: { content: string } }>
+}
+
+const errorMessage = ref('')
+const form = ref<IPostFormPayload>({
+  id: undefined,
+  title: '',
+  description: '',
+  content: '',
+  published: false,
+  slug: '',
+  image: '',
+})
+const isLoading = ref(false)
+const isAutoGenerate = ref(false)
+const promptTheme = ref<string>('Например: Подсолнечное масло')
+
+const submit = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  await $fetch('/api/posts/create', {
+    method: 'POST',
+    body: form.value,
+  } as Record<string, unknown>)
+      .then(() => {
+        navigateTo(`/admin/post`)
+      })
+      .catch((err) => {
+        errorMessage.value = err.data.message || 'Ошибка при создании поста'
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
+}
+
+const fetchDeepSeek = () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  $fetch('/api/ai/generate-post', {
+    method: 'POST',
+    body: {
+      promptTheme: promptTheme.value,
+    },
+  })
+      .then(async (res) => {
+        const data = res as AiGenerateError | AiGenerateSuccess
+        if ('error' in data && data.error) {
+          errorMessage.value = data.error.message
+        } else {
+          const generatePost = await parseResponse(data as AiGenerateSuccess)
+          form.value.title = generatePost.title || ''
+          form.value.content = generatePost.content || ''
+          form.value.description = generatePost.description || ''
+        }
+      })
+      .catch(() => {
+        errorMessage.value = 'Ошибка! Не удалось сгенерировать пост!'
+      })
+      .finally(() => {
+        isLoading.value = false
+        isAutoGenerate.value = false
+      })
+}
+
+const parseResponse = async (data: AiGenerateSuccess) => {
+  let content = data.choices[0].message.content
+  content = content.replace(/<think>[\s\S]*?<\/think>/g, '')
+  content = content.trim()
+  return JSON.parse(content)
+}
+</script>

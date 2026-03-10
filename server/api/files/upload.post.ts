@@ -28,7 +28,8 @@ export default defineEventHandler(async (event) => {
     if (!filePart) {
         throw createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
     }
-    if (!filePart.data || typeof (filePart.data as any).length !== 'number') {
+    const data = filePart.data
+    if (!data || (typeof (data as { length?: number }).length !== 'number')) {
         throw createError({statusCode: 400, statusMessage: 'Missing or invalid file field'})
     }
 

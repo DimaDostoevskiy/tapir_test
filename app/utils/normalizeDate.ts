@@ -1,1 +1,1 @@
-export default (date: any) => new Date(date).toLocaleDateString('ru-RU')
+export default (date: string | number | Date) => new Date(date).toLocaleDateString('ru-RU')

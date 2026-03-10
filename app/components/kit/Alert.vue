@@ -32,7 +32,7 @@ const props = withDefaults(
     defineProps<{
       title: string
       text: string
-      type: KitAlertType
+      type?: KitAlertType
     }>(),
     {
       type: 'info',

@@ -18,13 +18,20 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
-    defineProps<{
-      modelValue?: string | null
-      label?: string
-      required?: boolean
-    }>(),
-    {required: false}
+defineProps({
+      modelValue: {
+        type: String,
+        default: null
+      },
+      label: {
+        type: String,
+        default: ''
+      },
+      required: {
+        type: Boolean,
+        default: false
+      },
+    }
 )
 
 const emit = defineEmits<{

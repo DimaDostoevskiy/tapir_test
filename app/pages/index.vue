@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
   if (listMutationObserver) {
     try {
       listMutationObserver.disconnect()
-    } catch (_) {
+    } catch {
       // ignore cleanup errors
     }
     listMutationObserver = null
