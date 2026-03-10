@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   path: {
     type: String,
     default: ''
@@ -19,10 +19,16 @@ defineProps({
 })
 
 const isError = ref(false)
+const imageSrc = ref(props.path)
 
 const handleError = () => {
   isError.value = true
 }
+
+watch(() => (props.path), (newPath) => {
+  imageSrc.value = newPath
+  isError.value = false
+})
 </script>
 
 <template>
