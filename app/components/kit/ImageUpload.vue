@@ -14,14 +14,11 @@
       <span class="kit-image-upload__trigger-text">Выбрать файл</span>
     </label>
     <p v-if="error" class="kit-image-upload__error">{{ error }}</p>
-    <div v-if="(modelValue ?? '').trim()" class="kit-image-upload__preview">
-      <img :src="modelValue ?? ''" alt="Превью" class="kit-image-upload__preview-img"/>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(
+withDefaults(
     defineProps<{
       modelValue?: string | null
       label?: string
@@ -40,9 +37,13 @@ const onChange = async (event: Event) => {
   error.value = ''
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+
   if (!file) return
+
   const formData = new FormData()
+
   formData.append('file', file)
+
   await $fetch<{ path: string }>('/api/files/upload', {
     method: 'POST',
     body: formData,
