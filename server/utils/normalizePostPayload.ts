@@ -36,15 +36,15 @@ export default function (payload: unknown, isCreate: boolean = false): PostModel
     if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
         throw createError({statusCode: 400, statusMessage: 'Invalid payload'})
     }
-    const p = payload as Record<string, unknown>
+    const post = payload as Record<string, unknown>
 
-    if (p.title && typeof p.title === 'string') {
-        p.slug = makeSlug(p.title)
+    if (post.title && typeof post.title === 'string') {
+        post.slug = makeSlug(post.title)
     }
 
     if (!isCreate) {
         const idSchema = z.object({id: z.number()})
-        const idCheck = idSchema.safeParse(p)
+        const idCheck = idSchema.safeParse(post)
 
         if (!idCheck.success) {
             throw createError({
@@ -54,13 +54,10 @@ export default function (payload: unknown, isCreate: boolean = false): PostModel
         }
     }
 
-    console.log(p)
-
     // Валидация всех полей
-    const result = PostSchema.safeParse(p)
+    const result = PostSchema.safeParse(post)
 
     if (!result.success) {
-        // const error = result.error as ZodError
         throw createError({
             statusCode: 400,
             statusMessage: 'Ошибка валидации'

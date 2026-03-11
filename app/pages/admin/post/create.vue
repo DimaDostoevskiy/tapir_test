@@ -1,21 +1,85 @@
+<script setup lang="ts">
+import useAgent from "../../../composables/useAgent";
+
+definePageMeta({
+  middleware: ['auth'],
+})
+
+import type {IPostFormPayload} from '~/types/blog'
+
+const form = ref<IPostFormPayload>({
+  id: undefined,
+  title: '',
+  description: '',
+  content: '',
+  published: false,
+  slug: '',
+  image: '',
+})
+const isLoading = ref(false)
+const promptTheme = ref<string>('')
+const errorMessage = ref('')
+const isAutoGenerate = ref(false)
+
+const submitFormHandler = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  await $fetch('/api/posts/create', {
+    method: 'POST',
+    body: form.value,
+  } as Record<string, unknown>)
+      .then(() => {
+        navigateTo(`/admin/post`)
+      })
+      .catch((err) => {
+        errorMessage.value = err.data.message || 'Ошибка при создании поста'
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
+}
+
+const generatePostHandler = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+
+  const {message, result} = await useAgent().fetchDeepSeek(promptTheme.value)
+
+  if (result) {
+    form.value.title = result.title || ''
+    form.value.content = result.content || ''
+    form.value.description = result.description || ''
+  } else {
+    errorMessage.value = String(message)
+  }
+
+  isLoading.value = false
+  isAutoGenerate.value = false
+}
+</script>
+
 <template>
   <LayoutDefaultSection :title="'Создать пост'">
     <template #section-controls>
+      <KitButton :text="isAutoGenerate ? 'сам' :  'авто' "
+                 @click="isAutoGenerate = !isAutoGenerate"
+      />
       <NuxtLink :to="'/admin/post/'"
-                class="link-btn link-btn--outline"
-      >Назад к списку
+                class="link-btn link-btn_outline"
+      >назад
       </NuxtLink>
     </template>
     <template #section-content>
-      <KitImage :path="String(form.image)"
-                loading="lazy"
-      />
       <KitForm v-if="form && !isAutoGenerate"
                submit-label="Создать"
                :loading="isLoading"
                :submit-disabled="!form.image?.trim()"
-               @submit="submit"
+               @submit="submitFormHandler"
       >
+        <KitImage
+            :path="form.image"
+            loading="lazy"
+        />
         <KitImageUpload label="Изображение"
                         required
                         v-model="form.image"
@@ -47,10 +111,10 @@
         />
       </KitForm>
       <KitForm v-if="isAutoGenerate"
-               submit-label="Создать"
+               submit-label="Сгенерировать"
                :loading="isLoading"
                :submit-disabled="!promptTheme.trim()"
-               @submit="fetchDeepSeek"
+               @submit="generatePostHandler"
       >
         <KitInput label="Тема поста"
                   type="text"
@@ -61,6 +125,7 @@
         />
       </KitForm>
       <KitAlert v-if="errorMessage"
+                style="margin-top: 1em"
                 title="Ошибка"
                 :text="errorMessage"
                 :type="'error'"
@@ -69,87 +134,3 @@
   </LayoutDefaultSection>
 </template>
 
-<script setup lang="ts">
-
-definePageMeta({
-  middleware: ['auth'],
-})
-
-import type {IPostFormPayload} from '~/types/blog'
-
-interface AiGenerateError {
-  error: { message: string }
-}
-
-interface AiGenerateSuccess {
-  choices: Array<{ message: { content: string } }>
-}
-
-const errorMessage = ref('')
-const form = ref<IPostFormPayload>({
-  id: undefined,
-  title: '',
-  description: '',
-  content: '',
-  published: false,
-  slug: '',
-  image: '',
-})
-const isLoading = ref(false)
-const isAutoGenerate = ref(false)
-const promptTheme = ref<string>('Например: Подсолнечное масло')
-
-const submit = async () => {
-  isLoading.value = true
-  errorMessage.value = ''
-  await $fetch('/api/posts/create', {
-    method: 'POST',
-    body: form.value,
-  } as Record<string, unknown>)
-      .then(() => {
-        navigateTo(`/admin/post`)
-      })
-      .catch((err) => {
-        errorMessage.value = err.data.message || 'Ошибка при создании поста'
-      })
-      .finally(() => {
-        isLoading.value = false
-      })
-}
-
-const fetchDeepSeek = () => {
-  isLoading.value = true
-  errorMessage.value = ''
-  $fetch('/api/ai/generate-post', {
-    method: 'POST',
-    body: {
-      promptTheme: promptTheme.value,
-    },
-  })
-      .then(async (res) => {
-        const data = res as AiGenerateError | AiGenerateSuccess
-        if ('error' in data && data.error) {
-          errorMessage.value = data.error.message
-        } else {
-          const generatePost = await parseResponse(data as AiGenerateSuccess)
-          form.value.title = generatePost.title || ''
-          form.value.content = generatePost.content || ''
-          form.value.description = generatePost.description || ''
-        }
-      })
-      .catch(() => {
-        errorMessage.value = 'Ошибка! Не удалось сгенерировать пост!'
-      })
-      .finally(() => {
-        isLoading.value = false
-        isAutoGenerate.value = false
-      })
-}
-
-const parseResponse = async (data: AiGenerateSuccess) => {
-  let content = data.choices[0].message.content
-  content = content.replace(/<think>[\s\S]*?<\/think>/g, '')
-  content = content.trim()
-  return JSON.parse(content)
-}
-</script>
