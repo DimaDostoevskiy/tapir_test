@@ -11,7 +11,10 @@ alwaysApply: true
   - `npm run generate` - generate static output.
   - `npm run preview` - preview production output.
   - `npm run postinstall` - run Nuxt prepare step.
-- After substantial code edits, run at least one relevant verification command (`build` or another task-specific check).
+  - `npm run lint` - run ESLint.
+- After code edits, run verification:
+  - **Always** run `npm run lint` after edits.
+  - Run `npm run build` when logic, types, imports, or structure change; optional for style/lint-only fixes.
 - If a command fails, fix introduced issues before finalizing or clearly report blockers.
 - Do not leave partially implemented changes behind.
 - In the final response, include what was changed, what was verified, and any remaining risks.
