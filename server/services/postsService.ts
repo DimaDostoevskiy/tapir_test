@@ -22,10 +22,15 @@ export const postsService = {
         })
     ,
 
-    getAllPosts: async () => await PostModel.findAll()
+    getAllPosts: async () => await PostModel.findAll({
+        order: [['createdAt', 'DESC']],
+    })
         .then(postList => postList.map(post => post.get({plain: true})))
         .catch(() => {
-            return []
+            throw createError({
+                statusCode: 400,
+                statusMessage: 'Ошибка! Не удалось получить посты!',
+            })
         })
     ,
 
