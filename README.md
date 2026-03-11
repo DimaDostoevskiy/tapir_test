@@ -29,9 +29,9 @@
 - Главная..............................<https://motodart.pro/blog/>
 - Страница поста.................<https://motodart.pro/blog/:slug>
 - Панель администратора...<https://motodart.pro/blog/admin/>
-- Управление постами.........<https://motodart.pro/blog/admin/blog>
-- Создать пост......................<https://motodart.pro/blog/admin/blog/create>
-- Изменить пост....................<https://motodart.pro/blog/admin/blog/:id/edit>
+- Управление постами.........<https://motodart.pro/blog/admin/post>
+- Создать пост......................<https://motodart.pro/blog/admin/post/create>
+- Изменить пост....................<https://motodart.pro/blog/admin/post/edit/:id>
 
 ## Базы данных (Sequelize + MySQL)
 
