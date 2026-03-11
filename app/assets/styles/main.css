@@ -117,26 +117,31 @@ a {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.link-btn--primary {
+
+.link-btn_primary {
     background: rgb(var(--color-primary-rgb));
     color: rgb(var(--color-bg-rgb));
 }
-.link-btn--primary:hover {
+
+.link-btn_primary:hover {
     background: rgb(var(--color-primary-hover-rgb));
     transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
 }
-.link-btn--outline {
+
+.link-btn_outline {
     background: transparent;
     color: rgb(var(--color-text-rgb));
     border-color: rgb(var(--color-border-rgb) / 0.5);
 }
-.link-btn--outline:hover {
+
+.link-btn_outline:hover {
     background: rgb(var(--color-surface-2-rgb) / 0.5);
     border-color: rgb(var(--color-primary-rgb));
     transform: translateY(-1px);
 }
-.link-btn--sm {
+
+.link-btn_sm {
     padding: 8px 16px;
     font-size: 0.875rem;
     border-radius: calc(var(--radius-sm) - 4px);

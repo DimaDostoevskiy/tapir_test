@@ -1,22 +1,21 @@
 <template>
-  <div class="card">
-    <div class="image__wrapper">
-      <img class="image"
-           v-if="displayImageSrc && !isImageBroken"
-           :src="displayImageSrc"
-           :alt="`Изображение к посту: ${post.title}`"
-           loading="lazy"
-           @error="handleImageError"
+  <div class="post-card">
+    <div class="post-card__media">
+      <img
+          v-if="displayImageSrc && !isImageBroken"
+          class="post-card__media-image"
+          :src="displayImageSrc"
+          :alt="`Изображение к посту: ${post.title}`"
+          loading="lazy"
+          @error="handleImageError"
       />
-      <div v-else class="card__media-fallback">Нет изображения</div>
-      <a class="card__link"
-         :href="postHref"
-      >Перейти на страницу</a>
+      <div v-else class="post-card__media-fallback">Нет изображения</div>
+      <a class="post-card__link" :href="postHref">Перейти на страницу</a>
     </div>
-    <div class="card__body">
-      <h2 class="card__title">{{ post.title }}</h2>
-      <p class="card__description">{{ post.description }}</p>
-      <div class="card__content" v-html="post.content"/>
+    <div class="post-card__body">
+      <h2 class="post-card__title">{{ post.title }}</h2>
+      <p class="post-card__description">{{ post.description }}</p>
+      <div class="post-card__content" v-html="post.content"/>
     </div>
   </div>
 </template>
@@ -29,9 +28,12 @@ type BlogPostWithImage = BlogPost & {
   cover?: string | null
 }
 
-const props = defineProps<{
-  post: BlogPost
-}>()
+const props = defineProps({
+  post: {
+    type: Object as () => BlogPost,
+    required: true
+  }
+})
 
 const {app: appConfig} = useRuntimeConfig()
 const postHref = computed(() => `${appConfig.baseURL || '/blog/'}${props.post.slug}`)
@@ -58,7 +60,7 @@ function handleImageError() {
 
 
 <style scoped>
-.card {
+.post-card {
   position: relative;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-md);
@@ -72,24 +74,24 @@ function handleImageError() {
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
 
-.card:hover {
+.post-card:hover {
   border-color: rgb(var(--color-primary-rgb) / 0.88);
   box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.24), 0 16px 34px rgb(var(--color-primary-rgb) / 0.3);
 }
 
-.image {
+.post-card__media {
+  position: relative;
+  display: grid;
+}
+
+.post-card__media-image {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
 
-.image__wrapper {
-  position: relative;
-  display: grid;
-}
-
-.card__media-fallback {
+.post-card__media-fallback {
   aspect-ratio: 16 / 9;
   display: grid;
   place-items: center;
@@ -99,7 +101,7 @@ function handleImageError() {
   font-weight: 600;
 }
 
-.card__link {
+.post-card__link {
   position: absolute;
   right: 10px;
   bottom: 10px;
@@ -119,20 +121,20 @@ function handleImageError() {
   transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
 }
 
-.card__link:hover {
+.post-card__link:hover {
   color: rgb(var(--color-primary-rgb) / 0.96);
   border-color: rgb(var(--color-primary-rgb) / 0.45);
   background: rgba(0, 0, 0, 0.44);
 }
 
-.card__body {
+.post-card__body {
   display: grid;
   gap: 1px;
   padding-inline: 6px;
   height: 160px;
 }
 
-.card__title {
+.post-card__title {
   font-size: clamp(20px, 2.2vw, 26px);
   letter-spacing: -0.25px;
   line-height: 1.22;
@@ -141,7 +143,7 @@ function handleImageError() {
   text-wrap: balance;
 }
 
-.card__description {
+.post-card__description {
   margin: 0;
   color: rgba(250, 250, 250, 0.72);
   font-size: 15px;
@@ -149,7 +151,7 @@ function handleImageError() {
   max-width: 78ch;
 }
 
-.card__content {
+.post-card__content {
   position: relative;
   color: rgba(250, 250, 250, 0.88);
   font-size: 15px;
@@ -161,7 +163,7 @@ function handleImageError() {
   overflow-wrap: anywhere;
 }
 
-.card__content::after {
+.post-card__content::after {
   content: '';
   position: absolute;
   left: 0;
@@ -176,45 +178,31 @@ function handleImageError() {
   );
 }
 
-.post__card__content :deep(p) {
-  margin: 0;
-}
-
-.post__card__content :deep(p + p) {
-  margin-top: 10px;
-}
-
-.post__card__content :deep(a) {
-  color: var(--color-primary);
-  font-weight: 700;
-  text-decoration: underline;
-}
-
 @media (max-width: 900px) {
-  .card {
+  .post-card {
     padding: 12px;
   }
 
-  .card__body {
+  .post-card__body {
     height: auto;
     gap: 8px;
   }
 
-  .card__content {
+  .post-card__content {
     height: auto;
     max-height: 88px;
   }
 }
 
 @media (max-width: 560px) {
-  .card__link {
+  .post-card__link {
     right: 8px;
     bottom: 8px;
     padding: 7px 9px;
     font-size: 13px;
   }
 
-  .card__title {
+  .post-card__title {
     font-size: clamp(18px, 6vw, 22px);
   }
 }

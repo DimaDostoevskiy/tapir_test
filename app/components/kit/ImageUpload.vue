@@ -1,27 +1,8 @@
-<template>
-  <div class="kit-image-upload">
-    <label v-if="label" class="kit-image-upload__label">
-      {{ label }}
-      <span v-if="required" class="kit-image-upload__required">*</span>
-    </label>
-    <label class="kit-image-upload__trigger">
-      <input
-          type="file"
-          accept="image/*"
-          class="kit-image-upload__input"
-          @change="onChange"
-      />
-      <span class="kit-image-upload__trigger-text">Выбрать файл</span>
-    </label>
-    <p v-if="error" class="kit-image-upload__error">{{ error }}</p>
-  </div>
-</template>
-
 <script setup lang="ts">
 defineProps({
       modelValue: {
         type: String,
-        default: null
+        default: ''
       },
       label: {
         type: String,
@@ -63,6 +44,36 @@ const onChange = async (event: Event) => {
 }
 </script>
 
+<template>
+  <div
+      class="kit-image-upload"
+      :class="{ 'kit-image-upload_has-error': error }"
+  >
+    <label
+        v-if="label"
+        class="kit-image-upload__label"
+        :class="{ 'kit-image-upload__label_required': required }"
+    >
+      {{ label }}
+      <span
+          v-if="required"
+          class="kit-image-upload__required-mark"
+      >*</span>
+    </label>
+    <label class="kit-image-upload__trigger">
+      <input
+          type="file"
+          accept="image/*"
+          class="kit-image-upload__input"
+          @change="onChange"
+      />
+      <span class="kit-image-upload__trigger-text">Выбрать файл</span>
+    </label>
+    <p v-if="error" class="kit-image-upload__error">{{ error }}</p>
+  </div>
+</template>
+
+
 <style scoped>
 .kit-image-upload {
   display: grid;
@@ -81,7 +92,7 @@ const onChange = async (event: Event) => {
   opacity: 0.9;
 }
 
-.kit-image-upload__required {
+.kit-image-upload__required-mark {
   color: rgb(var(--color-danger-rgb));
 }
 
@@ -119,26 +130,14 @@ const onChange = async (event: Event) => {
 }
 
 .kit-image-upload__error {
-  margin: 0;
-  margin-top: 2px;
+  margin: 2px 0 0 0;
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
   color: rgb(var(--color-danger-rgb));
 }
 
-.kit-image-upload__preview {
-  max-width: min(400px, 100%);
-  overflow: hidden;
-  border: 1px solid rgb(var(--color-border-rgb) / 0.15);
-  border-radius: var(--radius-sm);
-  background: rgb(var(--color-surface-2-rgb) / 0.2);
-}
-
-.kit-image-upload__preview-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  vertical-align: top;
+.kit-image-upload_has-error .kit-image-upload__trigger {
+  border-color: rgb(var(--color-danger-rgb) / 0.8);
 }
 </style>

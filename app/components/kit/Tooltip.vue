@@ -1,13 +1,15 @@
 <template>
-  <div
-    class="tooltip__wrapper"
-    @mouseenter="show = true"
-    @mouseleave="show = false"
+  <div class="kit-tooltip"
+       @mouseenter="show = true"
+       @mouseleave="show = false"
   >
-    <slot name="trigger" />
-    <div v-show="show" class="tooltip" :class="'tooltip--' + position">
-      <p v-if="text">{{ text }}</p>
-      <slot name="content" />
+    <slot name="trigger"/>
+    <div v-show="show"
+         class="kit-tooltip__popup"
+         :class="`kit-tooltip__popup_${position}`"
+    >
+      <p v-if="text" class="kit-tooltip__text">{{ text }}</p>
+      <slot name="content"/>
     </div>
   </div>
 </template>
@@ -26,12 +28,12 @@ const show = ref(false)
 </script>
 
 <style scoped>
-.tooltip__wrapper {
+.kit-tooltip {
   position: relative;
   display: inline-block;
 }
 
-.tooltip {
+.kit-tooltip__popup {
   position: absolute;
   z-index: 9999;
   padding: 8px 12px;
@@ -44,31 +46,35 @@ const show = ref(false)
   box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.5);
 }
 
-.tooltip--top {
+.kit-tooltip__popup_top {
   bottom: 100%;
   left: 50%;
   margin-bottom: 6px;
   transform: translateX(-50%);
 }
 
-.tooltip--bottom {
+.kit-tooltip__popup_bottom {
   top: 100%;
   left: 50%;
   margin-top: 6px;
   transform: translateX(-50%);
 }
 
-.tooltip--left {
+.kit-tooltip__popup_left {
   right: 100%;
   top: 50%;
   margin-right: 6px;
   transform: translateY(-50%);
 }
 
-.tooltip--right {
+.kit-tooltip__popup_right {
   left: 100%;
   top: 50%;
   margin-left: 6px;
   transform: translateY(-50%);
+}
+
+.kit-tooltip__text {
+  margin: 0;
 }
 </style>

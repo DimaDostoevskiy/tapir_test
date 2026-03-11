@@ -1,7 +1,7 @@
 <template>
   <LayoutDefaultSection :title="'Управление постами'">
     <template #section-controls>
-      <nuxt-link class="link-btn link-btn--outline"
+      <nuxt-link class="link-btn link-btn_outline"
                  :to="`/admin/post/create`"
       >Создать новый пост
       </nuxt-link>

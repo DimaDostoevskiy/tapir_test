@@ -5,7 +5,7 @@ export interface BlogPost {
     description: string | null
     content: string
     published: boolean
-    image?: string | null
+    image: string
     createdAt: string
     updatedAt: string
 }
@@ -17,5 +17,5 @@ export interface IPostFormPayload {
     content: string
     published: boolean
     slug: string
-    image?: string | null
+    image: string
 }

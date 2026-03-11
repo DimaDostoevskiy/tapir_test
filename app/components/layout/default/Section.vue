@@ -1,10 +1,10 @@
 <template>
-  <section class="section">
-    <div class="section__header">
-      <h1 class="header__title">{{ props.title }}</h1>
+  <section class="layout-section">
+    <div class="layout-section__header">
+      <h1 class="layout-section__title">{{ props.title }}</h1>
       <slot name="section-controls"/>
     </div>
-    <div class="section__content scroll">
+    <div class="layout-section__content scroll">
       <slot name="section-content"/>
     </div>
   </section>
@@ -17,7 +17,7 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.section {
+.layout-section {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -25,20 +25,20 @@ const props = defineProps({
   padding: 1em;
 }
 
-.section__header {
+.layout-section__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 24px;
 }
 
-.header__title {
+.layout-section__title {
   margin: 0;
   font-weight: 700;
   font-size: clamp(1.5rem, 4vw, 1.875rem);
 }
 
-.section__content {
+.layout-section__content {
   flex: 1 1 auto;
   min-height: 0;
   max-height: calc(100vh - 120px);
@@ -48,7 +48,7 @@ const props = defineProps({
 }
 
 @media (max-width: 768px) {
-  .section__header {
+  .layout-section__header {
     align-items: flex-start;
   }
 }

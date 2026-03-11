@@ -2,8 +2,8 @@
   <LayoutDefaultSection :title="'Редактировать пост'">
     <template #section-controls>
       <NuxtLink :to="'/admin/post/'"
-                class="link-btn link-btn--outline"
-      >Назад к списку
+                class="link-btn link-btn_outline"
+      >Назад
       </NuxtLink>
     </template>
     <template #section-content>
@@ -12,7 +12,7 @@
                submit-label="Сохранить"
                @submit="submit"
       >
-        <KitImage :path="String(form.image)"
+        <KitImage :path="form.image"
                   loading="lazy"
         />
         <KitImageUpload label="Изображение"

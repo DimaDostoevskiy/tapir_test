@@ -1,7 +1,7 @@
 <template>
   <div
       class="kit-alert"
-      :class="`kit-alert--${type}`"
+      :class="`kit-alert_${props.type}`"
       role="alert"
   >
     <div class="kit-alert__icon" aria-hidden="true">
@@ -26,18 +26,21 @@
 </template>
 
 <script setup lang="ts">
-type KitAlertType = 'info' | 'success' | 'warning' | 'error'
-
-const props = withDefaults(
-    defineProps<{
-      title: string
-      text: string
-      type?: KitAlertType
-    }>(),
-    {
-      type: 'info',
-    }
-)
+const props = defineProps({
+  title: {
+    type: String,
+    default: ''
+  },
+  text: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String as () => 'info' | 'success' | 'warning' | 'error',
+    default: 'info',
+    validator: (v: string) => ['info', 'success', 'warning', 'error'].includes(v)
+  }
+})
 
 const icon = computed(() => {
   switch (props.type) {
@@ -51,8 +54,6 @@ const icon = computed(() => {
       return 'ℹ'
   }
 })
-
-const type = computed(() => props.type ?? 'info')
 </script>
 
 <style scoped>
@@ -99,22 +100,22 @@ const type = computed(() => props.type ?? 'info')
   color: rgb(var(--color-muted-rgb));
 }
 
-.kit-alert--info {
+.kit-alert_info {
   border-color: rgb(var(--color-primary-rgb) / 0.4);
   background: rgb(var(--color-surface-2-rgb) / 0.8);
 }
 
-.kit-alert--success {
+.kit-alert_success {
   border-color: rgb(var(--color-success-rgb) / 0.6);
   background: rgb(22 163 74 / 0.12);
 }
 
-.kit-alert--warning {
+.kit-alert_warning {
   border-color: rgb(var(--color-accent-rgb) / 0.6);
   background: rgb(234 179 8 / 0.12);
 }
 
-.kit-alert--error {
+.kit-alert_error {
   border-color: rgb(var(--color-danger-rgb) / 0.7);
   background: rgb(220 38 38 / 0.12);
 }

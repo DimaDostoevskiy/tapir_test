@@ -1,9 +1,7 @@
-<!-- BaseInput.vue -->
 <template>
-  <div class="input-wrapper">
-    <!-- Checkbox режим -->
+  <div class="kit-input">
     <template v-if="type === 'checkbox'">
-      <label class="kit-form__checkbox input__checkbox-wrapper" :for="id">
+      <label class="kit-input__checkbox-wrap" :for="id">
         <input
             :id="id"
             :name="name"
@@ -12,20 +10,22 @@
             :disabled="disabled"
             :readonly="readonly"
             :required="required"
-            class="input__checkbox"
+            class="kit-input__checkbox"
             @change="handleCheckboxChange"
             @focus="$emit('focus')"
             @blur="$emit('blur')"
         />
-        <span v-if="label" class="input__label input__label--inline">
+        <span v-if="label" class="kit-input__label kit-input__label_inline">
           {{ label }}
         </span>
       </label>
     </template>
 
-    <!-- Обычные input / textarea -->
     <template v-else>
-      <label v-if="label" :for="id" class="input__label">{{ label }}</label>
+      <label v-if="label"
+             :for="id"
+             class="kit-input__label"
+      >{{ label }}</label>
       <textarea v-if="as === 'textarea'"
                 :value="modelValue"
                 :placeholder="placeholder"
@@ -35,15 +35,15 @@
                 :name="name"
                 :id="id"
                 :rows="rows"
-                v-bind="$attrs"
-                class="input input_textarea"
+                class="kit-input__field kit-input__field_textarea"
                 :class="{
-                  'input_error': error,
-                  'input_success': success,
-                  'input_disabled': disabled,
-                  'input_lg': size === 'lg',
-                  'input_sm': size === 'sm'
+                     'kit-input__field_error': error,
+                     'kit-input__field_success': success,
+                     'kit-input__field_disabled': disabled,
+                     'kit-input__field_lg': size === 'lg',
+                     'kit-input__field_sm': size === 'sm'
                 }"
+                v-bind="$attrs"
                 @input="handleInput"
                 @focus="$emit('focus')"
                 @blur="$emit('blur')"
@@ -57,23 +57,23 @@
              :required="required"
              :name="name"
              :id="id"
+             class="kit-input__field"
+             :class="{
+          'kit-input__field_error': error,
+          'kit-input__field_success': success,
+          'kit-input__field_disabled': disabled,
+          'kit-input__field_lg': size === 'lg',
+          'kit-input__field_sm': size === 'sm'
+        }"
+             v-bind="$attrs"
              @input="handleInput"
              @focus="$emit('focus')"
              @blur="$emit('blur')"
              @keyup.enter="$emit('enter')"
-             v-bind="$attrs"
-             class="input"
-             :class="{
-               'input_error': error,
-               'input_success': success,
-               'input_disabled': disabled,
-               'input_lg': size === 'lg',
-               'input_sm': size === 'sm'
-             }"
       />
     </template>
-    <p v-if="error" class="input__error">{{ error }}</p>
-    <p v-if="hint && !error" class="input__hint">{{ hint }}</p>
+    <p v-if="error" class="kit-input__error">{{ error }}</p>
+    <p v-if="hint && !error" class="kit-input__hint">{{ hint }}</p>
   </div>
 </template>
 
@@ -131,18 +131,18 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.input-wrapper {
+.kit-input {
   width: 100%;
 }
 
-.input__checkbox-wrapper {
+.kit-input__checkbox-wrap {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
 
-.input__label {
+.kit-input__label {
   display: block;
   margin-bottom: 6px;
   font-size: 0.9rem;
@@ -153,13 +153,13 @@ onBeforeUnmount(() => {
   opacity: 0.9;
 }
 
-.input__label--inline {
+.kit-input__label_inline {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 500;
 }
 
-.input__checkbox {
+.kit-input__checkbox {
   width: 22px;
   height: 22px;
   border-radius: 8px;
@@ -171,17 +171,17 @@ onBeforeUnmount(() => {
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.input__checkbox:focus-visible {
+.kit-input__checkbox:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.4);
 }
 
-.input__checkbox:hover {
+.kit-input__checkbox:hover {
   transform: scale(1.04);
   border-color: rgb(var(--color-primary-rgb));
 }
 
-.input {
+.kit-input__field {
   padding: 12px 16px;
   background: rgb(var(--color-surface-2-rgb) / 0.4);
   border: 1px solid rgb(var(--color-border-rgb) / 0.15);
@@ -197,48 +197,48 @@ onBeforeUnmount(() => {
   transition: all 0.2s ease;
 }
 
-.input_sm {
+.kit-input__field_sm {
   padding: 8px 12px;
   font-size: 0.875rem;
   border-radius: calc(var(--radius-sm) - 2px);
 }
 
-.input_lg {
+.kit-input__field_lg {
   padding: 16px 20px;
   font-size: 1.125rem;
   border-radius: var(--radius-md);
 }
 
-.input:hover:not(:disabled) {
+.kit-input__field:hover:not(:disabled) {
   background: rgb(var(--color-surface-2-rgb) / 0.6);
   border-color: rgb(var(--color-border-rgb) / 0.3);
 }
 
-.input:focus {
+.kit-input__field:focus {
   background: rgb(var(--color-surface-rgb));
   border-color: rgb(var(--color-primary-rgb));
   box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.15);
 }
 
-.input_error {
+.kit-input__field_error {
   border-color: rgb(var(--color-danger-rgb));
 }
 
-.input_error:focus {
+.kit-input__field_error:focus {
   border-color: rgb(var(--color-danger-rgb));
   box-shadow: 0 0 0 3px rgb(var(--color-danger-rgb) / 0.15);
 }
 
-.input_success {
+.kit-input__field_success {
   border-color: rgb(var(--color-success-rgb));
 }
 
-.input_disabled {
+.kit-input__field_disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.input::placeholder {
+.kit-input__field::placeholder {
   color: rgb(var(--color-muted-rgb) / 0.72);
   font-family: inherit;
   font-size: 1em;
@@ -246,25 +246,27 @@ onBeforeUnmount(() => {
   font-style: normal;
 }
 
-.input__error {
+.kit-input__field_textarea {
+  min-height: auto;
+  resize: vertical;
+}
+
+.kit-input__error {
   margin-top: 4px;
+  margin-bottom: 0;
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
   color: rgb(var(--color-danger-rgb));
 }
 
-.input__hint {
+.kit-input__hint {
   margin-top: 4px;
+  margin-bottom: 0;
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.4;
   color: rgb(var(--color-muted-rgb));
   font-style: normal;
-}
-
-.input_textarea {
-  min-height: auto;
-  resize: vertical;
 }
 </style>

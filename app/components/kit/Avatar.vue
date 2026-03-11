@@ -1,16 +1,15 @@
-<!-- BaseAvatar.vue -->
 <template>
-  <div class="avatar"
+  <div class="kit-avatar"
        :class="{
-         'avatar_sm': size === 'sm',
-         'avatar_md': size === 'md',
-         'avatar_lg': size === 'lg',
-         'avatar_xl': size === 'xl',
-       }"
+      'kit-avatar_sm': size === 'sm',
+      'kit-avatar_md': size === 'md',
+      'kit-avatar_lg': size === 'lg',
+      'kit-avatar_xl': size === 'xl'
+    }"
        @click="$emit('click', $event)"
   >
     <img v-if="src"
-         class="avatar__image"
+         class="kit-avatar__image"
          :src="src"
          :alt="alt"
     />
@@ -19,7 +18,7 @@
 
 <script setup>
 defineProps({
-  src: {type: String, default: '/avatar.jpg'},
+  src: {type: String, default: `https://motodart.pro/files/avatar.jpg`},
   alt: {type: String, default: 'Картинка'},
   size: {type: String, default: 'md', validator: v => ['sm', 'md', 'lg', 'xl'].includes(v)},
 })
@@ -28,7 +27,7 @@ defineEmits(['click'])
 </script>
 
 <style scoped>
-.avatar {
+.kit-avatar {
   position: relative;
   border-radius: 50%;
   overflow: hidden;
@@ -42,36 +41,31 @@ defineEmits(['click'])
   margin-right: 8px;
 }
 
-.avatar:hover {
-}
-
-/* Sizes */
-.avatar_sm {
+.kit-avatar_sm {
   width: 32px;
   height: 32px;
   border-width: 1px;
 }
 
-.avatar_md {
+.kit-avatar_md {
   width: 42px;
   height: 42px;
   border-width: 1px;
 }
 
-
-.avatar_lg {
+.kit-avatar_lg {
   width: 64px;
   height: 64px;
   border-width: 2px;
 }
 
-.avatar_xl {
+.kit-avatar_xl {
   width: 96px;
   height: 96px;
   border-width: 3px;
 }
 
-.avatar__image {
+.kit-avatar__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
