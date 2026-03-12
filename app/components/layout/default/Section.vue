@@ -8,7 +8,9 @@ const props = defineProps({
   <section class="layout-section">
     <div class="layout-section__header">
       <h1 class="layout-section__title">{{ props.title }}</h1>
-      <slot name="section-controls"/>
+      <div>
+        <slot name="section-controls"/>
+      </div>
     </div>
     <div class="layout-section__content scroll">
       <slot name="section-content"/>

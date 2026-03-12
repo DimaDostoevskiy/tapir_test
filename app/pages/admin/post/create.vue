@@ -61,7 +61,8 @@ const generatePostHandler = async () => {
 <template>
   <LayoutDefaultSection :title="'Создать пост'">
     <template #section-controls>
-      <KitButton :text="isAutoGenerate ? 'создать' : 'авто' "
+      <KitButton class="mr-2"
+                 :text="isAutoGenerate ? 'создать' : 'генерировать'"
                  @click="isAutoGenerate = !isAutoGenerate"
       />
       <NuxtLink :to="'/admin/post/'"
