@@ -1,0 +1,151 @@
+@use './variables' as *;
+@import './utilities.scss';
+
+// CSS custom properties (from SCSS vars)
+:root {
+  --color-bg-rgb: #{$color-bg-rgb};
+  --color-surface-rgb: #{$color-surface-rgb};
+  --color-surface-2-rgb: #{$color-surface-2-rgb};
+  --color-text-rgb: #{$color-text-rgb};
+  --color-muted-rgb: #{$color-muted-rgb};
+  --color-border-rgb: #{$color-border-rgb};
+  --color-primary-rgb: #{$color-primary-rgb};
+  --color-primary-hover-rgb: #{$color-primary-hover-rgb};
+  --color-danger-rgb: #{$color-danger-rgb};
+  --color-success-rgb: #{$color-success-rgb};
+  --color-error-rgb: #{$color-error-rgb};
+  --color-accent-rgb: #{$color-accent-rgb};
+
+  --color-bg: rgb(var(--color-bg-rgb));
+  --color-surface: rgb(var(--color-surface-rgb));
+  --color-surface-2: rgb(var(--color-surface-2-rgb));
+  --color-text: rgb(var(--color-text-rgb));
+  --color-muted: rgb(var(--color-muted-rgb));
+  --color-border: rgb(var(--color-border-rgb) / 0.14);
+  --color-primary: rgb(var(--color-primary-rgb));
+  --color-primary-hover: rgb(var(--color-primary-hover-rgb));
+  --color-danger: rgb(var(--color-danger-rgb));
+  --color-success: rgb(var(--color-success-rgb));
+  --color-error: rgb(var(--color-error-rgb));
+  --color-accent: rgb(var(--color-accent-rgb));
+
+  --radius-md: #{$radius-md};
+  --radius-sm: #{$radius-sm};
+  --shadow-lg: #{$shadow-lg};
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans",
+  sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.scroll {
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+    background: var(--color-bg);
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+    background: var(--color-bg);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    display: none;
+    background: var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    min-height: 100px;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-primary-hover);
+    }
+  }
+
+  @media (min-width: 1190px) {
+    &::-webkit-scrollbar {
+      display: block;
+    }
+
+    &::-webkit-scrollbar-track {
+      display: block;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      display: block;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary-hover);
+    }
+  }
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &_primary {
+    background: rgb(var(--color-primary-rgb));
+    color: rgb(var(--color-bg-rgb));
+
+    &:hover {
+      background: rgb(var(--color-primary-hover-rgb));
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  &_outline {
+    background: transparent;
+    color: rgb(var(--color-text-rgb));
+    border-color: rgb(var(--color-border-rgb) / 0.5);
+
+    &:hover {
+      background: rgb(var(--color-surface-2-rgb) / 0.5);
+      border-color: rgb(var(--color-primary-rgb));
+      transform: translateY(-1px);
+    }
+  }
+
+  &_sm {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    border-radius: calc(var(--radius-sm) - 4px);
+  }
+}

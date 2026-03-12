@@ -1,0 +1,74 @@
+:root {
+  @for $i from 0 through 16 {
+    --spacing-#{$i}: #{$i * 4}px;
+  }
+}
+
+$sides: ('t': 'top', 'b': 'bottom', 'l': 'left', 'r': 'right');
+
+@each $prop in (m: margin, p: padding) {
+  $prop-key: nth($prop, 1);
+  $prop-value: nth($prop, 2);
+
+  @for $i from 0 through 16 {
+    .#{$prop-key}-#{$i} {
+      #{$prop-value}: var(--spacing-#{$i}) !important;
+    }
+    .#{$prop-key}x-#{$i} {
+      #{$prop-value}-left: var(--spacing-#{$i}) !important;
+      #{$prop-value}-right: var(--spacing-#{$i}) !important;
+    }
+    .#{$prop-key}y-#{$i} {
+      #{$prop-value}-top: var(--spacing-#{$i}) !important;
+      #{$prop-value}-bottom: var(--spacing-#{$i}) !important;
+    }
+
+    @each $side-key, $side-value in $sides {
+      .#{$prop-key}#{$side-key}-#{$i} {
+        #{$prop-value}-#{$side-value}: var(--spacing-#{$i}) !important;
+      }
+    }
+
+    // Отрицательные отступы для margin
+    @if $prop-key == 'm' and $i > 0 {
+      .#{$prop-key}--#{$i} {
+        #{$prop-value}: calc(-1 * var(--spacing-#{$i})) !important;
+      }
+      .#{$prop-key}x--#{$i} {
+        #{$prop-value}-left: calc(-1 * var(--spacing-#{$i})) !important;
+        #{$prop-value}-right: calc(-1 * var(--spacing-#{$i})) !important;
+      }
+      .#{$prop-key}y--#{$i} {
+        #{$prop-value}-top: calc(-1 * var(--spacing-#{$i})) !important;
+        #{$prop-value}-bottom: calc(-1 * var(--spacing-#{$i})) !important;
+      }
+
+      @each $side-key, $side-value in $sides {
+        .#{$prop-key}#{$side-key}--#{$i} {
+          #{$prop-value}-#{$side-value}: calc(-1 * var(--spacing-#{$i})) !important;
+        }
+      }
+    }
+  }
+
+  // Auto для margin
+  @if $prop-key == 'm' {
+    .#{$prop-key}-auto {
+      #{$prop-value}: auto !important;
+    }
+    .#{$prop-key}x-auto {
+      #{$prop-value}-left: auto !important;
+      #{$prop-value}-right: auto !important;
+    }
+    .#{$prop-key}y-auto {
+      #{$prop-value}-top: auto !important;
+      #{$prop-value}-bottom: auto !important;
+    }
+
+    @each $side-key, $side-value in $sides {
+      .#{$prop-key}#{$side-key}-auto {
+        #{$prop-value}-#{$side-value}: auto !important;
+      }
+    }
+  }
+}

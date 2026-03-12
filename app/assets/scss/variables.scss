@@ -1,0 +1,48 @@
+// Colors (RGB for opacity support)
+$color-bg-rgb: 10 12 17;
+$color-surface-rgb: 20 24 33;
+$color-surface-2-rgb: 30 36 48;
+$color-text-rgb: 241 245 249;
+$color-muted-rgb: 148 163 184;
+$color-border-rgb: 148 163 184;
+$color-primary-rgb: 190 140 248;
+$color-primary-hover-rgb: 99 102 241;
+$color-danger-rgb: 220 38 38;
+$color-success-rgb: 22 163 74;
+$color-error-rgb: 185 28 28;
+$color-accent-rgb: 226 232 240;
+
+// Full color values (for use in SCSS)
+// Space-separated RGB for modern CSS rgb(r g b) syntax
+$color-bg: unquote('rgb(#{$color-bg-rgb})');
+$color-surface: unquote('rgb(#{$color-surface-rgb})');
+$color-surface-2: unquote('rgb(#{$color-surface-2-rgb})');
+$color-text: unquote('rgb(#{$color-text-rgb})');
+$color-muted: unquote('rgb(#{$color-muted-rgb})');
+$color-border: unquote('rgb(#{$color-border-rgb} / 0.14)');
+$color-primary: unquote('rgb(#{$color-primary-rgb})');
+$color-primary-hover: unquote('rgb(#{$color-primary-hover-rgb})');
+$color-danger: unquote('rgb(#{$color-danger-rgb})');
+$color-success: unquote('rgb(#{$color-success-rgb})');
+$color-error: unquote('rgb(#{$color-error-rgb})');
+$color-accent: unquote('rgb(#{$color-accent-rgb})');
+
+// Radii
+$radius-md: 16px;
+$radius-sm: 12px;
+
+// Shadow
+$shadow-lg: 0 20px 50px rgb(0 0 0 / 0.55);
+
+// Spacing
+$spacing-0: 0;
+$spacing-1: 4px;
+$spacing-2: 8px;
+$spacing-3: 12px;
+$spacing-4: 16px;
+$spacing-5: 20px;
+$spacing-6: 24px;
+$spacing-8: 32px;
+$spacing-10: 40px;
+$spacing-12: 48px;
+$spacing-16: 64px;

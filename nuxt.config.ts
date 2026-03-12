@@ -1,12 +1,13 @@
 export default defineNuxtConfig({
+    compatibilityDate: '2026-03-01',
+
     devtools: {enabled: false},
 
     typescript: {
         typeCheck: false,
     },
 
-    compatibilityDate: '2026-01-01',
-    css: ['~/assets/styles/main.css'],
+    css: ['~/assets/scss/main.scss'],
 
     app: {
         baseURL: '/blog/',
@@ -75,5 +76,15 @@ export default defineNuxtConfig({
         compressPublicAssets: true,
     },
 
-    modules: ['@nuxt/image']
+    modules: ['@nuxt/image'],
+
+    vite: {
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    additionalData: '@use "~/assets/scss/variables.scss" as *;',
+                },
+            },
+        },
+    },
 })
