@@ -7,7 +7,6 @@ export interface IListPostsParams {
     limit?: number
     offset?: number
     q?: string
-    publishedOnly?: boolean
 }
 
 const DEFAULT_LIMIT = 10
@@ -38,13 +37,11 @@ export const postsService = {
     searchPost: async (params: IListPostsParams) => {
         const limit = Number(params.limit) || DEFAULT_LIMIT
         const offset = Number(params.offset) || 0
-        const publishedOnly = params.publishedOnly
         const searchString = (params.q ?? '').toString().trim().replace(/[%_\\]/g, '\\$&')
 
         if (!searchString) {
-            const where = publishedOnly ? {published: true} : {}
             return PostModel.findAll({
-                where,
+                where: {published: true},
                 order: [['createdAt', 'DESC']],
                 limit,
                 offset,
@@ -52,19 +49,19 @@ export const postsService = {
         }
 
         const likePattern = `%${searchString}%`
-        const orMatch = {
-            [Op.or]: [
-                {title: {[Op.like]: likePattern}},
-                {description: {[Op.like]: likePattern}},
-                {content: {[Op.like]: likePattern}},
-            ],
-        }
-        const where = publishedOnly
-            ? {[Op.and]: [{published: true}, orMatch]}
-            : orMatch
-
         return PostModel.findAll({
-            where,
+            where: {
+                [Op.and]: [
+                    {published: true},
+                    {
+                        [Op.or]: [
+                            {title: {[Op.like]: likePattern}},
+                            {description: {[Op.like]: likePattern}},
+                            {content: {[Op.like]: likePattern}},
+                        ],
+                    },
+                ],
+            },
             order: [['createdAt', 'DESC']],
             limit,
             offset,

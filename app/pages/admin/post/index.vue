@@ -9,9 +9,7 @@ useSeoMeta({
   title: 'Админка',
 })
 
-const {data: posts, pending, error: fetchError, refresh} = await useFetch<BlogPost[]>('/api/posts/get-all', {
-  query: {published: 'all'},
-})
+const {data: posts, pending, error: fetchError, refresh} = await useFetch<BlogPost[]>('/api/posts/get-all-admin')
 
 const removePost = async (id: number) => {
   if (!confirm('Удалить пост?')) {
