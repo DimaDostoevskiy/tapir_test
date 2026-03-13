@@ -9,147 +9,41 @@ definePageMeta({
 
 import type {BlogPost} from '~/types/blog'
 
-const PAGE_SIZE = 5
-const AUTO_LOAD_THRESHOLD = 300
-const SHOW_SCROLL_TOP_THRESHOLD = 5
+const QUERY_LIMIT = 5
 
 const searchQuery = useState<string>('postsSearchQuery', () => '')
-const blogListRef = ref<HTMLElement | null>(null)
-const postList = ref<BlogPost[]>([])
-const pending = ref(false)
-const error = ref('')
-const isLoadingMore = ref(false)
-const hasMore = ref(true)
-const showScrollTopButton = ref(false)
+const postService = usePostService()
 
-const syncBottomState = () => {
-  const container = blogListRef.value
+// Первую порцию постов получаем перед сборкой на сервере (SSR)
+const {data: initialPosts, pending} = await useAsyncData('posts-initial', () => postService.getPostList())
 
-  if (!container) {
-    return
-  }
+const postList = ref<BlogPost[]>(initialPosts.value ?? [])
 
-  const distanceToBottom = container.scrollHeight - (container.scrollTop + container.clientHeight)
-  showScrollTopButton.value = container.scrollTop >= SHOW_SCROLL_TOP_THRESHOLD
-
-  if (
-      distanceToBottom <= AUTO_LOAD_THRESHOLD
-      && hasMore.value
-      && !pending.value
-      && !error.value
-      && !isLoadingMore.value
-  ) {
-    void loadMorePosts()
-  }
+const scrollListHandler = async () => {
+  const chunk = await postService.getPostList(searchQuery.value, QUERY_LIMIT, postList.value.length)
+  postList.value = [...postList.value, ...chunk]
 }
 
-const loadMorePosts = async (reset = false) => {
-  if (
-      isLoadingMore.value
-      || (!reset && !hasMore.value)
-      || pending.value
-      || Boolean(error.value)
-  ) {
-    return
-  }
-
-  isLoadingMore.value = true
-
-  if (reset) {
-    postList.value = []
-    hasMore.value = true
-  }
-
-  try {
-    const nextChunk = await $fetch<BlogPost[]>('/api/posts/get-all', {
-      query: {
-        q: searchQuery.value.trim(),
-        limit: PAGE_SIZE,
-        offset: postList.value.length,
-      },
-    })
-    const list = Array.isArray(nextChunk) ? nextChunk : []
-    postList.value = [...postList.value, ...list]
-    hasMore.value = list.length === PAGE_SIZE
-  } finally {
-    isLoadingMore.value = false
-  }
-}
-
-const scrollToTop = () => {
-  blogListRef.value?.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  })
-}
-
-let listMutationObserver: MutationObserver | null = null
-
-onMounted(async () => {
-  await loadMorePosts()
-  const el = blogListRef.value
-  if (el) {
-    el.addEventListener('scroll', syncBottomState)
-    listMutationObserver = new MutationObserver(syncBottomState)
-    listMutationObserver.observe(el, {childList: true, subtree: true})
-  }
-})
-
-onBeforeUnmount(() => {
-  const el = blogListRef.value
-  if (el) {
-    el.removeEventListener('scroll', syncBottomState)
-  }
-  if (listMutationObserver) {
-    try {
-      listMutationObserver.disconnect()
-    } catch {
-      // ignore cleanup errors
-    }
-    listMutationObserver = null
-  }
-})
-
-watch(searchQuery, async () => {
-  await loadMorePosts(true)
+watch(searchQuery, async (newValue) => {
+  postList.value = await postService.getPostList(newValue, QUERY_LIMIT, 0)
 })
 </script>
 
 <template>
-  <section class="blog-list scroll"
-           ref="blogListRef"
-  >
+  <PostList @bottom-scroll="scrollListHandler">
     <PostCard v-for="post in postList"
               :key="post.id"
               :post="post"
               class="mb-8"
     />
-    <KitAlert v-if="!pending && !error && !hasMore && postList.length > 0"
+    <KitAlert v-if="pending"
+              :type="'success'"
+              :title="`Загрузка данных...`"
+              :text="`...`"
+    />
+    <KitAlert v-if="!pending && postList.length > 0"
               class="pl-8"
               title="элементов больше нет"
-              text=""
     />
-    <KitButton v-if="showScrollTopButton"
-               class="blog-list__up-btn"
-               aria-label="Прокрутить наверх"
-               text="UP"
-               @click="scrollToTop"
-    />
-  </section>
+  </PostList>
 </template>
-
-<style scoped>
-.blog-list {
-  padding: 24px 24px 100px 24px;
-  height: 100vh;
-  width: 100%;
-  max-width: 100%;
-}
-
-.blog-list__up-btn {
-  position: fixed;
-  right: clamp(16px, 4vw, 40px);
-  bottom: clamp(16px, 6vh, 40px);
-  z-index: 20;
-}
-</style>

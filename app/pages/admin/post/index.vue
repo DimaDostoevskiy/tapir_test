@@ -9,25 +9,48 @@ useSeoMeta({
   title: 'Админка',
 })
 
-const router = useRouter()
+// Первую порцию постов получаем перед сборкой на сервере (SSR)
+const {data: initialPosts, pending, refresh} = await useAsyncData('posts-initial', () => postService.getPostList())
 
-const {data: posts, pending, error: fetchError, refresh} = await useFetch<BlogPost[]>('/api/posts/get-all-admin')
+const searchQuery = useState<string>('postsSearchQuery', () => '')
+const router = useRouter()
+const postService = usePostService()
+
+const QUERY_LIMIT = 5
+const isLoading = ref<boolean>(false)
+const postList = ref<BlogPost[]>(initialPosts.value ?? [])
 
 const removePostClickHandler = async (id: number) => {
-  if (!confirm('Удалить пост?')) {
-    return
-  }
+  if (!confirm('Удалить пост?')) return
 
-  await $fetch(`/api/posts/${id}`, {
+  isLoading.value = true
+
+  $fetch(`/api/post/${id}`, {
     method: 'DELETE',
   } as Record<string, unknown>)
-
-  await refresh()
+      .then(() => {
+        refresh()
+      })
+      .catch(err => {
+        alert(err);
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
 }
 
 const editPostClickHandler = (id: number) => {
   router.push(`/admin/post/edit/${String(id)}`)
 }
+
+const scrollListHandler = async () => {
+  const chunk = await postService.getPostList(searchQuery.value, QUERY_LIMIT, postList.value.length)
+  postList.value = [...postList.value, ...chunk]
+}
+
+watch(searchQuery, async (newValue) => {
+  postList.value = await postService.getPostList(newValue, QUERY_LIMIT, 0)
+})
 </script>
 
 <template>
@@ -39,22 +62,11 @@ const editPostClickHandler = (id: number) => {
       />
     </template>
     <template #section-content>
-      <KitAlert v-if="pending"
-                :type="'success'"
-                :title="`Загрузка данных...`"
-                :text="`...`"
-      />
-      <KitAlert v-if="fetchError"
-                :type="'error'"
-                :title="`Ошибка!`"
-                :text="String(fetchError)"
-      />
-      <div class="admin-page__list scroll">
-        <PostCard
-            class="mb-4"
-            v-for="post in posts"
-            :key="post.id"
-            :post="post"
+      <PostList @bottom-scroll="scrollListHandler">
+        <PostCard v-for="post in postList"
+                  class="mb-4"
+                  :key="post.id"
+                  :post="post"
         >
           <template #controls>
             <div class="control__wrapper">
@@ -75,7 +87,16 @@ const editPostClickHandler = (id: number) => {
             </div>
           </template>
         </PostCard>
-      </div>
+        <KitAlert v-if="pending"
+                  :type="'success'"
+                  :title="`Загрузка данных...`"
+                  :text="`...`"
+        />
+        <KitAlert v-if="!pending && postList.length > 0"
+                  class="pl-8"
+                  title="элементов больше нет"
+        />
+      </PostList>
     </template>
   </LayoutDefaultSection>
 </template>

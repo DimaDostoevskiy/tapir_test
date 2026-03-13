@@ -5,7 +5,7 @@ const route = useRoute()
 const cookieUser = useCookie('auth_user')
 const searchQuery = useState<string>('postsSearchQuery', () => '')
 const user = ref<IUserCookie | null>(null)
-const isHomePage = computed(() => route.path === '/')
+const isShowSearchInput = computed(() => route.path === '/' || route.path === '/admin/post/')
 
 onMounted(() => {
   if (cookieUser.value) {
@@ -28,7 +28,7 @@ onMounted(() => {
 <template>
   <header class="layout-header">
     <NuxtLink class="layout-header__logo" :to="'/'">Logo</NuxtLink>
-    <div v-if="isHomePage" class="layout-header__search">
+    <div v-if="isShowSearchInput" class="layout-header__search">
       <KitInput placeholder="Поиск..." v-model="searchQuery"/>
     </div>
     <div class="layout-header__user">
