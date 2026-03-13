@@ -22,26 +22,15 @@ export const postsService = {
         })
     ,
 
-    getAllPosts: async () => await PostModel.findAll({
-        order: [['createdAt', 'DESC']],
-    })
-        .then(postList => postList.map(post => post.get({plain: true})))
-        .catch(() => {
-            throw createError({
-                statusCode: 400,
-                statusMessage: 'Ошибка! Не удалось получить посты!',
-            })
-        })
-    ,
-
-    searchPost: async (params: IListPostsParams) => {
+    searchPost: async (params: IListPostsParams, role: string = '') => {
         const limit = Number(params.limit) || DEFAULT_LIMIT
         const offset = Number(params.offset) || 0
         const searchString = (params.q ?? '').toString().trim().replace(/[%_\\]/g, '\\$&')
+        const publishedWhere = role === 'ADMIN' ? {} : {published: true}
 
         if (!searchString) {
             return PostModel.findAll({
-                where: {published: true},
+                where: publishedWhere,
                 order: [['createdAt', 'DESC']],
                 limit,
                 offset,
@@ -52,7 +41,7 @@ export const postsService = {
         return PostModel.findAll({
             where: {
                 [Op.and]: [
-                    {published: true},
+                    publishedWhere,
                     {
                         [Op.or]: [
                             {title: {[Op.like]: likePattern}},
@@ -69,7 +58,7 @@ export const postsService = {
     }
     ,
 
-    getOnePublicPost: async (idOrSlug: string | number) => {
+    getOnePost: async (idOrSlug: string | number) => {
         const where: Record<string, unknown> = {
             published: true
         }
